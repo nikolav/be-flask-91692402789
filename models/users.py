@@ -27,6 +27,11 @@ TAG_EMAIL_VERIFIED    = os.getenv('TAG_EMAIL_VERIFIED')
 UPLOAD_PATH           = os.getenv('UPLOAD_PATH')
 USER_EMAIL            = os.getenv('USER_EMAIL')
 
+POLICY_APPROVED    = os.getenv('POLICY_APPROVED')
+POLICY_EMAIL       = os.getenv('POLICY_EMAIL')
+POLICY_FILESTORAGE = os.getenv('POLICY_FILESTORAGE')
+
+
 
 class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   __tablename__ = usersTable
@@ -165,6 +170,30 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   def products_sorted_popular(self):
     return Products.popular_sorted_user(self)
   
+  # public 
+  def policies_add(self, *policies):
+    changes = 0
+
+    for policy in filter(lambda p: not self.includes_tags(p), policies):
+      tp = Tags.by_name(policy, create = True)
+      tp.users.append(self)
+      changes += 1
+    
+    if 0 < changes:
+      db.session.commit()
+
+  # public 
+  def policies_rm(self, *policies):
+    changes = 0
+
+    for policy in filter(lambda p: self.includes_tags(p), policies):
+      tp = Tags.by_name(policy, create = True)
+      tp.users.remove(self)
+      changes += 1
+    
+    if 0 < changes:
+      db.session.commit()
+  
   @staticmethod
   def clear_storage(uid):
     directory = os.path.join(UPLOAD_PATH.rstrip("/\\"), 'storage', str(uid))
@@ -187,8 +216,15 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
       email    = email,
       password = hashPassword(password)
     )
+
     db.session.add(u)
     db.session.commit()
+
+    # add default policies
+    u.policies_add(
+      POLICY_APPROVED,
+      POLICY_EMAIL,
+      POLICY_FILESTORAGE)
 
     return u
 

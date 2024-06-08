@@ -53,15 +53,16 @@ def status_ok():
       break
 
   
+  uid_admin = db.session.scalar(
+    db.select(Users.id)
+    .where(Users.email == ADMIN_EMAIL)
+  )
+  
   uid = db.session.scalar(
     db.select(Users.id)
     .where(Users.email == USER_EMAIL)
   )
   
-  uid_admin = db.session.scalar(
-    db.select(Users.id)
-    .where(Users.email == ADMIN_EMAIL)
-  )
   
   uids_admin = [u.id for u in Tags.by_name(POLICY_ADMINS).users]
 

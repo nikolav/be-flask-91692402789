@@ -48,10 +48,10 @@ db.session.commit()
 
 
 # default tags
-policy_admins_   = os.getenv('POLICY_ADMINS')
 policy_fs_       = os.getenv('POLICY_FILESTORAGE')
-policy_email_    = os.getenv('POLICY_EMAIL')
 policy_approved_ = os.getenv('POLICY_APPROVED')
+policy_email_    = os.getenv('POLICY_EMAIL')
+policy_admins_   = os.getenv('POLICY_ADMINS')
 policy_all_      = os.getenv('POLICY_ALL')
 
 # misc

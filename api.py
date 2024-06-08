@@ -13,7 +13,6 @@ from blueprints              import bp_home
 from blueprints.auth         import bp_auth
 from blueprints.storage      import bp_storage
 from blueprints.testing      import bp_testing
-# from blueprints.pdf          import bp_pdf
 
 
 # mount resources
@@ -64,12 +63,12 @@ if __name__ == '__main__':
     # @app:init
     
     # load models
-    from models.tags     import Tags
     from models.tokens   import Tokens
+    from models.tags     import Tags
+    from models.docs     import Docs
     from models.users    import Users
     from models.products import Products
     from models.orders   import Orders
-    from models.docs     import Docs
     from models.posts    import Posts
 
     # drop/create schema
