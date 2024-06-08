@@ -1,13 +1,7 @@
-# import os
-# import json
-# import re
-# from typing import List
-
 from sqlalchemy import func
 
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-# from sqlalchemy.orm import relationship
 
 from . import db
 from . import tblSuffix

@@ -1,6 +1,5 @@
 import os
 import secrets
-# from pprint import pprint
 
 from flask      import Blueprint
 from flask      import g
@@ -9,15 +8,12 @@ from flask      import render_template
 from flask_cors import CORS
 from flask_mail import Message
 
-from sqlalchemy import func
-
 from flask_app      import db
 from flask_app      import io
 from flask_app      import mail
 
 from models.users    import Users
 from models.docs     import Docs
-# from models.tags    import Tags
 
 from utils.pw       import hash  as hashPassword
 from utils.pw       import check as checkPassword
@@ -80,7 +76,6 @@ def auth_register():
   
   # forbiden otherwise
   return { 'error': str(error) }, 403
-  
   
 @bp_auth.route('/login', methods = ('POST',))
 @arguments_schema(SchemaAuthLogin())
@@ -177,7 +172,6 @@ def auth_social():
   # forbiden otherwise
   return { 'error': str(error) }, 403
 
-
 @bp_auth.route('/logout', methods = ('POST',))
 def auth_logout():
   error = '@error/auth:logout'
@@ -206,7 +200,6 @@ def auth_who():
     error = err
   
   return { 'error': str(error) }, 500
-
 
 @bp_auth.route('/password-reset-obnova-lozinke', methods = ('POST',))
 def password_reset_obnova_lozinke():
@@ -282,3 +275,4 @@ def password_reset_email_link():
       return d['email'] if not res else None
   
   return None
+
