@@ -33,7 +33,6 @@ def resolve_productsRm(_obj, _info, id):
     
     uid = p.user.id
 
-    # approved company
     # remove owned product record
     g.user.products.remove(p)
     db.session.delete(p)

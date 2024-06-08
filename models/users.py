@@ -22,7 +22,6 @@ from utils.str import match_after_last_at
 from utils.pw  import hash as hashPassword
 
 POLICY_ADMINS         = os.getenv('POLICY_ADMINS')
-POLICY_COMPANY        = os.getenv('POLICY_COMPANY')
 TAG_ARCHIVED          = os.getenv('TAG_ARCHIVED')
 TAG_EMAIL_VERIFIED    = os.getenv('TAG_EMAIL_VERIFIED')
 UPLOAD_PATH           = os.getenv('UPLOAD_PATH')
@@ -87,9 +86,8 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
         tag_approved.users.remove(self)
         db.session.commit()
 
-    except Exception as e:
-      error = e
-      raise e
+    except Exception as err:
+      error = err
     
     else:
       return str(self.id)
@@ -98,6 +96,8 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   
   # public
   def approve(self):
+    error = '@error:approve'
+
     try:
       if not self.approved():
         tag_approved = Tags.by_name(POLICY_APPROVED)
@@ -105,10 +105,12 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
         db.session.commit()
 
     except Exception as err:
-      raise err
+      error = err
 
     else:
       return str(self.id)
+    
+    return { 'error': str(error) }
   
   # public
   def profile(self):
@@ -126,7 +128,7 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
       )
       
       if not t:
-        raise Exception('unavailable')
+        raise Exception('profile:unavailable')
       
       # docid from Tags{}
       docid = int(match_after_last_at(t.tag))

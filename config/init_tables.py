@@ -49,7 +49,6 @@ db.session.commit()
 
 # default tags
 policy_admins_   = os.getenv('POLICY_ADMINS')
-policy_company_  = os.getenv('POLICY_COMPANY')
 policy_fs_       = os.getenv('POLICY_FILESTORAGE')
 policy_email_    = os.getenv('POLICY_EMAIL')
 policy_approved_ = os.getenv('POLICY_APPROVED')
@@ -62,7 +61,6 @@ TAG_FEEDBACK_ON_ORDER_COMPLETED = os.getenv('TAG_FEEDBACK_ON_ORDER_COMPLETED')
 
 # init
 tagPolicyADMINS          = Tags.by_name(policy_admins_,                  create = True)
-tagPolicyCOMPANY         = Tags.by_name(policy_company_,                 create = True)
 tagPolicyEMAIL           = Tags.by_name(policy_email_,                   create = True)
 tagPolicyFS              = Tags.by_name(policy_fs_,                      create = True)
 tagPolicy_approved       = Tags.by_name(policy_approved_,                create = True)
@@ -78,8 +76,6 @@ if not user_admin.includes_tags(policy_email_):
   tagPolicyEMAIL.users.append(user_admin)
 if not user_admin.includes_tags(policy_fs_):
   tagPolicyFS.users.append(user_admin)
-if not user_admin.includes_tags(policy_company_):
-  tagPolicyCOMPANY.users.append(user_admin)
 if not user_admin.includes_tags(policy_approved_):
   tagPolicy_approved.users.append(user_admin)
 # if not user_admin.includes_tags(policy_all_):

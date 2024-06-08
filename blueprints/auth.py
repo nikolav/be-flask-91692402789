@@ -56,10 +56,7 @@ def auth_register():
 
   try:    
     # skip registered
-    if (0 < db.session.scalar(
-      db.select(func.count(Users.id))
-        .where(Users.email == email)
-    )):
+    if (Users.email_exists(email)):
       raise Exception('access denied')
 
     # email available
@@ -103,10 +100,6 @@ def auth_login():
     # skip invalid credentials ~email ~password
     if not u:
       raise Exception('access denied')
-
-    ## skip archived
-    if u.is_archived():
-      raise Exception('access denied')
     
     if not checkPassword(password, u.password):
       raise Exception('access denied')
@@ -144,11 +137,7 @@ def auth_social():
       db.select(Users)
         .where(Users.email == auth_data['email'])
     )
-    
-    # skip archived
-    if u and u.is_archived():
-      raise Exception('access denied')
-    
+        
     if not u:
       u = Users.create_user(
         email    = auth_data['email'],
@@ -210,9 +199,8 @@ def auth_who():
       'id'            : g.user.id, 
       'email'         : g.user.email, 
       'admin'         : g.user.is_admin(),
-      'email_verified': g.user.email_verified(),
       'approved'      : g.user.approved(),
-      'archived'      : g.user.is_archived(),
+      'email_verified': g.user.email_verified()
     }, 200
   except Exception as err:
     error = err
