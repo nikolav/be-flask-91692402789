@@ -104,7 +104,6 @@ def mail_general():
 
       # pass all data to mail template
       html = render_template(f'mail/{template}.html', data = data)
-      
     )
   )
 
