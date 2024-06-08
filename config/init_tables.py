@@ -55,11 +55,6 @@ policy_email_    = os.getenv('POLICY_EMAIL')
 policy_approved_ = os.getenv('POLICY_APPROVED')
 policy_all_      = os.getenv('POLICY_ALL')
 
-# packages
-policy_pkg_silver   = os.getenv('POLICY_PACKAGE_SILVER')
-policy_pkg_gold     = os.getenv('POLICY_PACKAGE_GOLD')
-policy_pkg_promoted = os.getenv('POLICY_PACKAGE_PROMOTED')
-
 # misc
 TAG_ARCHIVED        = os.getenv('TAG_ARCHIVED')
 TAG_EMAIL_VERIFIED  = os.getenv('TAG_EMAIL_VERIFIED')
@@ -72,9 +67,6 @@ tagPolicyEMAIL           = Tags.by_name(policy_email_,                   create 
 tagPolicyFS              = Tags.by_name(policy_fs_,                      create = True)
 tagPolicy_approved       = Tags.by_name(policy_approved_,                create = True)
 tagPolicyALL             = Tags.by_name(policy_all_,                     create = True)
-tagPolicy_pkg_silver     = Tags.by_name(policy_pkg_silver,               create = True)
-tagPolicy_pkg_gold       = Tags.by_name(policy_pkg_gold,                 create = True)
-tagPolicy_pkg_promoted   = Tags.by_name(policy_pkg_promoted,             create = True)
 tag_archived             = Tags.by_name(TAG_ARCHIVED,                    create = True)
 tag_email_verified       = Tags.by_name(TAG_EMAIL_VERIFIED,              create = True)
 tag_order_email_feedback = Tags.by_name(TAG_FEEDBACK_ON_ORDER_COMPLETED, create = True)

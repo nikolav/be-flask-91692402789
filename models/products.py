@@ -28,16 +28,12 @@ from models.docs import Docs
 
 from schemas.serialization import SchemaSerializeProductsTimes
 
-
-
-PRODUCT_CATEGORY_prefix          = os.getenv('PRODUCT_CATEGORY_prefix')
-TOPIC_RATINGS                    = os.getenv('TOPIC_RATINGS')
-PRODUCT_RATING_prefix            = os.getenv('PRODUCT_RATING_prefix')
 LIKEDISLIKE_CACHE_ID             = os.getenv('LIKEDISLIKE_CACHE_ID')
+PRODUCT_CATEGORY_prefix          = os.getenv('PRODUCT_CATEGORY_prefix')
+PRODUCT_RATING_prefix            = os.getenv('PRODUCT_RATING_prefix')
 PRODUCTS_LIKES_prefix            = os.getenv('PRODUCTS_LIKES_prefix')
 TOPIC_CHAT_PRODUCTS_prefix       = os.getenv('TOPIC_CHAT_PRODUCTS_prefix')
-POLICY_PACKAGE_PROMOTED          = os.getenv('POLICY_PACKAGE_PROMOTED')
-IOEVENT_PACKAGES_PROMOTED_prefix = os.getenv('IOEVENT_PACKAGES_PROMOTED_prefix')
+TOPIC_RATINGS                    = os.getenv('TOPIC_RATINGS')
 
 
 class Products(MixinTimestamps, MixinIncludesTags, db.Model):
@@ -122,7 +118,7 @@ class Products(MixinTimestamps, MixinIncludesTags, db.Model):
     return bool(re.match( f'.*{re.escape(location)}.*', 
       self.location(), flags = re.IGNORECASE))
   
-  # getter, calculate 🌟 rating
+  # calculate 🌟 rating
   def rating(self):
     
     # get rating map
@@ -177,13 +173,13 @@ class Products(MixinTimestamps, MixinIncludesTags, db.Model):
 
   @staticmethod
   def popular_sorted_user(user):
-    lsp = []
-
+    lsp  = []
     sumc = func.sum(ln_orders_products.c.amount)
+
     ls_p = db.session.scalars(
       db.select(Products, sumc)
         # .join(ln_orders_products)
-        # include Products with no orders also
+        #  include Products with no orders as well, isouter = True
         .join(ln_orders_products, isouter = True)
         .where(Products.user_id == user.id)
         .group_by(Products.id)
@@ -193,55 +189,3 @@ class Products(MixinTimestamps, MixinIncludesTags, db.Model):
     
     return lsp
 
-  
-  ############
-  ## @packages
-  
-  # promote all products by user
-  @staticmethod
-  def packages_promote_user(user):
-    lsp = db.session.scalars(
-      db.select(Products)
-        .join(Products.user)
-        .where(Products.user_id == user.id)
-    )
-    for p in lsp:
-      p.packages_set_promoted(True)
-    
-    # return promoted set
-    return lsp
-  
-  
-  # public
-  def packages_type(self):
-    # 'basic' | 'silver' | 'gold'
-    return 'basic' if (not self.user.packages_is_premium() or not self.packages_is_promoted()) else 'silver' if self.user.packages_is('silver') else 'gold'
-  
-  # manage if premium user included this node in promoted set
-  def packages_is_promoted(self):
-    return self.includes_tags(POLICY_PACKAGE_PROMOTED) if self.user.packages_is_premium() else False
-    
-  def packages_set_promoted(self, status = True):
-    updated = False
-    
-    # for premium users
-    if self.user.packages_is_premium():
-      t = Tags.by_name(POLICY_PACKAGE_PROMOTED)
-      
-      if True == status:
-        if not self.includes_tags(POLICY_PACKAGE_PROMOTED):
-          # include node in promoted set if not already there
-          t.products.append(self)
-          updated = True
-          
-      else:
-        if self.includes_tags(POLICY_PACKAGE_PROMOTED):
-          # remove node from promoted set if its included
-          t.products.remove(self)
-          updated = True
-      
-      if updated:
-        # update
-        db.session.commit()
-    
-    return updated

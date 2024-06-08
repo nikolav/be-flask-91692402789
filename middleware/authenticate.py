@@ -55,7 +55,6 @@ def authenticate():
       g.access_token         = token
       g.access_token_payload = payload
       g.user                 = user
-      g.is_company           = g.user.is_company()
 
       # `.success`, run next
       return

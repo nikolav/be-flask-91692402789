@@ -7,8 +7,9 @@ from sqlalchemy import DateTime
 from flask_app import db
 
 
-POLICY_APPROVED = os.getenv('POLICY_APPROVED')
 tblSuffix = os.getenv('TABLE_NAME_SUFFIX')
+
+POLICY_APPROVED = os.getenv('POLICY_APPROVED')
 
 tagsTable     = f'tags{tblSuffix}'
 usersTable    = f'users{tblSuffix}'

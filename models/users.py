@@ -21,20 +21,13 @@ from models.products import Products
 from utils.str import match_after_last_at
 from utils.pw  import hash as hashPassword
 
-
 POLICY_ADMINS         = os.getenv('POLICY_ADMINS')
 POLICY_COMPANY        = os.getenv('POLICY_COMPANY')
-USER_EMAIL            = os.getenv('USER_EMAIL')
-POLICY_PACKAGE_SILVER = os.getenv('POLICY_PACKAGE_SILVER')
-POLICY_PACKAGE_GOLD   = os.getenv('POLICY_PACKAGE_GOLD')
 TAG_ARCHIVED          = os.getenv('TAG_ARCHIVED')
-UPLOAD_PATH           = os.getenv('UPLOAD_PATH')
 TAG_EMAIL_VERIFIED    = os.getenv('TAG_EMAIL_VERIFIED')
+UPLOAD_PATH           = os.getenv('UPLOAD_PATH')
+USER_EMAIL            = os.getenv('USER_EMAIL')
 
-PKG = {
-  'silver': POLICY_PACKAGE_SILVER,
-  'gold'  : POLICY_PACKAGE_GOLD,
-}
 
 class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   __tablename__ = usersTable
@@ -54,24 +47,7 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   # magic
   def __repr__(self):
     return f'Users(id={self.id!r}, email={self.email!r}, password={self.password!r})'
-  
-  # public
-  def accounts_upgrade(self, flag = True):
-    isc = self.is_company()
-    tt  = Tags.by_name(POLICY_COMPANY)
     
-    if flag:
-      if not isc:
-        tt.users.append(self)
-    
-    else:
-      if isc:
-        tt.users.remove(self)
-    
-    db.session.commit()
-    
-    return self.is_company()
-  
   # public
   def email_verified(self):
     return self.includes_tags(TAG_EMAIL_VERIFIED)
@@ -96,31 +72,11 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   # public
   def is_admin(self):
     return self.includes_tags(POLICY_ADMINS)
-  
-  # public
-  def is_company(self):
-    return self.includes_tags(POLICY_COMPANY)
-  
+    
   # public
   def approved(self):
     return self.includes_tags(POLICY_APPROVED)
-  
-  # public
-  def set_is_company(self, flag = True):
-    pc = Tags.by_name(POLICY_COMPANY)
-    iscom = self.is_company()
-
-    if flag:
-      if not iscom:
-        pc.users.append(self)
-    else:
-      if iscom:
-        pc.users.remove(self)
-    
-    db.session.commit()
-
-    return self.is_company()
-      
+        
   # public 
   def disapprove(self):
     error = '@error:disapprove'
@@ -249,45 +205,3 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
         .where(Users.email == email)
     )
 
-
-  ###########
-  ## packages
-  
-  @staticmethod
-  def pasckages_list_is_gold():
-    return db.session.scalars(
-      db.select(Users)
-        .join(Users.tags)
-        .where(Tags.tag == POLICY_PACKAGE_GOLD)
-    )
-    
-  @staticmethod
-  def pasckages_list_is_silver():
-    return db.session.scalars(
-      db.select(Users)
-        .join(Users.tags)
-        .where(Tags.tag == POLICY_PACKAGE_SILVER)
-    )
-  
-  # public
-  def packages_is_premium(self):
-    return any([self.packages_is(pkg_type) for pkg_type in PKG.keys()])
-  
-  # public
-  def packages_is(self, pkg_type):
-    return self.includes_tags(PKG.get(pkg_type))
-  
-  # public
-  def packages_add(self, pkg_type):
-    if not self.packages_is(pkg_type):
-      t = Tags.by_name(PKG.get(pkg_type))
-      t.users.append(self)
-      db.session.commit()  
-
-  # public
-  def packages_drop(self, pkg_type):
-    if self.packages_is(pkg_type):
-      t = Tags.by_name(PKG.get(pkg_type))
-      t.users.remove(self)
-      db.session.commit()
-  
