@@ -8,8 +8,6 @@ from flask_app import io
 from models.posts          import Posts
 from config.graphql.init   import mutation
 from schemas.serialization import SchemaSerializePosts
-from middleware.authguard  import authguard_company_approved
-# from middleware.authguard import authguard
 
 IOEVENT_POST_CHANGE_SINGLE_prefix = os.getenv('IOEVENT_POST_CHANGE_SINGLE_prefix')
 IOEVENT_USER_POSTS_CHANGE_prefix  = os.getenv('IOEVENT_USER_POSTS_CHANGE_prefix')
@@ -26,7 +24,6 @@ POSTS_KEYS_UPDATE_WHITELIST = [
 ]
 
 @mutation.field('postsUpsert')
-@authguard_company_approved
 def resolve_postsUpsert(_obj, _info, data, id = None):
   p = None
   
@@ -51,10 +48,10 @@ def resolve_postsUpsert(_obj, _info, data, id = None):
       # keywords = data.get('keywords', None)
 
       p = Posts(
-        
         #  default to blank title/content
         title   = data.get('title',   ''),
         content = data.get('content', ''),
+
         user    = g.user, 
         
         #  @todo --attachments
@@ -66,9 +63,8 @@ def resolve_postsUpsert(_obj, _info, data, id = None):
     
     db.session.commit()
 
-  except:
-    pass
-    # raise err
+  except Exception as err:
+    raise err
 
   else:
     if None != p.id:

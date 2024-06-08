@@ -11,8 +11,7 @@ from models.orders       import Orders
 from models.users        import Users
 from config.graphql.init import mutation
 
-
-# IOEVENT_ORDERS_CHANGE = os.getenv('IOEVENT_ORDERS_CHANGE')
+APP_NAME                          = os.getenv('APP_NAME')
 IOEVENT_ORDER_UPDATED             = os.getenv('IOEVENT_ORDER_UPDATED')
 ORDER_COMPLETED_FEEDBACK_FORM_URL = os.getenv('ORDER_COMPLETED_FEEDBACK_FORM_URL')
 
@@ -47,10 +46,10 @@ def r_ordersSetCompleted(_o, _i, oid, completed = None):
           Message(
             
             # subject
-            f'narudzba-realizovana:[#{o.id}]@kantar.rs',
+            f'narudzba-realizovana:[#{o.id}]@{APP_NAME}.rs',
 
             # from
-            sender = ('KANTAR.RS', 'app@kantar.rs'),
+            sender = (APP_NAME, f'app@{APP_NAME}.rs'),
             
             # default recepiens ls
             recipients = [u.email],

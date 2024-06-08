@@ -19,7 +19,6 @@ def resolve_manageOrderData(_obj, _info, oid, data):
       raise Exception('--invalid')
     
     status = data.get('status')
-    print(status)
     # delivery  = data.get('delivery')
     # completed = data.get('completed')
     # canceled  = data.get('canceled')

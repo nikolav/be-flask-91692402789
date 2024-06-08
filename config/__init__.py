@@ -29,17 +29,3 @@ DEFAULT_POPULAR_PRODUCTS_LIMIT = 25
 MAIL_RECIPIENTS = [
   'admin@nikolav.rs', 
 ]
-
-fields_profile_complete = [
-  'about',
-  'address',
-  'city',
-  'delivery',
-  'district',
-  'name',
-  'ownerFirstName',
-  'ownerLastName',
-  'phone',
-  'pib',
-  'pin',
-]

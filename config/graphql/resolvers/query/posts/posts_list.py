@@ -1,21 +1,16 @@
-from sqlalchemy.orm import joinedload
 from flask import g
+from sqlalchemy.orm import joinedload
 
 from flask_app import db
 
 from models.posts import Posts
-from models.users import Users
 from config.graphql.init import query
 
-
-from schemas.serialization import SchemaSerializeProductsTimes
 from schemas.serialization import SchemaSerializePosts
 
 
 @query.field('postsList')
-def resolve_postsList(_obj, _info, uid = None):
-  from pprint import pprint
-  
+def resolve_postsList(_obj, _info, uid = None):  
   try:
     id = uid if None != uid else g.user.id
 
@@ -33,8 +28,6 @@ def resolve_postsList(_obj, _info, uid = None):
     ).unique()
     
     res = SchemaSerializePosts(many = True).dump(posts)
-
-    pprint(res)
 
     return res
 

@@ -1,6 +1,5 @@
 from config.graphql.init import query
 from models.docs         import Docs
-from config              import TAG_VARS
 
 
 @query.field('vars')

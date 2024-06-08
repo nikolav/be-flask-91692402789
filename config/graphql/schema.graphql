@@ -178,34 +178,28 @@ type Query {
   productsSearch(query: JsonData): [Product!]!
 
   # orders
-  ordersListByUser(uid: ID!): [Order!]!
   ordersOne(oid: ID!): Order
-  ordersProducts(oid: ID!): [ProductWithAmount!]!
+  ordersListByUser(uid: ID!): [Order!]!
   ordersReceived: [Order!]!
+  ordersProducts(oid: ID!): [ProductWithAmount!]!
   ordersReceivedProducts(order_id: ID!): [ProductWithAmount!]!
   
   # posts
   postsList(uid: ID): [Post!]!
-  postsImages(id: ID): [JsonData!]!
   postsListOnly(sids: [ID!]!): [Post!]!
-
-  # storage
-  storageList: [StorageFileInfo!]!
-  storageListAll: [StorageFileInfo!]!
+  postsImages(id: ID): [JsonData!]!
 
   # docs
   docsByTopic(topic: String!): [JsonData!]!
   docByDocId(doc_id: String!): JsonData!
   tagsByDocId(id: ID!): [String!]!
 
-  # packages --products
-  packagesIsPromoted(pid: ID!): Boolean!
-
   # pdf
   pdfDownload(data: JsonData!): String!
 
-  # accounts
-  accountsIncompleteProfileFields: [String!]!
+  # storage
+  storageList: [StorageFileInfo!]!
+  storageListAll: [StorageFileInfo!]!
 }
 
 ############
@@ -240,13 +234,10 @@ type Mutation {
   # storage
   storageRemoveFile(file_id: String!): StorageFileRemovedInfo
 
-  # packages --products
-  packagesSetPromoted(pid: ID!, status: Boolean): ID
-
   # accounts
   accountsArchive(uid: ID!): ID
   accountsDrop(uid: ID!): ID
   accountsSendVerifyEmailLink(uid: ID!, url: String!): ID
   accountsVeifyEmail(data: JsonData!): String
-  accountsUpgradeUserCompany(uid: ID!): ID
 }
+

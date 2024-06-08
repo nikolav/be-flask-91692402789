@@ -5,12 +5,11 @@ from flask import g
 from flask_app import db
 from flask_app import io
 
-from models.tags  import Tags
 from models.products import Products
+from models.tags     import Tags
+
 from config.graphql.init import mutation
 from schemas.serialization import SchemaSerializeProductsTimes
-# from middleware.authguard import authguard
-from middleware.authguard import authguard_company_approved
 
 IOEVENT_PRODUCTS_CHANGE_SINGLE_prefix = os.getenv('IOEVENT_PRODUCTS_CHANGE_SINGLE_prefix')
 IOEVENT_PRODUCTS_CHANGE_prefix        = os.getenv('IOEVENT_PRODUCTS_CHANGE_prefix')
@@ -24,12 +23,11 @@ FIELDS = [
   'price',
   'stock',
   'stockType',
-  # 'onSale',
+  'onSale',
   'description',
 ]
 
 @mutation.field('productsUpsert')
-# @authguard_company_approved
 def resolve_productsUpsert(_obj, _info, data, id = None):
   p = None
   
@@ -61,6 +59,7 @@ def resolve_productsUpsert(_obj, _info, data, id = None):
 
           if p.includes_tags(category_):
             continue
+          
           # doesnt have this category
           # edit 
           #  drop old
@@ -103,17 +102,19 @@ def resolve_productsUpsert(_obj, _info, data, id = None):
     
     db.session.commit()
 
-  except:
-    pass
+  except Exception as err:
+    raise err
 
   else:
     if None != p.id:
-      # emit updates
+      # change@product
       io.emit(f'{IOEVENT_PRODUCTS_CHANGE_SINGLE_prefix}{p.id}')
+      # change@user:products
       io.emit(f'{IOEVENT_PRODUCTS_CHANGE_prefix}{p.user.id}')
-      # emit 'prefix':'tag' to ui
       for c in p.categories():
+        # change@product:category
         io.emit(f'{IOEVENT_PRODUCTS_CHANGE_prefix}{c}')
+      # change@products
       io.emit(IOEVENT_PRODUCTS_CHANGE)
   
   return SchemaSerializeProductsTimes().dump(p)

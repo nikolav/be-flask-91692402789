@@ -13,4 +13,3 @@ def resolve_ordersOne(_o, _i, oid):
     raise err
     
   return None
-

@@ -24,12 +24,13 @@ def resolve_ordersReceived(_obj, _info):
           # pick orders for own items only
           Products.user_id == g.user.id
         )
-        .order_by(desc(Orders.created_at))
+        # .order_by(desc(Orders.created_at))
         .group_by(Orders)
     )  
     return SchemaSerializeOrdersTimes(many = True).dump(orders)
 
-  except:
-    pass
+  except Exception as err:
+    raise err
 
   return []
+

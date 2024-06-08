@@ -29,11 +29,12 @@ def resolve_docsTags(_obj, _info, id, tags):
   
   # collect added/removed tags
   tags_managed  = []
-  ioevents_product_images_managed = []
 
   try:
     doc = db.session.get(Docs, id)
+
     if None != doc:
+      
       for key, value in tags.items():
         if isinstance(value, bool):
           if value:
@@ -52,13 +53,13 @@ def resolve_docsTags(_obj, _info, id, tags):
               tags_managed.append(key)
           
           res[key] = value
+      
+      db.session.commit()
           
   except Exception as error:
     print(error)
     
   else:
-    db.session.commit()
-
     if modified:
       io.emit(f'{IOEVENT_DOCS_TAGS_CHANGE_prefix}{doc.id}')
       

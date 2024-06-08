@@ -8,17 +8,16 @@ from flask_app import io
 # from models.tags  import Tags
 # from models.users import Users
 from models.products import Products
-from config.graphql.init import mutation
+
+from config.graphql.init   import mutation
 from schemas.serialization import SchemaSerializeProductsTimes
-# from middleware.authguard import authguard
-from middleware.authguard import authguard_company_approved
 
 IOEVENT_PRODUCTS_CHANGE_SINGLE_prefix = os.getenv('IOEVENT_PRODUCTS_CHANGE_SINGLE_prefix')
 IOEVENT_PRODUCTS_CHANGE_prefix        = os.getenv('IOEVENT_PRODUCTS_CHANGE_prefix')
 IOEVENT_PRODUCTS_CHANGE               = os.getenv('IOEVENT_PRODUCTS_CHANGE')
 
+
 @mutation.field('productsRm')
-# @authguard_company_approved
 def resolve_productsRm(_obj, _info, id):
   p   = None
   uid = None

@@ -12,8 +12,9 @@ from models.users import Users
 from utils.jwtToken      import encode_secret
 from config.graphql.init import mutation
 
-
+APP_NAME                = os.getenv('APP_NAME')
 JWT_SECRET_VERIFY_EMAIL = os.getenv('JWT_SECRET_VERIFY_EMAIL')
+
 
 @mutation.field('accountsSendVerifyEmailLink')
 def resolve_accountsSendVerifyEmailLink(_o, _i, uid, url):
@@ -34,10 +35,10 @@ def resolve_accountsSendVerifyEmailLink(_o, _i, uid, url):
       Message(
         
         # subject
-        'potvrda-email-adrese@kantar.rs',
+        f'potvrda-email-adrese@{APP_NAME}.rs',
 
         # from
-        sender = ('KANTAR.RS', 'app@kantar.rs'),
+        sender = (APP_NAME, f'app@{APP_NAME}.rs'),
         
         # default recepiens ls
         recipients = [u.email],

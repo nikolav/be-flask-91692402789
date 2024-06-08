@@ -20,7 +20,7 @@ def resolve_postsImagesDrop(_obj, _info, id):
     
   except Exception as error:
     raise error
-    # pass
+
   else:
     if None != p:
       io.emit(f'{IOEVENT_STORY_PHOTOS_CHANGE_prefix}{p.id}')

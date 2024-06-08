@@ -10,20 +10,17 @@ from flask_app   import io
 from models.tags import Tags
 from models.docs import Docs
 
-from middleware.wrappers.files import files
-# from middleware.authguard      import authguard
-# from middleware.arguments      import arguments_schema
+from middleware.wrappers.files  import files
 
 from schemas.validation.storage import SchemaStorageFile
 
-from utils import id_gen
-from utils import gen_filename
+from utils               import id_gen
+from utils               import gen_filename
 from utils.mimetype      import mimetype
 from utils.doc_json_date import docJsonDates as doc_plain
 
 from config import TAG_STORAGE
 from config import TAG_IS_FILE
-
 
 UPLOAD_PATH   = os.getenv('UPLOAD_PATH')
 UPLOAD_DIR    = os.getenv('UPLOAD_DIR')
@@ -132,70 +129,9 @@ def storage_upload():
   return saved, status
 
 
-# @bp_storage.route('/', methods = ('DELETE',))
-# @authguard(os.getenv('POLICY_FILESTORAGE'))
-# @arguments_schema(SchemaStorageRemoveArguments())
-# def storage_remove():
-#   # try
-#   #  file exists
-#   #   unlink
-#   #    rm data @db
-#   #     @200, file deleted, io:change
-
-#   error    = ''
-#   status   = 400
-#   doc_file = None
-#   tag_storage_ = f'{TAG_STORAGE}{g.user.id}'
-
-
-#   try:
-#     # get related file Docs{}
-#     tag = Tags.by_name(f'{TAG_STORAGE}{g.user.id}', create = True)
-#     for doc in tag.docs:
-#       if g.arguments['file_id'] == doc.data['file_id']:
-#         doc_file = doc
-#         break
-    
-#     if not doc_file:
-#       raise Exception('file not found')
-    
-#     if not os.path.exists(doc_file.data['path']):
-#       raise Exception('no file')
-    
-#   except Exception as err:
-#     error = err
-    
-#   else:
-    
-#     try:
-#       os.unlink(doc_file.data['path'])
-      
-#     except Exception as err:
-#       error  = err
-#       status = 500
-    
-#     else:
-#       if not os.path.exists(doc_file.data['path']):
-#         try:
-#           tag.docs.remove(doc_file)
-#           db.session.delete(doc_file)
-#           db.session.commit()
-          
-#         except Exception as err:
-#           error  = err
-#           status = 500
-
-#         else:
-#           # @200, file deleted
-#           io.emit(tag_storage_)
-#           return doc_plain(doc_file), 200
-  
-#   return { 'error': str(error) }, status
-
-
 @bp_storage.route('/<string:file_id>', methods = ('GET',))
 def storage_download(file_id):
-  
+
   error  = ''
   status = 400
 
@@ -227,9 +163,8 @@ def storage_download(file_id):
   
   else:
       return send_file(
-                      doc_dl_file.data['path'], 
-                      as_attachment = True,
-                    )
+              doc_dl_file.data['path'], 
+              as_attachment = True)
   
   return { 'error': str(error) }, status
   

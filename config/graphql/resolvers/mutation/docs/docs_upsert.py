@@ -19,8 +19,9 @@ def resolve_docsUpsert(_obj, _info, topic, data, id = None):
     doc = db.session.scalar(
       db.select(Docs)
         .join(Docs.tags)
-        # .where(Docs.tags.any(Tags.tag == topic), Docs.id == id))
-        .where(Tags.tag == topic, Docs.id == id))
+        .where(
+          Tags.tag == topic, 
+          Docs.id  == id))
   
   except:
     pass
@@ -32,7 +33,7 @@ def resolve_docsUpsert(_obj, _info, topic, data, id = None):
     else:
       # create
       doc = Docs(data = data)
-      tagTopic = Tags.by_name(topic)
+      tagTopic = Tags.by_name(topic, create = True)
       tagTopic.docs.append(doc)
         
     try:
