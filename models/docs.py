@@ -22,8 +22,8 @@ from schemas.serialization import SchemaSerializeDocJsonTimes
 from config import TAG_VARS
 
 
-PREFIX_BY_DOC_ID           = os.getenv('PREFIX_BY_DOC_ID')
-TAG_COMPANY_PROFILE_prefix = os.getenv('TAG_COMPANY_PROFILE_prefix')
+PREFIX_BY_DOC_ID        = os.getenv('PREFIX_BY_DOC_ID')
+TAG_USER_PROFILE_prefix = os.getenv('TAG_USER_PROFILE_prefix')
 
 _schemaDocsDump     = SchemaSerializeDocJsonTimes()
 _schemaDocsDumpMany = SchemaSerializeDocJsonTimes(many = True)
@@ -85,7 +85,7 @@ class Docs(MixinTimestamps, MixinIncludesTags, db.Model):
   
   @staticmethod
   def docs_profile_domain_from_uid(uid):
-    return Docs.docs_profile_domain_from_docid(f'{TAG_COMPANY_PROFILE_prefix}{uid}')
+    return Docs.docs_profile_domain_from_docid(f'{TAG_USER_PROFILE_prefix}{uid}')
   
   @staticmethod
   def by_doc_id(doc_id, *, create = False):

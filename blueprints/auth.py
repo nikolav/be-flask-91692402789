@@ -34,7 +34,7 @@ from schemas.validation.auth import SchemaEmailResetRequest
 from schemas.validation.auth import SchemaEmailResetObnovaLozinke
 
 APP_NAME                   = os.getenv('APP_NAME')
-TAG_COMPANY_PROFILE_prefix = os.getenv('TAG_COMPANY_PROFILE_prefix')
+TAG_USER_PROFILE_prefix    = os.getenv('TAG_USER_PROFILE_prefix')
 IOEVENT_AUTH_NEWUSER       = os.getenv('IOEVENT_AUTH_NEWUSER')
 JWT_SECRET_PASSWORD_RESET  = os.getenv('JWT_SECRET_PASSWORD_RESET')
 
@@ -168,7 +168,7 @@ def auth_social():
       # store social auth data
       
       doc_profile = Docs.by_doc_id(
-        f'{TAG_COMPANY_PROFILE_prefix}{u.id}', create = True)
+        f'{TAG_USER_PROFILE_prefix}{u.id}', create = True)
       
       d = doc_profile.data.copy()
       d['authProvider'] = auth_data

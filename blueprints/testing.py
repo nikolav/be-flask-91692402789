@@ -86,6 +86,5 @@ PRODUCTS_SEARCH_RANDOM_MAX = int(os.getenv('PRODUCTS_SEARCH_RANDOM_MAX'))
 # @arguments_schema(SchemaTesting())
 def testing_home():
   u = db.session.get(Users, 1)
-  p = u.profile()
-  return p
+  return u.profile()
 

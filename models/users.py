@@ -125,6 +125,9 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
           .where(Tags.tag.startswith(profile_domain))
       )
       
+      if not t:
+        raise Exception('unavailable')
+      
       # docid from Tags{}
       docid = int(match_after_last_at(t.tag))
 
@@ -132,7 +135,7 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
       p   = getattr(doc, 'data')
       
     except Exception as err:
-      raise err
+      print(err)
 
     return p if p else {}
   
