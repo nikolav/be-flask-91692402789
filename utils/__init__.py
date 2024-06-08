@@ -1,11 +1,9 @@
 import re
 from random import randbytes
 from werkzeug.utils import secure_filename
-from markupsafe import escape as html_escape
 
 
 re_base_ext = r'(.*)\.([^\.]+)'
-
 
 id_gen = lambda: randbytes(4).hex()
 
