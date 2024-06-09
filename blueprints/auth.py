@@ -53,7 +53,7 @@ def auth_register():
   try:    
     # skip registered
     if (Users.email_exists(email)):
-      raise Exception('access denied')
+      raise Exception('auth_register:unavailable')
 
     # email available
     #  register, save

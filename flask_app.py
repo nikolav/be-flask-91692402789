@@ -56,7 +56,8 @@ CORS(app,
   }
 ) if PRODUCTION else CORS(app, supports_credentials = True)
 
-Talisman(app)
+Talisman(app, 
+  force_https = False)
 
 
 api   = Api(app)
@@ -67,3 +68,63 @@ io    = SocketIO(app,
                   cors_supports_credentials = True,
                 )
 mail  = Mail(app)
+
+
+# init models
+with app.app_context():
+
+  from models.tokens   import Tokens
+  from models.tags     import Tags
+  from models.docs     import Docs
+  from models.users    import Users
+  from models.products import Products
+  from models.orders   import Orders
+  from models.posts    import Posts
+
+  # drop/create schema
+  if REBUILD_SCHEMA:
+    db.drop_all()
+  
+  # create schema
+  db.create_all()
+
+  # init db
+  import config.init_tables
+
+
+# mount resources
+from resources.docs import DocsResource
+api.add_resource(DocsResource, '/docs/<string:tag_name>')
+
+from blueprints         import bp_home
+from blueprints.auth    import bp_auth
+from blueprints.storage import bp_storage
+from blueprints.testing import bp_testing
+# @blueprints:mount
+#   /auth
+app.register_blueprint(bp_auth)
+#   /
+app.register_blueprint(bp_home)
+#   /storage
+app.register_blueprint(bp_storage)
+#   /test
+if not PRODUCTION:
+  app.register_blueprint(bp_testing)
+  
+# init graphql endpoint, `POST /graphql`
+import config.graphql.init
+  
+
+# authentication.middleware@init
+from middleware.authenticate import authenticate
+@app.before_request
+def before_request_authenticate():
+  return authenticate()
+
+
+io.init_app(app)
+# io status check
+@io.on('connect')
+def io_connected():
+  print('@io/connection')
+

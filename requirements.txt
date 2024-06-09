@@ -26,3 +26,6 @@ webdriver-manager==4.0.1
 Babel==2.15.0
 nutree==0.8.0
 python-dateutil==2.9.0.post0
+waitress==3.0.0
+click==8.1.7
+# pytest==8.2.2
