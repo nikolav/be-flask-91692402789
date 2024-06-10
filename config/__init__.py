@@ -18,9 +18,7 @@ TAG_VARS         = '@vars'
 TAG_IS_FILE      = '@isfile'
 TAG_STORAGE      = '@storage:'
 
-
 init_docs_tags = (TAG_VARS, TAG_IS_FILE)
-
 
 KEY_TOKEN_CREATED_AT = '@'
 
@@ -29,3 +27,4 @@ DEFAULT_POPULAR_PRODUCTS_LIMIT = 25
 MAIL_RECIPIENTS = [
   'admin@nikolav.rs', 
 ]
+

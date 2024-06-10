@@ -95,7 +95,7 @@ class Products(MixinTimestamps, MixinIncludesTags, db.Model):
         # if next price update is after order day
         #  take current node
         if index < hlen - 1:
-          if o.created_at.timestamp() < datetime.fromisoformat(self.price_history[index + 1]['day']).timestamp():
+          if o.created_at < datetime.fromisoformat(self.price_history[index + 1]['day']):
             # next price update is newer than order date;
             #  take this nodes price
             price = self.price_history[index]['price']

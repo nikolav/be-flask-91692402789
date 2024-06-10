@@ -32,7 +32,6 @@ POLICY_EMAIL       = os.getenv('POLICY_EMAIL')
 POLICY_FILESTORAGE = os.getenv('POLICY_FILESTORAGE')
 
 
-
 class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   __tablename__ = usersTable
   
@@ -50,7 +49,7 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
 
   # magic
   def __repr__(self):
-    return f'Users(id={self.id!r}, email={self.email!r}, password={self.password!r})'
+    return f'<Users(id={self.id!r}, email={self.email!r})>'
     
   # public
   def email_verified(self):

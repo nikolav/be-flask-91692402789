@@ -16,16 +16,19 @@ from src.classes import Base as DbModelBaseClass
 
 load_dotenv()
 
-APP_NAME     = os.getenv('APP_NAME')
-PRODUCTION   = bool(os.getenv('PRODUCTION'))
-DATABASE_URI = os.getenv('DATABASE_URI_production') if PRODUCTION else os.getenv('DATABASE_URI_dev')
+ENV             = os.getenv('ENV')
+PRODUCTION      = 'production' == ENV
+APP_NAME        = os.getenv('APP_NAME')
+DATABASE_URI    = os.getenv('DATABASE_URI_production') if PRODUCTION else os.getenv('DATABASE_URI_dev')
+REBUILD_SCHEMA  = bool(os.getenv('REBUILD_SCHEMA'))
+UPLOAD_PATH     = os.getenv('UPLOAD_PATH')
+UPLOAD_DIR      = os.getenv('UPLOAD_DIR')
 
 IO_CORS_ALLOW_ORIGINS = (
   os.getenv('IOCORS_ALLOW_ORIGIN_dev'),
   os.getenv('IOCORS_ALLOW_ORIGIN_nikolavrs'),
 )
 
-REBUILD_SCHEMA = bool(os.getenv('REBUILD_SCHEMA'))
 
 app = Flask(__name__)
 
@@ -35,7 +38,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 # app-config:db
 app.config['SQLALCHEMY_DATABASE_URI']        = DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO']                = not PRODUCTION
+app.config['SQLALCHEMY_ECHO']                = not PRODUCTION or bool(os.getenv('SQLALCHEMY_ECHO'))
 
 # app-config:email
 app.config['MAIL_SERVER']            = os.getenv('MAIL_SERVER')
@@ -99,32 +102,32 @@ api.add_resource(DocsResource, '/docs/<string:tag_name>')
 from blueprints         import bp_home
 from blueprints.auth    import bp_auth
 from blueprints.storage import bp_storage
-from blueprints.testing import bp_testing
 # @blueprints:mount
-#   /auth
-app.register_blueprint(bp_auth)
 #   /
 app.register_blueprint(bp_home)
+#   /auth
+app.register_blueprint(bp_auth)
 #   /storage
 app.register_blueprint(bp_storage)
-#   /test
 if not PRODUCTION:
+  #   /test
+  from blueprints.testing import bp_testing
   app.register_blueprint(bp_testing)
   
 # init graphql endpoint, `POST /graphql`
 import config.graphql.init
   
 
-# authentication.middleware@init
-from middleware.authenticate import authenticate
-@app.before_request
-def before_request_authenticate():
-  return authenticate()
-
-
 io.init_app(app)
 # io status check
 @io.on('connect')
 def io_connected():
   print('@io/connection')
+
+
+# authentication.middleware@init
+from middleware.authenticate import authenticate
+@app.before_request
+def before_request_authenticate():
+  return authenticate()
 

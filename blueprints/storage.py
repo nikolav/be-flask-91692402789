@@ -19,11 +19,10 @@ from utils               import gen_filename
 from utils.mimetype      import mimetype
 from utils.doc_json_date import docJsonDates as doc_plain
 
-from config import TAG_STORAGE
-from config import TAG_IS_FILE
-
-UPLOAD_PATH   = os.getenv('UPLOAD_PATH')
-UPLOAD_DIR    = os.getenv('UPLOAD_DIR')
+from config    import TAG_STORAGE
+from config    import TAG_IS_FILE
+from flask_app import UPLOAD_DIR
+from flask_app import UPLOAD_PATH
 
 # router config
 bp_storage = Blueprint('storage', __name__, url_prefix = '/storage')
