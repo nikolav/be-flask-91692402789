@@ -17,7 +17,7 @@ def render_template_order_items(data):
   oid  = int(data.get('oid'))
   uid  = int(data.get('uid'))
   
-  com         = db.session.get(Users,  uid)
+  com         = db.session.get(Users, uid)
   com_profile = com.profile()
   
   order       = db.session.get(Orders, oid)
@@ -50,8 +50,12 @@ def render_template_order_items(data):
                          count       = len(order_items),
                         )
 
+def render_template_blank_a4(data):
+  return render_template('pdf/blank-a4.html', text = data.get('text'))
+
 TEMPLATE = {
-  'order-items': render_template_order_items,
+  'blank-a4'    : render_template_blank_a4,
+  'order-items' : render_template_order_items,
 }
 
 

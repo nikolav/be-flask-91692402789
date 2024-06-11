@@ -18,4 +18,4 @@ COPY . .
 # CMD [ "python", "api.py" ]
 # CMD [ "waitress-serve", "--host", "127.0.0.1", "--port", "5000", "flask_app:app" ]
 # CMD [ "python", "./waitress-serve.py" ]
-CMD ["source", "./wserver.sh" ]
+CMD ["./wserver.sh" ]
