@@ -154,6 +154,11 @@ type ResultTotalAmountOrdered {
   amount: Int!
 }
 
+type ResultMailStatus {
+  error: String
+  status: String
+}
+
 #########
 ## @Query
 
@@ -239,5 +244,8 @@ type Mutation {
   accountsDrop(uid: ID!): ID
   accountsSendVerifyEmailLink(uid: ID!, url: String!): ID
   accountsVeifyEmail(data: JsonData!): String
+
+  # mail
+  sendmail(subject: String!, template: String!, data: JsonData!): ResultMailStatus!
 }
 

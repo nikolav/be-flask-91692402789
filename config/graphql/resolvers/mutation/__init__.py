@@ -24,3 +24,5 @@ from .accounts import account_drop
 from .accounts import accounts_send_verify_email_link
 from .accounts import verify_email
 
+from .mail import sendmail
+

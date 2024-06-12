@@ -28,3 +28,4 @@ MAIL_RECIPIENTS = [
   'admin@nikolav.rs', 
 ]
 
+
