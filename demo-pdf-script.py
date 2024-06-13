@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.service import Service
 
 
 # load html in headless chrome
-data    = '<a href="https://nikolav.rs/">NIKOLAV</a>'
+data    = '<a href="https://nikolav.rs/">@nikolav.rs</a>'
 b64data = base64.b64encode(data.encode('utf-8')).decode('utf-8')
 uridata = f'data:text/html;base64,{b64data}'
 
@@ -25,13 +25,13 @@ driver  = webdriver.Chrome(
 
 driver.get(uridata)
 
-parms = { 
+params = { 
   'printBackground' : True ,
   'landscape'       : False,
   'paperWidth'      : 8.26,
   'paperHeight'     : 11.68,
 }
-pdfdata = driver.execute_cdp_cmd("Page.printToPDF",  parms)
+pdfdata = driver.execute_cdp_cmd("Page.printToPDF",  params)
 
 pdf = base64.b64decode(pdfdata['data'])
 

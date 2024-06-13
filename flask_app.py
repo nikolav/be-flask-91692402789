@@ -106,13 +106,17 @@ api.add_resource(DocsResource, '/docs/<string:tag_name>')
 from blueprints         import bp_home
 from blueprints.auth    import bp_auth
 from blueprints.storage import bp_storage
+
 # @blueprints:mount
 #   /
 app.register_blueprint(bp_home)
+
 #   /auth
 app.register_blueprint(bp_auth)
+
 #   /storage
 app.register_blueprint(bp_storage)
+
 if not PRODUCTION:
   #   /test
   from blueprints.testing import bp_testing

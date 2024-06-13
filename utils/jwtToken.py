@@ -22,7 +22,9 @@ def tokenFromRequest():
 
 
 def decode(sToken):
-  return jwt.decode(sToken, os.getenv('JWT_SECRET_ACCESS_TOKEN'), algorithms = ('HS256',))
+  return jwt.decode(sToken, 
+                    os.getenv('JWT_SECRET_ACCESS_TOKEN'), 
+                    algorithms = ('HS256',))
 
 def decode_secret(sToken, secret):
   return jwt.decode(sToken, secret, algorithms = ('HS256',))
@@ -61,22 +63,13 @@ def valid(token):
 
 
 def setInvalid(token_str):
-  tok = None
-
-  try:
-    tok = db.session.scalar(
-      db.select(Tokens).where(Tokens.token == token_str)
-    )
-    if None != tok:
-      db.session.delete(tok)
-
-  except:
-    pass
-
-  else:
-    if tok:
-      db.session.commit()
-
+  tok = db.session.scalar(
+    db.select(Tokens).where(Tokens.token == token_str)
+  )
+  if None != tok:
+    db.session.delete(tok)
+    db.session.commit()
+  
 
 def clearExpiredAll():
   i = 0
