@@ -30,6 +30,8 @@ USER_EMAIL      = os.getenv('USER_EMAIL')
 
 IO_CORS_ALLOW_ORIGINS = (
   os.getenv('IOCORS_ALLOW_ORIGIN_dev'),
+  os.getenv('IOCORS_ALLOW_ORIGIN_dev2'),
+  os.getenv('IOCORS_ALLOW_ORIGIN_dev3'),
   os.getenv('IOCORS_ALLOW_ORIGIN_nikolavrs'),
   os.getenv('IOCORS_ALLOW_ORIGIN_frikomnikolavrs')
 )
