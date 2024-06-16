@@ -1,13 +1,16 @@
 #!/bin/bash
 
+
 # update packages
 apt update
 apt-get update -y
+
 
 # install git
 apt install git
 git config --global user.name "nikolav"
 git config --global user.email "admin@nikolav.rs"
+
 
 # install docker
 apt-get remove docker docker-engine docker.io containerd runc
@@ -18,6 +21,7 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o 
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 apt-get update
 apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
 
 # install docker-compose
 curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -33,12 +37,24 @@ chmod +x /usr/local/bin/docker-compose
 ufw allow OpenSSH
 ufw allow http
 ufw allow https
+ufw allow 'Nginx Full'
+ufw allow 5000
 ufw allow 5544
 ufw enable
+
 
 # shortcuts
 alias ll='ls -AlFht --color=auto --group-directories-first '
 alias gs='git status '
+
+
+# if 'WSERVER'
+#  exe server script
+WSERVER="./wserver.sh"
+if [ -e "$WSERVER" ]; then
+  chmod 755 $WSERVER
+fi
+
 
 # status check
 echo '== status'
@@ -47,3 +63,4 @@ docker --version
 docker-compose --version
 service docker status
 ufw status verbose
+
