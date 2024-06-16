@@ -28,8 +28,8 @@ def render_template_order_items(data):
   full_name   = ' '.join(map(
     lambda d: d.capitalize(),
     (
-      profile.get('firstName', '') or profile.get('ownerFirstName', ''), 
-      profile.get('lastName', '')  or profile.get('ownerLastName', '')
+      profile.get('firstName', ''),
+      profile.get('lastName', '')
     )
   ))
 
