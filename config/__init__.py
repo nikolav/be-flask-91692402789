@@ -25,7 +25,7 @@ KEY_TOKEN_CREATED_AT = '@'
 DEFAULT_POPULAR_PRODUCTS_LIMIT = 25
 
 MAIL_RECIPIENTS = [
-  'admin@nikolav.rs', 
+  # 'admin@nikolav.rs', 
+  'admin@frikom.nikolav.rs', 
 ]
-
 

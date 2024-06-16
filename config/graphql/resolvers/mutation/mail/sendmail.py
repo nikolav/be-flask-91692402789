@@ -3,6 +3,7 @@ from flask_mail import Message
 
 from flask_app import mail
 from flask_app import APP_NAME
+from flask_app import APP_DOMAIN
 
 from config              import MAIL_RECIPIENTS
 from config.graphql.init import mutation
@@ -20,7 +21,7 @@ def resolve_sendmail(_o, _i, subject, template, data):
         subject,
 
         # from
-        sender = (APP_NAME, f'{APP_NAME}@nikolav.rs'),
+        sender = (APP_NAME, f'{APP_NAME}@{APP_DOMAIN}'),
         
         # default recepiens ls
         recipients = MAIL_RECIPIENTS,

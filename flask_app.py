@@ -21,6 +21,7 @@ PRODUCTION      = 'production' == ENV
 
 ADMIN_EMAIL     = os.getenv('ADMIN_EMAIL')
 APP_NAME        = os.getenv('APP_NAME')
+APP_DOMAIN      = os.getenv('APP_DOMAIN')
 DATABASE_URI    = os.getenv('DATABASE_URI_production') if PRODUCTION else os.getenv('DATABASE_URI_dev')
 POLICY_ADMINS   = os.getenv('POLICY_ADMINS')
 REBUILD_SCHEMA  = bool(os.getenv('REBUILD_SCHEMA'))
