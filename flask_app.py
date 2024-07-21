@@ -28,6 +28,7 @@ REBUILD_SCHEMA  = bool(os.getenv('REBUILD_SCHEMA'))
 UPLOAD_DIR      = os.getenv('UPLOAD_DIR')
 UPLOAD_PATH     = os.getenv('UPLOAD_PATH')
 USER_EMAIL      = os.getenv('USER_EMAIL')
+SCHEDULER_INIT  = bool(os.getenv('SCHEDULER_INIT'))
 
 IO_CORS_ALLOW_ORIGINS = (
   os.getenv('IOCORS_ALLOW_ORIGIN_dev'),
@@ -142,4 +143,10 @@ from middleware.authenticate import authenticate
 @app.before_request
 def before_request_authenticate():
   return authenticate()
+
+
+# scheduler.setup
+if SCHEDULER_INIT:
+  from config.scheduler import scheduler_configure
+  scheduler_configure(app)
 
