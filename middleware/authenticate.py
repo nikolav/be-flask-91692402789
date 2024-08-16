@@ -18,7 +18,7 @@ from config         import PATHS_SKIP_AUTH
 def authenticate():
   # @before_request
   
-  error = '@error/internal.500'
+  error = '@error'
 
   # do not redirect `CORS` preflight `OPTIONS` requests, send success/2xx
   if 'OPTIONS' == request.method.upper():

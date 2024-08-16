@@ -1,7 +1,5 @@
-from flask_app   import db
-from models.docs import Docs
-
-from models.docs import Docs
+from flask_app           import db
+from models.docs         import Docs
 from config.graphql.init import query
 
 
@@ -11,7 +9,7 @@ def resolve_tagsByDocId(_obj, _info, id):
     return [t.tag for t in db.session.get(Docs, id).tags]
     
   except Exception as err:
-    print(err)
-    # raise err
+    # print(err)
+    raise err
     
   return []

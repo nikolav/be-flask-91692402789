@@ -82,7 +82,7 @@ io    = SocketIO(app,
 mail  = Mail(app)
 
 
-# init models
+# db schema
 with app.app_context():
 
   from models.tokens   import Tokens
@@ -100,7 +100,7 @@ with app.app_context():
   # create schema
   db.create_all()
 
-  # init db
+  # setup tables
   import config.init_tables
 
 
@@ -127,7 +127,7 @@ if not PRODUCTION:
   from blueprints.testing import bp_testing
   app.register_blueprint(bp_testing)
   
-# init graphql endpoint, `POST /graphql`
+# graphql endpoint, `POST /graphql`
 import config.graphql.init
   
 

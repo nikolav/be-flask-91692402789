@@ -4,8 +4,8 @@ def job():
     file.write('demo_job_1\n')
 
 demo_job_1 = {
-  'trigger' : 'interval', 
   'id'      : 'demo_job_1', 
+  'trigger' : 'interval', 
   'func'    : job, 
   'seconds' : 5,
 }
