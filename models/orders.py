@@ -41,6 +41,7 @@ class Orders(MixinTimestamps, MixinIncludesTags, db.Model):
   
   id: Mapped[int] = mapped_column(primary_key = True)
 
+  # scalar
   code        : Mapped[Optional[str]]
   description : Mapped[Optional[str]]
   completed   : Mapped[Optional[bool]]
@@ -48,7 +49,7 @@ class Orders(MixinTimestamps, MixinIncludesTags, db.Model):
   status      : Mapped[Optional[int]]
   delivery_at : Mapped[Optional[datetime]]
 
-  # 1-M
+  # m-1
   user_id = mapped_column(db.ForeignKey(f'{usersTable}.id'))
   
   # virtual

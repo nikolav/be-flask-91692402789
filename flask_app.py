@@ -30,6 +30,8 @@ UPLOAD_PATH     = os.getenv('UPLOAD_PATH')
 USER_EMAIL      = os.getenv('USER_EMAIL')
 SCHEDULER_INIT  = bool(os.getenv('SCHEDULER_INIT'))
 
+CLOUD_MESSAGING_INIT = bool(os.getenv('CLOUD_MESSAGING_INIT'))
+
 IO_CORS_ALLOW_ORIGINS = (
   os.getenv('IOCORS_ALLOW_ORIGIN_dev'),
   os.getenv('IOCORS_ALLOW_ORIGIN_dev2'),
@@ -149,4 +151,8 @@ def before_request_authenticate():
 if SCHEDULER_INIT:
   from config.scheduler import scheduler_configure
   scheduler_configure(app)
+
+
+if CLOUD_MESSAGING_INIT:
+  import config.cloud_messaging.app_init
 
