@@ -230,7 +230,7 @@ type Mutation {
   # docs
   docsUpsert(topic: String!, data: JsonData!, id: ID): JsonData!
   docsRm(topic: String!, id: ID!): JsonData
-  docUpsert(doc_id: String!, data: JsonData!): JsonData!
+  docUpsert(doc_id: String!, data: JsonData!, merge: Boolean!): JsonData!
   docsRmById(id: ID!): JsonData
 
   # manage docs/tags: id, { "@tag/foo": true, "@tag/bar": false }
