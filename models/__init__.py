@@ -17,6 +17,7 @@ productsTable = f'products{tblSuffix}'
 ordersTable   = f'orders{tblSuffix}'
 docsTable     = f'docs{tblSuffix}'
 postsTable    = f'posts{tblSuffix}'
+assetsTable    = f'assets{tblSuffix}'
 
 lnTableUsersTags      = f'ln_users_tags{tblSuffix}'
 lnTableProductsTags   = f'ln_products_tags{tblSuffix}'
@@ -24,6 +25,8 @@ lnTableOrdersProducts = f'ln_orders_products{tblSuffix}'
 lnTableOrdersTags     = f'ln_orders_tags{tblSuffix}'
 lnTableDocsTags       = f'ln_docs_tags{tblSuffix}'
 lnTablePostsTags      = f'ln_posts_tags{tblSuffix}'
+lnTableAssetsTags     = f'ln_assets_tags{tblSuffix}'
+lnTableUsersAssets    = f'ln_users_assets{tblSuffix}'
 
 # link tables, *:*
 ln_users_tags = db.Table(
@@ -64,3 +67,16 @@ ln_posts_tags = db.Table(
   db.Column('post_id', db.ForeignKey(f'{postsTable}.id'), primary_key = True),
   db.Column('tag_id',  db.ForeignKey(f'{tagsTable}.id'),  primary_key = True),
 )
+
+ln_assets_tags = db.Table(
+  lnTableAssetsTags,
+  db.Column('asset_id', db.ForeignKey(f'{assetsTable}.id'), primary_key = True),
+  db.Column('tag_id',  db.ForeignKey(f'{tagsTable}.id'),  primary_key = True),
+)
+
+ln_users_assets = db.Table(
+  lnTableUsersAssets,
+  db.Column('user_id', db.ForeignKey(f'{usersTable}.id'), primary_key = True),
+  db.Column('asset_id',  db.ForeignKey(f'{assetsTable}.id'),  primary_key = True),
+)
+

@@ -10,6 +10,7 @@ from sqlalchemy.orm import relationship
 from . import db
 from . import usersTable
 from . import ln_users_tags
+from . import ln_users_assets
 from . import POLICY_APPROVED
 from src.mixins import MixinTimestamps
 from src.mixins import MixinIncludesTags
@@ -17,8 +18,6 @@ from src.mixins import MixinIncludesTags
 from models.tags     import Tags
 from models.docs     import Docs
 from models.products import Products
-# from models.posts    import Posts
-# from models.orders   import Orders
 
 from utils.str import match_after_last_at
 from utils.pw  import hash as hashPassword
@@ -48,6 +47,7 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   orders   : Mapped[List['Orders']]   = relationship(back_populates = 'user')
   posts    : Mapped[List['Posts']]    = relationship(back_populates = 'user')
   docs     : Mapped[List['Docs']]     = relationship(back_populates = 'user')
+  assets   : Mapped[List['Assets']]   = relationship(secondary = ln_users_assets, back_populates = 'users')
 
   # magic
   def __repr__(self):

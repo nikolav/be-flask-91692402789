@@ -94,6 +94,7 @@ with app.app_context():
   from models.products import Products
   from models.orders   import Orders
   from models.posts    import Posts
+  from models.assets   import Assets
 
   # drop/create schema
   if REBUILD_SCHEMA:

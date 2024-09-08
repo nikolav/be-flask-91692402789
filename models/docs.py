@@ -9,13 +9,14 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
+from . import db
 from . import docsTable
 from . import usersTable
 from . import postsTable
 from . import productsTable
-from . import ln_docs_tags
 from . import ordersTable
-from . import db
+from . import assetsTable
+from . import ln_docs_tags
 from .tags import Tags
 from src.mixins import MixinTimestamps
 from src.mixins import MixinIncludesTags
@@ -40,6 +41,7 @@ class Docs(MixinTimestamps, MixinIncludesTags, db.Model):
   post_id    = mapped_column(db.ForeignKey(f'{postsTable}.id'))
   product_id = mapped_column(db.ForeignKey(f'{productsTable}.id'))
   order_id   = mapped_column(db.ForeignKey(f'{ordersTable}.id'))
+  asset_id   = mapped_column(db.ForeignKey(f'{assetsTable}.id'))
 
   # virtual
   tags    : Mapped[List['Tags']] = relationship(secondary = ln_docs_tags, back_populates = 'docs')
@@ -47,6 +49,7 @@ class Docs(MixinTimestamps, MixinIncludesTags, db.Model):
   post    : Mapped['Posts']      = relationship(back_populates = 'docs')
   product : Mapped['Products']   = relationship(back_populates = 'docs')
   order   : Mapped['Orders']     = relationship(back_populates = 'docs')
+  asset   : Mapped['Assets']     = relationship(back_populates = 'docs')
 
   
   # magic
