@@ -1,7 +1,10 @@
 #!/bin/bash
 
-if [ -e "./wserver.sh" ]; then
-  chmod 755 ./wserver.sh
+WSERVER="./wserver.sh"
+
+#  exe server script
+if [ -e "$WSERVER" ]; then
+  chmod 755 $WSERVER
 fi
 
 docker compose up -d --build api

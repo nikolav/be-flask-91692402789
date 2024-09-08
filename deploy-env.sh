@@ -1,5 +1,7 @@
 #!/bin/bash
 
+WSERVER="./wserver.sh"
+
 
 # update packages
 apt update
@@ -48,9 +50,7 @@ alias ll='ls -AlFht --color=auto --group-directories-first '
 alias gs='git status '
 
 
-# if 'WSERVER'
 #  exe server script
-WSERVER="./wserver.sh"
 if [ -e "$WSERVER" ]; then
   chmod 755 $WSERVER
 fi

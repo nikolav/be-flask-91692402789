@@ -66,7 +66,7 @@ def setInvalid(token_str):
   tok = db.session.scalar(
     db.select(Tokens).where(Tokens.token == token_str)
   )
-  if None != tok:
+  if tok:
     db.session.delete(tok)
     db.session.commit()
   
