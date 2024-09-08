@@ -85,6 +85,8 @@ class SchemaSerializeAssets(SchemaSerializeTimes):
   notes   = fields.String()
   
   # virtal
-  users = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password',))))
+  # users = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password',))))
+  users = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password', 'posts', 'products'))))
   tags  = fields.List(fields.String())
   docs  = fields.List(fields.Nested(SchemaSerializeDocJsonTimes()))
+

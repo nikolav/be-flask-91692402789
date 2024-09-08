@@ -21,7 +21,6 @@ class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
   id: Mapped[int] = mapped_column(primary_key = True)
 
   name    : Mapped[str]
-  address : Mapped[Optional[str]]
   code    : Mapped[Optional[str]]
   status  : Mapped[Optional[str]]
   meta    : Mapped[Optional[dict]] = mapped_column(JSON)
