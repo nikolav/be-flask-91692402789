@@ -76,17 +76,20 @@ class SchemaSerializePosts(SchemaSerializeTimes):
   docs        = fields.List(fields.Nested(SchemaSerializeDocJsonWithRelationsPosts(exclude = ('post',))))
 
 class SchemaSerializeAssets(SchemaSerializeTimes):
-  id      = fields.Integer()
-  name    = fields.String()
-  address = fields.String()
-  code    = fields.String()
-  status  = fields.String()
-  meta    = fields.Dict()
-  notes   = fields.String()
+  id        = fields.Integer()
+  name      = fields.String()
+  code      = fields.String()
+  type      = fields.String()
+  location  = fields.String()
+  status    = fields.String()
+  condition = fields.String()
+  meta      = fields.Dict()
+  notes     = fields.String()
   
   # virtal
   # users = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password',))))
   users = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password', 'posts', 'products'))))
   tags  = fields.List(fields.String())
   docs  = fields.List(fields.Nested(SchemaSerializeDocJsonTimes()))
+
 
