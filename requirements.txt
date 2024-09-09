@@ -31,3 +31,4 @@ click==8.1.7
 # pytest==8.2.2
 firebase-admin==6.5.0
 Flask-APScheduler==1.13.1
+qrcode==7.4.2

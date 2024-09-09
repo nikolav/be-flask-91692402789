@@ -1,4 +1,5 @@
 from typing import List
+from typing import Optional
 
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -21,7 +22,8 @@ class Tags(db.Model):
 
   id: Mapped[int] = mapped_column(primary_key = True)
 
-  tag: Mapped[str] = mapped_column(unique = True)
+  tag         : Mapped[str] = mapped_column(unique = True)
+  description : Mapped[Optional[str]]
 
   # virtual
   users    : Mapped[List['Users']]    = relationship(secondary = ln_users_tags,    back_populates = 'tags')
