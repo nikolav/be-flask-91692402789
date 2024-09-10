@@ -33,6 +33,22 @@ class SchemaSerializeUsersTimes(SchemaSerializeTimes):
   def calc_is_approved(self, u):
     return u.approved()
 
+class SchemaSerializeUsersWho(SchemaSerializeTimes):
+  id             = fields.Integer()
+  email          = fields.String()
+  admin          = fields.Method('calc_admin')
+  approved       = fields.Method('calc_approved')
+  email_verified = fields.Method('calc_email_verified')
+
+  def calc_approved(self, u):
+    return u.approved()
+  
+  def calc_admin(self, u):
+    return u.is_admin()
+
+  def calc_email_verified(self, u):
+    return u.email_verified()
+  
 class SchemaSerializeProductsTimes(SchemaSerializeTimes):
   id            = fields.Integer()
   user_id       = fields.Integer(dump_default = None)

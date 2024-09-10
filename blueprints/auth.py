@@ -28,6 +28,7 @@ from schemas.validation.auth import SchemaAuthRegister
 from schemas.validation.auth import SchemaAuthSocial
 from schemas.validation.auth import SchemaEmailResetRequest
 from schemas.validation.auth import SchemaEmailResetObnovaLozinke
+from schemas.serialization   import SchemaSerializeUsersWho
 
 APP_NAME                   = os.getenv('APP_NAME')
 TAG_USER_PROFILE_prefix    = os.getenv('TAG_USER_PROFILE_prefix')
@@ -189,13 +190,8 @@ def auth_who():
   error = '@error/auth:who'
   try:
     # send user data
-    return { 
-      'id'            : g.user.id, 
-      'email'         : g.user.email, 
-      'admin'         : g.user.is_admin(),
-      'approved'      : g.user.approved(),
-      'email_verified': g.user.email_verified()
-    }, 200
+    return SchemaSerializeUsersWho().dump(g.user), 200
+  
   except Exception as err:
     error = err
   

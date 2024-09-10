@@ -1,5 +1,4 @@
 from functools import wraps
-from pprint    import pprint
 
 from flask import request
 from flask import g
@@ -36,7 +35,6 @@ def arguments_schema(schema_validate):
         return fnView(*args, **kwargs)
       
       # abort, send error
-      pprint(error, indent = 2)
       return abort(make_response({ 'error': str(error) }, status))
     return wrapper
   return arguments_schema_validate
