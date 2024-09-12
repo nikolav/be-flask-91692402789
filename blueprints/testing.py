@@ -8,15 +8,7 @@ CORS(bp_testing)
 
 
 @bp_testing.route('/', methods = ('POST',))
-def testing_home():  
-  from flask_app import db
-  from schemas.serialization import SchemaSerializeUsersWho
-  from models.users import Users
-
-  u = db.session.get(Users, 1)
-
-  return SchemaSerializeUsersWho().dump(u)
-  
+def testing_home():    
   # from servcies.firebase.messaging import send as cloud_messaging_send_message
   
   # # get cached tokens for user devices

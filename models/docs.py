@@ -42,15 +42,18 @@ class Docs(MixinTimestamps, MixinIncludesTags, db.Model):
   product_id = mapped_column(db.ForeignKey(f'{productsTable}.id'))
   order_id   = mapped_column(db.ForeignKey(f'{ordersTable}.id'))
   asset_id   = mapped_column(db.ForeignKey(f'{assetsTable}.id'))
+  parent_id  = mapped_column(db.ForeignKey(f'{docsTable}.id'))
 
   # virtual
-  tags    : Mapped[List['Tags']] = relationship(secondary = ln_docs_tags, back_populates = 'docs')
-  user    : Mapped['Users']      = relationship(back_populates = 'docs')
-  post    : Mapped['Posts']      = relationship(back_populates = 'docs')
-  product : Mapped['Products']   = relationship(back_populates = 'docs')
-  order   : Mapped['Orders']     = relationship(back_populates = 'docs')
-  asset   : Mapped['Assets']     = relationship(back_populates = 'docs')
-
+  tags     : Mapped[List['Tags']] = relationship(secondary = ln_docs_tags, back_populates = 'docs')
+  user     : Mapped['Users']      = relationship(back_populates = 'docs')
+  post     : Mapped['Posts']      = relationship(back_populates = 'docs')
+  product  : Mapped['Products']   = relationship(back_populates = 'docs')
+  order    : Mapped['Orders']     = relationship(back_populates = 'docs')
+  asset    : Mapped['Assets']     = relationship(back_populates = 'docs')
+  # virtual: hierarchical data
+  parent   : Mapped['Docs']       = relationship(back_populates = 'children', remote_side = [id])
+  children : Mapped[List['Docs']] = relationship(back_populates = 'parent')
   
   # magic
   def __repr__(self):
