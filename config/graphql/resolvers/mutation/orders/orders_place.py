@@ -34,16 +34,16 @@ def resolve_ordersPlace(_obj, _info, data, items):
   try:
     
     # products:ordered
-    lsProductsOrdered = [p for p in db.session.scalars(
+    resProductsOrdered = db.session.scalars(
       db.select(Products)
         .where(
           Products.id.in_(orderd_ids), 
           # skip own products
           Products.user_id != g.user.id
         )
-    )]
+    )
 
-    if not 0 < len(lsProductsOrdered):
+    if not 0 < len(resProductsOrdered):
       raise Exception('--ordersPlace-skip')
 
     # insert order
@@ -51,13 +51,13 @@ def resolve_ordersPlace(_obj, _info, data, items):
       code        = data.get('code', ''),
       description = data.get('description', ''),
       user        = g.user,
-      products    = lsProductsOrdered
+      products    = resProductsOrdered.all()
     )
 
     db.session.add(o)
     db.session.commit()
 
-    for p in lsProductsOrdered:
+    for p in resProductsOrdered:
       # cache statement to run
       #  store order-products amounts
       db.session.execute(      

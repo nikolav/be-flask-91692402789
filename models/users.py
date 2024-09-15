@@ -1,8 +1,10 @@
 import os
 import shutil
 from typing import List
+from typing import Optional
 
 from sqlalchemy     import func
+from sqlalchemy     import JSON
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
@@ -40,6 +42,7 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   
   email    : Mapped[str] = mapped_column(unique = True)
   password : Mapped[str]
+  profile  : Mapped[Optional[dict]] = mapped_column(JSON)
   
   # virtual
   tags     : Mapped[List['Tags']]     = relationship(secondary = ln_users_tags, back_populates = 'users')
@@ -119,33 +122,47 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
     return { 'error': str(error) }
   
   # public
-  def profile(self):
-    p = None
+  def get_profile(self):
+    return self.profile if self.profile else {}
+  
+  # public
+  def profile_updated(self, **kwargs_fields):
+    p = self.get_profile().copy()
+    p.update(kwargs_fields)
+    return p
+  
+  # public
+  def profile_update(self, **kwargs_fields):
+    self.profile = self.profile_updated(**kwargs_fields)
+  
+  # public
+  # def profile(self):
+  #   p = None
     
-    try:
+  #   try:
 
-      # get profile tag prefix in .tags
-      profile_domain = Docs.docs_profile_domain_from_uid(self.id)
+  #     # get profile tag prefix in .tags
+  #     profile_domain = Docs.docs_profile_domain_from_uid(self.id)
       
-      # fetch Tags{}
-      t = db.session.scalar(
-        db.select(Tags)
-          .where(Tags.tag.startswith(profile_domain))
-      )
+  #     # fetch Tags{}
+  #     t = db.session.scalar(
+  #       db.select(Tags)
+  #         .where(Tags.tag.startswith(profile_domain))
+  #     )
       
-      if not t:
-        raise Exception('profile:unavailable')
+  #     if not t:
+  #       raise Exception('profile:unavailable')
       
-      # docid from Tags{}
-      docid = int(match_after_last_at(t.tag))
+  #     # docid from Tags{}
+  #     docid = int(match_after_last_at(t.tag))
 
-      doc = db.session.get(Docs, docid)
-      p   = getattr(doc, 'data')
+  #     doc = db.session.get(Docs, docid)
+  #     p   = getattr(doc, 'data')
       
-    except Exception as err:
-      print(err)
+  #   except Exception as err:
+  #     print(err)
 
-    return p if p else {}
+  #   return p if p else {}
   
   # public
   def is_archived(self):

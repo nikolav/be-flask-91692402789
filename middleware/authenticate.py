@@ -18,7 +18,7 @@ from config         import PATHS_SKIP_AUTH
 def authenticate():
   # @before_request
   
-  error = '@error'
+  error = '@error:authenticate'
 
   # do not redirect `CORS` preflight `OPTIONS` requests, send success/2xx
   if 'OPTIONS' == request.method.upper():
@@ -34,9 +34,11 @@ def authenticate():
     token   = tokenFromRequest()
     payload = jwtTokenDecode(token)
     
+    uid = payload['id']
+    
     # skip token validation if user is
     #  default, no policies, user
-    if not Users.is_default(payload['id']):
+    if not Users.is_default(uid):
           
       # abort.401 if token expired
       if tokenExpired(payload):
@@ -47,7 +49,7 @@ def authenticate():
         raise Exception('access denied')
     
     # pass if authenticated, valid user in db
-    user = db.session.get(Users, payload['id'])
+    user = db.session.get(Users, uid)
     
     if user:
       

@@ -111,8 +111,7 @@ class Products(MixinTimestamps, MixinIncludesTags, db.Model):
     return [t.tag for t in self.tags if t.tag.startswith(PRODUCT_CATEGORY_prefix)]
   
   def location(self):
-    p = self.user.profile()
-    return p.get('location', '') if p else ''
+    return self.user.get_profile().get('location', '')
   
   def is_from_location(self, location = ''):
     return bool(re.match( f'.*{re.escape(location)}.*', 

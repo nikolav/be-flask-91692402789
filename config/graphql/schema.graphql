@@ -172,6 +172,7 @@ type Query {
   # users
   users: [User!]!
   usersById(uid: ID!): User
+  usersOnly(uids: [ID!]!): [User!]!
 
   # products
   productsListAll: [Product!]!

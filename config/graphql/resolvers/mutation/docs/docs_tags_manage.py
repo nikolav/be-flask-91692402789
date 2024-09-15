@@ -25,7 +25,7 @@ def resolve_docsTags(_obj, _info, id, tags):
   res = {}
   doc = None
 
-  modified = False
+  changes = 0
   
   # collect added/removed tags
   tags_managed  = []
@@ -42,25 +42,25 @@ def resolve_docsTags(_obj, _info, id, tags):
             tag_ = Tags.by_name(key, create = True)
             if not tag_ in doc.tags:
               doc.tags.append(tag_)
-              modified = True
               tags_managed.append(key)
+              changes += 1
           else:
             # remove tag
             tag_ = Tags.by_name(key)
             if (None != tag_) and (tag_ in doc.tags):
               doc.tags.remove(tag_)
-              modified = True
               tags_managed.append(key)
+              changes += 1
           
           res[key] = value
       
       db.session.commit()
-          
+
   except Exception as error:
     print(error)
     
   else:
-    if modified:
+    if 0 < changes:
       io.emit(f'{IOEVENT_DOCS_TAGS_CHANGE_prefix}{doc.id}')
       
       # detect if `@product:images:{pid}`

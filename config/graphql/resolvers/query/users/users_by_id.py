@@ -8,7 +8,7 @@ from schemas.serialization import SchemaSerializeUsersTimes
 
 @query.field('usersById')
 def resolve_usersById(_obj, _info, uid):
-  return SchemaSerializeUsersTimes().dump(
+  return SchemaSerializeUsersTimes(exclude = ('password',)).dump(
     db.session.scalar(
       db.select(Users)
         # load joined products

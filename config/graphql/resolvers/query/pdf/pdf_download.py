@@ -18,13 +18,13 @@ def render_template_order_items(data):
   uid  = int(data.get('uid'))
   
   com         = db.session.get(Users, uid)
-  com_profile = com.profile()
+  com_profile = com.get_profile()
   
   order       = db.session.get(Orders, oid)
   user        = order.user
   total       = order.total_original_for_company(com)
   order_items = Orders.order_products_with_amount_and_original_price_by_user(order, com)
-  profile     = user.profile()
+  profile     = user.get_profile()
   full_name   = ' '.join(map(
     lambda d: d.capitalize(),
     (

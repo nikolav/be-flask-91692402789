@@ -25,6 +25,7 @@ from .orders import orders_one
 
 from .users import users_list
 from .users import users_by_id
+from .users import users_only
 
 from .posts import posts_list
 from .posts import posts_images
