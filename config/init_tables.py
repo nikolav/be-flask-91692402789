@@ -52,15 +52,18 @@ policy_fs_       = os.getenv('POLICY_FILESTORAGE')
 policy_approved_ = os.getenv('POLICY_APPROVED')
 policy_email_    = os.getenv('POLICY_EMAIL')
 policy_admins_   = os.getenv('POLICY_ADMINS')
+policy_managers_ = os.getenv('POLICY_MANAGERS')
 policy_all_      = os.getenv('POLICY_ALL')
 
 # misc
-TAG_ARCHIVED        = os.getenv('TAG_ARCHIVED')
-TAG_EMAIL_VERIFIED  = os.getenv('TAG_EMAIL_VERIFIED')
+TAG_ARCHIVED                    = os.getenv('TAG_ARCHIVED')
+TAG_EMAIL_VERIFIED              = os.getenv('TAG_EMAIL_VERIFIED')
 TAG_FEEDBACK_ON_ORDER_COMPLETED = os.getenv('TAG_FEEDBACK_ON_ORDER_COMPLETED')
+TAG_USERS_EXTERNAL              = os.getenv('TAG_USERS_EXTERNAL')
 
 # init
 tagPolicyADMINS          = Tags.by_name(policy_admins_,                  create = True)
+tagPolicyMANAGERS        = Tags.by_name(policy_managers_,                create = True)
 tagPolicyEMAIL           = Tags.by_name(policy_email_,                   create = True)
 tagPolicyFS              = Tags.by_name(policy_fs_,                      create = True)
 tagPolicy_approved       = Tags.by_name(policy_approved_,                create = True)
@@ -68,19 +71,35 @@ tagPolicyALL             = Tags.by_name(policy_all_,                     create 
 tag_archived             = Tags.by_name(TAG_ARCHIVED,                    create = True)
 tag_email_verified       = Tags.by_name(TAG_EMAIL_VERIFIED,              create = True)
 tag_order_email_feedback = Tags.by_name(TAG_FEEDBACK_ON_ORDER_COMPLETED, create = True)
+tag_users_external       = Tags.by_name(TAG_USERS_EXTERNAL,              create = True)
 
-# bind users
-if not user_admin.includes_tags(policy_admins_):
-  tagPolicyADMINS.users.append(user_admin)
-if not user_admin.includes_tags(policy_email_):
-  tagPolicyEMAIL.users.append(user_admin)
-if not user_admin.includes_tags(policy_fs_):
-  tagPolicyFS.users.append(user_admin)
-if not user_admin.includes_tags(policy_approved_):
-  tagPolicy_approved.users.append(user_admin)
+# users:policies --default
+user_admin.policies_add(
+  # policy_all_,
+  policy_approved_,
+  policy_admins_,
+  policy_managers_,
+  policy_email_,
+  policy_fs_
+)
+# if not user_admin.includes_tags(policy_admins_):
+#   tagPolicyADMINS.users.append(user_admin)
+# if not user_admin.includes_tags(policy_email_):
+#   tagPolicyEMAIL.users.append(user_admin)
+# if not user_admin.includes_tags(policy_fs_):
+#   tagPolicyFS.users.append(user_admin)
+# if not user_admin.includes_tags(policy_approved_):
+#   tagPolicy_approved.users.append(user_admin)
+# if not user_admin.includes_tags(policy_managers_):
+#   tagPolicyMANAGERS.users.append(user_admin)
 # if not user_admin.includes_tags(policy_all_):
 #   tagPolicyALL.users.append(user_admin)
 
+# user_default.policies_add(
+#   policy_approved_,
+#   policy_email_,
+#   policy_fs_
+# )
 # if not user_default.includes_tags(policy_approved_):
 #   tagPolicy_approved.users.append(user_default)
 # if not user_default.includes_tags(policy_email_):

@@ -20,9 +20,14 @@ from src.mixins import MixinIncludesTags
 from models.tags     import Tags
 from models.docs     import Docs
 from models.products import Products
+from models.assets   import Assets
+from models.assets   import AssetsType
 
-from utils.str import match_after_last_at
+# from utils.str import match_after_last_at
 from utils.pw  import hash as hashPassword
+
+from flask_app import POLICY_MANAGERS
+from flask_app import TAG_USERS_EXTERNAL
 
 POLICY_ADMINS         = os.getenv('POLICY_ADMINS')
 TAG_ARCHIVED          = os.getenv('TAG_ARCHIVED')
@@ -45,41 +50,86 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   profile  : Mapped[Optional[dict]] = mapped_column(JSON)
   
   # virtual
-  tags     : Mapped[List['Tags']]     = relationship(secondary = ln_users_tags, back_populates = 'users')
-  products : Mapped[List['Products']] = relationship(back_populates = 'user')
-  orders   : Mapped[List['Orders']]   = relationship(back_populates = 'user')
-  posts    : Mapped[List['Posts']]    = relationship(back_populates = 'user')
-  docs     : Mapped[List['Docs']]     = relationship(back_populates = 'user')
-  assets   : Mapped[List['Assets']]   = relationship(secondary = ln_users_assets, back_populates = 'users')
+  tags         : Mapped[List['Tags']]     = relationship(secondary = ln_users_tags, back_populates = 'users')
+  products     : Mapped[List['Products']] = relationship(back_populates = 'user')
+  orders       : Mapped[List['Orders']]   = relationship(back_populates = 'user')
+  posts        : Mapped[List['Posts']]    = relationship(back_populates = 'user')
+  docs         : Mapped[List['Docs']]     = relationship(back_populates = 'user')
+  assets       : Mapped[List['Assets']]   = relationship(secondary = ln_users_assets, back_populates = 'users')
+  assets_owned : Mapped[List['Assets']]   = relationship(back_populates = 'author') # assets created by the user
 
   # magic
   def __repr__(self):
     return f'<Users(id={self.id!r}, email={self.email!r})>'
+  
+  # public
+  def assets_by_type(self, *types):
+    return db.session.scalars(
+      db.select(
+        Assets
+      ).join(
+        ln_users_assets
+      ).join(
+        Users
+      ).where(
+        Assets.type.in_(types),
+        Users.id == self.id
+      )
+    )
+  
+  # public
+  def teams(self):
+    return self.assets_by_type(AssetsType.PEOPLE_GROUP_TEAM.value)
+
+  # public
+  def stores(self):
+    return self.assets_by_type(AssetsType.PHYSICAL_STORE.value)
     
+  # public
+  def is_external(self):
+    return self.includes_tags(TAG_USERS_EXTERNAL)
+  
+  # public
+  def set_is_external(self, flag = True):
+    if flag:
+      self.policies_add(TAG_USERS_EXTERNAL)
+    else:
+      self.policies_rm(TAG_USERS_EXTERNAL)
+  
+  # public
+  def is_manager(self):
+    return self.includes_tags(POLICY_MANAGERS)
+  
+  # public
+  def set_is_manager(self, flag = True):
+    if flag:
+      self.policies_add(POLICY_MANAGERS)
+    else:
+      self.policies_rm(POLICY_MANAGERS)
+  
   # public
   def email_verified(self):
     return self.includes_tags(TAG_EMAIL_VERIFIED)
   
   # public
   def set_email_verified(self, flag = True):
-    pe  = Tags.by_name(TAG_EMAIL_VERIFIED)
-    isv = self.email_verified()
-    
     if flag:
-      if not isv:
-        pe.users.append(self)
-
+      self.policies_add(TAG_EMAIL_VERIFIED)
     else:
-      if isv:
-        pe.users.remove(self)
-      
-    db.session.commit()
+      self.policies_rm(TAG_EMAIL_VERIFIED)
 
     return self.email_verified()
   
   # public
   def is_admin(self):
     return self.includes_tags(POLICY_ADMINS)
+  
+  # public
+  def set_is_admin(self, flag = True):
+    if flag:
+      self.policies_add(POLICY_ADMINS)
+    else:
+      self.policies_rm(POLICY_ADMINS)
     
   # public
   def approved(self):
@@ -87,39 +137,13 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
         
   # public 
   def disapprove(self):
-    error = '@error:disapprove'
-
-    try:
-      if self.approved():
-        tag_approved = Tags.by_name(POLICY_APPROVED)
-        tag_approved.users.remove(self)
-        db.session.commit()
-
-    except Exception as err:
-      error = err
-    
-    else:
-      return str(self.id)
-    
-    return { 'error': str(error) }
+    self.policies_rm(POLICY_APPROVED)
+    return str(self.id)
   
   # public
   def approve(self):
-    error = '@error:approve'
-
-    try:
-      if not self.approved():
-        tag_approved = Tags.by_name(POLICY_APPROVED)
-        tag_approved.users.append(self)
-        db.session.commit()
-
-    except Exception as err:
-      error = err
-
-    else:
-      return str(self.id)
-    
-    return { 'error': str(error) }
+    self.policies_add(POLICY_APPROVED)
+    return str(self.id)
   
   # public
   def get_profile(self):
@@ -134,53 +158,17 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   # public
   def profile_update(self, **kwargs_fields):
     self.profile = self.profile_updated(**kwargs_fields)
-  
-  # public
-  # def profile(self):
-  #   p = None
     
-  #   try:
-
-  #     # get profile tag prefix in .tags
-  #     profile_domain = Docs.docs_profile_domain_from_uid(self.id)
-      
-  #     # fetch Tags{}
-  #     t = db.session.scalar(
-  #       db.select(Tags)
-  #         .where(Tags.tag.startswith(profile_domain))
-  #     )
-      
-  #     if not t:
-  #       raise Exception('profile:unavailable')
-      
-  #     # docid from Tags{}
-  #     docid = int(match_after_last_at(t.tag))
-
-  #     doc = db.session.get(Docs, docid)
-  #     p   = getattr(doc, 'data')
-      
-  #   except Exception as err:
-  #     print(err)
-
-  #   return p if p else {}
-  
   # public
   def is_archived(self):
     return self.includes_tags(TAG_ARCHIVED)
   
   # public
   def set_is_archived(self, flag = True):
-    pa   = Tags.by_name(TAG_ARCHIVED)
-    isar = self.is_archived()
-    
     if flag:
-      if not isar:
-        pa.users.append(self)
+      self.policies_add(TAG_ARCHIVED)
     else:
-      if isar:
-        pa.users.remove(self)
-    
-    db.session.commit()
+      self.policies_rm(TAG_ARCHIVED)
 
     return self.is_archived()
 

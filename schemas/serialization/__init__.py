@@ -23,22 +23,47 @@ class SchemaSerializeDocJsonWithRelationsPosts(SchemaSerializeDocJsonTimes):
   post = fields.Nested(lambda: SchemaSerializePosts(exclude = ('docs',)))
 
 class SchemaSerializeUsersTimes(SchemaSerializeTimes):
+  # fields
   id          = fields.Integer()
   email       = fields.String()
   password    = fields.String()
+
+  # virtual
   products    = fields.List(fields.Nested(lambda: SchemaSerializeProductsTimes(exclude = ('user',))))
   posts       = fields.List(fields.Nested(lambda: SchemaSerializePosts(exclude = ('user',))))
-  is_approved = fields.Method("calc_is_approved")
+  
+  # computed
+  is_approved = fields.Method('calc_is_approved')
+  is_manager  = fields.Method('calc_is_manager')
+  is_admin    = fields.Method('calc_is_admin')
+  is_external = fields.Method('calc_is_external')
+  
 
   def calc_is_approved(self, u):
     return u.approved()
+  
+  def calc_is_manager(self, u):
+    return u.is_manager()
+  
+  def calc_is_admin(self, u):
+    return u.is_admin()
+  
+  def calc_is_external(self, u):
+    return u.is_external()
+    
 
 class SchemaSerializeUsersWho(SchemaSerializeTimes):
+
+  # fields
   id             = fields.Integer()
   email          = fields.String()
+  
+  # computed
   admin          = fields.Method('calc_admin')
   approved       = fields.Method('calc_approved')
   email_verified = fields.Method('calc_email_verified')
+  manager        = fields.Method('calc_manager')
+
 
   def calc_approved(self, u):
     return u.approved()
@@ -48,6 +73,9 @@ class SchemaSerializeUsersWho(SchemaSerializeTimes):
 
   def calc_email_verified(self, u):
     return u.email_verified()
+  
+  def calc_manager(self, u):
+    return u.is_manager()
   
 class SchemaSerializeProductsTimes(SchemaSerializeTimes):
   id            = fields.Integer()
@@ -104,8 +132,10 @@ class SchemaSerializeAssets(SchemaSerializeTimes):
   
   # virtal
   # users = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password',))))
-  users = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password', 'posts', 'products'))))
-  tags  = fields.List(fields.String())
-  docs  = fields.List(fields.Nested(SchemaSerializeDocJsonTimes()))
+  users      = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password', 'posts', 'products'))))
+  tags       = fields.List(fields.String())
+  docs       = fields.List(fields.Nested(SchemaSerializeDocJsonTimes()))
+  author     = fields.Nested(SchemaSerializeUsersTimes(exclude = ('password', 'posts', 'products')))
+  assets_has = fields.List(fields.Nested(lambda: SchemaSerializeAssets(exclude = ('assets_has',))))
 
 
