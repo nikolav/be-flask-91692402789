@@ -81,7 +81,7 @@ class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
 
 
   @staticmethod
-  def teams_all():
+  def groups_all():
     return db.session.scalars(
       db.select(
         Assets
@@ -100,3 +100,23 @@ class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
       ))
 
 
+##
+## assets table fields @chatGPT response
+##
+
+# When designing a database table for managing general company assets, you'll want to include fields that capture essential details about each asset. Here’s a basic outline of fields you might include:
+
+# AssetID (Primary Key): A unique identifier for each asset.
+# AssetName: The name or description of the asset.
+# Category: The category or type of asset (e.g., IT equipment, furniture, vehicles).
+# Location: The physical location or department where the asset is stored.
+# PurchaseDate: The date the asset was acquired.
+# PurchasePrice: The cost of acquiring the asset.
+# CurrentValue: The current value of the asset (may be updated periodically).
+# Condition: The current condition of the asset (e.g., New, Good, Needs Repair).
+# SerialNumber: A unique serial number or identification number assigned to the asset.
+# WarrantyExpiration: The expiration date of the asset’s warranty, if applicable.
+# LastServiceDate: The date of the last maintenance or service performed on the asset.
+# AssignedTo: The person or department to which the asset is assigned.
+# Status: The current status of the asset (e.g., In Use, In Storage, Disposed).
+# Notes: Any additional notes or comments about the asset.
