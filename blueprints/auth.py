@@ -30,7 +30,9 @@ from schemas.validation.auth import SchemaEmailResetRequest
 from schemas.validation.auth import SchemaEmailResetObnovaLozinke
 from schemas.serialization   import SchemaSerializeUsersWho
 
-APP_NAME                   = os.getenv('APP_NAME')
+from flask_app import APP_NAME
+
+
 # TAG_USER_PROFILE_prefix    = os.getenv('TAG_USER_PROFILE_prefix')
 IOEVENT_AUTH_NEWUSER       = os.getenv('IOEVENT_AUTH_NEWUSER')
 JWT_SECRET_PASSWORD_RESET  = os.getenv('JWT_SECRET_PASSWORD_RESET')

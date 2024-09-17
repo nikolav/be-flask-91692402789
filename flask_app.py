@@ -2,7 +2,7 @@ import os
 
 from dotenv           import load_dotenv
 from flask            import Flask
-from flask_restful    import Api
+# from flask_restful    import Api
 from flask_cors       import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_talisman   import Talisman
@@ -75,7 +75,7 @@ Talisman(app,
   force_https = False)
 
 
-api   = Api(app)
+# api   = Api(app)
 db    = SQLAlchemy(app, model_class = DbModelBaseClass)
 io    = SocketIO(app, 
                   cors_allowed_origins = IO_CORS_ALLOW_ORIGINS, 
@@ -109,8 +109,8 @@ with app.app_context():
 
 
 # mount resources
-from resources.docs import DocsResource
-api.add_resource(DocsResource, '/docs/<string:tag_name>')
+# from resources.docs import DocsResource
+# api.add_resource(DocsResource, '/docs/<string:tag_name>')
 
 from blueprints         import bp_home
 from blueprints.auth    import bp_auth
