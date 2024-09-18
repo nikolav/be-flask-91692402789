@@ -1,9 +1,13 @@
+from copy import deepcopy
+
 from flask_app import db
 from flask_app import io
 
 from models.docs import Docs
 from config.graphql.init import mutation
 from . import IOEVENT_DOC_CHANGE_prefix
+
+from utils.merge_strategies import dict_deepmerger_extend_lists as merger
 
 
 @mutation.field('docUpsert')
@@ -12,14 +16,7 @@ def resolve_docUpsert(_obj, _info, doc_id, data, merge = True):
   doc = Docs.by_doc_id(doc_id, create = True)
 
   try:
-    # doc.data = data
-    if merge:
-      d = doc.data.copy()
-      d.update(data)
-    else:
-      d = data
-    
-    doc.data = d
+    doc.data = merger.merge(deepcopy(doc.data), data) if merge else data
     db.session.commit()
 
   except:
