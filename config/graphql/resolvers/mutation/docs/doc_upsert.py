@@ -11,12 +11,19 @@ from utils.merge_strategies import dict_deepmerger_extend_lists as merger
 
 
 @mutation.field('docUpsert')
-def resolve_docUpsert(_obj, _info, doc_id, data, merge = True):
-  # docUpsert(doc_id: String!, data: JsonData!, merge: Boolean!): JsonData!
+def resolve_docUpsert(_obj, _info, doc_id, data, merge = True, shallow = False):
+  # docUpsert(doc_id: String!, data: JsonData!, merge: Boolean!, shallow: Boolean!): JsonData!
+  d   = data
   doc = Docs.by_doc_id(doc_id, create = True)
-
   try:
-    doc.data = merger.merge(deepcopy(doc.data), data) if merge else data
+    if merge:
+      if shallow:
+        d = doc.data.copy()
+        d.update(data)
+      else:
+        d = merger.merge(deepcopy(doc.data), data)
+    
+    doc.data = d
     db.session.commit()
 
   except:

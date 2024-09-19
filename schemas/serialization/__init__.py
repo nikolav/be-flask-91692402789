@@ -24,13 +24,14 @@ class SchemaSerializeDocJsonWithRelationsPosts(SchemaSerializeDocJsonTimes):
 
 class SchemaSerializeUsersTimes(SchemaSerializeTimes):
   # fields
-  id          = fields.Integer()
-  email       = fields.String()
-  password    = fields.String()
+  id        = fields.Integer()
+  email     = fields.String()
+  password  = fields.String()
+  profile   = fields.Dict()
 
   # virtual
-  products    = fields.List(fields.Nested(lambda: SchemaSerializeProductsTimes(exclude = ('user',))))
-  posts       = fields.List(fields.Nested(lambda: SchemaSerializePosts(exclude = ('user',))))
+  products  = fields.List(fields.Nested(lambda: SchemaSerializeProductsTimes(exclude = ('user',))))
+  posts     = fields.List(fields.Nested(lambda: SchemaSerializePosts(exclude = ('user',))))
   
   # computed
   is_approved = fields.Method('calc_is_approved')
@@ -55,8 +56,8 @@ class SchemaSerializeUsersTimes(SchemaSerializeTimes):
 class SchemaSerializeUsersWho(SchemaSerializeTimes):
 
   # fields
-  id             = fields.Integer()
-  email          = fields.String()
+  id    = fields.Integer()
+  email = fields.String()
   
   # computed
   admin          = fields.Method('calc_admin')

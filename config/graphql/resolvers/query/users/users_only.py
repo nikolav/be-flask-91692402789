@@ -9,7 +9,7 @@ from schemas.serialization import SchemaSerializeUsersTimes
 def resolve_usersOnly(_obj, _info, uids):
   if 0 < len(uids):
     try:
-      return SchemaSerializeUsersTimes(many = True, exclude = ('password',)).dump(      
+      return SchemaSerializeUsersTimes(many = True, exclude = ('password', 'products', 'posts',)).dump(      
         db.session.scalars(
           db.select(
             Users

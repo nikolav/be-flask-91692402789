@@ -26,8 +26,12 @@ from models.assets   import AssetsType
 # from utils.str import match_after_last_at
 from utils.pw  import hash as hashPassword
 
+from copy import deepcopy
+from utils.merge_strategies import dict_deepmerger_extend_lists as merger
+
 from flask_app import POLICY_MANAGERS
 from flask_app import TAG_USERS_EXTERNAL
+
 
 POLICY_ADMINS         = os.getenv('POLICY_ADMINS')
 TAG_ARCHIVED          = os.getenv('TAG_ARCHIVED')
@@ -150,14 +154,13 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
     return self.profile if self.profile else {}
   
   # public
-  def profile_updated(self, **kwargs_fields):
-    p = self.get_profile().copy()
-    p.update(kwargs_fields)
-    return p
+  def profile_updated(self, patch):
+    return merger.merge(deepcopy(self.get_profile()), patch)
   
   # public
-  def profile_update(self, **kwargs_fields):
-    self.profile = self.profile_updated(**kwargs_fields)
+  def profile_update(self, *, patch, merge = True):
+    # patch: Dict<string:path, Any>
+    self.profile = self.profile_updated(patch) if merge else patch
     
   # public
   def is_archived(self):

@@ -14,7 +14,9 @@ def resolve_users(_obj, _info):
     users = db.session.scalars(
       db.select(Users)
     )
-    return SchemaSerializeUsersTimes(many = True, exclude = ('password',)).dump(users)
+    return SchemaSerializeUsersTimes(
+      many    = True, 
+      exclude = ('password', 'products', 'posts',)).dump(users)
 
   except Exception as err:
     raise err
