@@ -31,6 +31,7 @@ from utils.merge_strategies import dict_deepmerger_extend_lists as merger
 
 from flask_app import POLICY_MANAGERS
 from flask_app import TAG_USERS_EXTERNAL
+from flask_app import KEY_FCM_DEVICE_TOKENS
 
 
 POLICY_ADMINS         = os.getenv('POLICY_ADMINS')
@@ -68,6 +69,22 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   def __repr__(self):
     return f'<Users(id={self.id!r}, email={self.email!r})>'
   
+  # public
+  def cloud_messaging_device_tokens(self):
+    '''
+      firebase FCM user device tokens
+    '''
+    try:
+      # get tokens Docs{}
+      dt = Docs.by_doc_id(f'{KEY_FCM_DEVICE_TOKENS}{self.id}')
+      # generate valid key tokens
+      return (k_tok for k_tok, k_val in dt.data.items() if True == k_val)
+
+    except:
+      pass
+
+    return []
+
   # public
   def assets_by_type(self, *types):
     return db.session.scalars(
