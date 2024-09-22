@@ -26,3 +26,5 @@ from .accounts import verify_email
 
 from .mail import sendmail
 
+from .messaging import cloud_messaging_ping
+

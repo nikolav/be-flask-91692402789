@@ -66,6 +66,7 @@ type User {
   is_manager: Boolean
   is_admin: Boolean
   is_external: Boolean
+  groups: [String!]
   created_at: String
   updated_at: String
 }
@@ -252,5 +253,8 @@ type Mutation {
 
   # mail
   sendmail(subject: String!, template: String!, data: JsonData!): ResultMailStatus!
+
+  # cloud_messaging
+  cloudMessagingPing(message: JsonData): JsonData!
 }
 

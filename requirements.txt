@@ -33,3 +33,5 @@ firebase-admin==6.5.0
 Flask-APScheduler==1.13.1
 qrcode==7.4.2
 deepmerge==2.0
+# 
+twilio==9.3.1

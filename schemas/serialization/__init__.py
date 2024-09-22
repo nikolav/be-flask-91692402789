@@ -38,8 +38,12 @@ class SchemaSerializeUsersTimes(SchemaSerializeTimes):
   is_manager  = fields.Method('calc_is_manager')
   is_admin    = fields.Method('calc_is_admin')
   is_external = fields.Method('calc_is_external')
-  
+  groups      = fields.Method('calc_groups')
 
+
+  def calc_groups(self, u):
+    return [g.name for g in u.groups()]
+  
   def calc_is_approved(self, u):
     return u.approved()
   

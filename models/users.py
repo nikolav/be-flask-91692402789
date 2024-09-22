@@ -43,6 +43,8 @@ POLICY_APPROVED    = os.getenv('POLICY_APPROVED')
 POLICY_EMAIL       = os.getenv('POLICY_EMAIL')
 POLICY_FILESTORAGE = os.getenv('POLICY_FILESTORAGE')
 
+DEFAULT_USER_CREATE_POLICIES = (POLICY_APPROVED, POLICY_EMAIL, POLICY_FILESTORAGE,)
+
 
 class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   __tablename__ = usersTable
@@ -82,7 +84,7 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
     )
   
   # public
-  def teams(self):
+  def groups(self):
     return self.assets_by_type(AssetsType.PEOPLE_GROUP_TEAM.value)
 
   # public
@@ -220,7 +222,8 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
           print(f'Failed to delete {file_path}. Reason: {e}')
 
   @staticmethod
-  def create_user(*, email, password):
+  def create_user(*, email, password, 
+                  policies = DEFAULT_USER_CREATE_POLICIES):
     u = Users(
       email    = email,
       password = hashPassword(password)
@@ -230,10 +233,7 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
     db.session.commit()
 
     # add default policies
-    u.policies_add(
-      POLICY_APPROVED,
-      POLICY_EMAIL,
-      POLICY_FILESTORAGE)
+    u.policies_add(*policies)
 
     return u
 

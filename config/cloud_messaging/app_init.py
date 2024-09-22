@@ -7,7 +7,7 @@ from firebase_admin import credentials
 CLOUD_MESSAGING_CERTIFICATE = os.getenv('CLOUD_MESSAGING_CERTIFICATE')
 
 # service account key file
-cred = credentials.Certificate(f'./{CLOUD_MESSAGING_CERTIFICATE}')
+creds = credentials.Certificate(f'./{CLOUD_MESSAGING_CERTIFICATE}')
 
 # Initialize the Firebase app
-app = firebase_admin.initialize_app(cred)
+app = firebase_admin.initialize_app(creds)
