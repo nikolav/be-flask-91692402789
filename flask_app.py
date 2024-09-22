@@ -19,20 +19,21 @@ load_dotenv()
 ENV             = os.getenv('ENV')
 PRODUCTION      = 'production' == ENV
 
-ADMIN_EMAIL             = os.getenv('ADMIN_EMAIL')
-APP_NAME                = os.getenv('APP_NAME')
-APP_DOMAIN              = os.getenv('APP_DOMAIN')
-DATABASE_URI            = os.getenv('DATABASE_URI_production') if PRODUCTION else os.getenv('DATABASE_URI_dev')
-POLICY_ADMINS           = os.getenv('POLICY_ADMINS')
-POLICY_MANAGERS         = os.getenv('POLICY_MANAGERS')
-REBUILD_SCHEMA          = bool(os.getenv('REBUILD_SCHEMA'))
-UPLOAD_DIR              = os.getenv('UPLOAD_DIR')
-UPLOAD_PATH             = os.getenv('UPLOAD_PATH')
-USER_EMAIL              = os.getenv('USER_EMAIL')
-SCHEDULER_INIT          = bool(os.getenv('SCHEDULER_INIT'))
-TAG_USERS_EXTERNAL      = os.getenv('TAG_USERS_EXTERNAL')
-CLOUD_MESSAGING_INIT    = bool(os.getenv('CLOUD_MESSAGING_INIT'))
-KEY_FCM_DEVICE_TOKENS   = os.getenv('KEY_FCM_DEVICE_TOKENS')
+ADMIN_EMAIL                   = os.getenv('ADMIN_EMAIL')
+APP_NAME                      = os.getenv('APP_NAME')
+APP_DOMAIN                    = os.getenv('APP_DOMAIN')
+DATABASE_URI                  = os.getenv('DATABASE_URI_production') if PRODUCTION else os.getenv('DATABASE_URI_dev')
+POLICY_ADMINS                 = os.getenv('POLICY_ADMINS')
+POLICY_MANAGERS               = os.getenv('POLICY_MANAGERS')
+REBUILD_SCHEMA                = bool(os.getenv('REBUILD_SCHEMA'))
+UPLOAD_DIR                    = os.getenv('UPLOAD_DIR')
+UPLOAD_PATH                   = os.getenv('UPLOAD_PATH')
+USER_EMAIL                    = os.getenv('USER_EMAIL')
+SCHEDULER_INIT                = bool(os.getenv('SCHEDULER_INIT'))
+TAG_USERS_EXTERNAL            = os.getenv('TAG_USERS_EXTERNAL')
+CLOUD_MESSAGING_INIT          = bool(os.getenv('CLOUD_MESSAGING_INIT'))
+KEY_FCM_DEVICE_TOKENS         = os.getenv('KEY_FCM_DEVICE_TOKENS')
+CLOUD_MESSAGING_CERTIFICATE   = os.getenv('CLOUD_MESSAGING_CERTIFICATE')
 
 IO_CORS_ALLOW_ORIGINS = (
   os.getenv('IOCORS_ALLOW_ORIGIN_dev'),
@@ -158,4 +159,3 @@ if SCHEDULER_INIT:
 
 if CLOUD_MESSAGING_INIT:
   import config.cloud_messaging.app_init
-

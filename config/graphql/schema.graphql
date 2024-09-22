@@ -255,6 +255,6 @@ type Mutation {
   sendmail(subject: String!, template: String!, data: JsonData!): ResultMailStatus!
 
   # cloud_messaging
-  cloudMessagingPing(message: JsonData): JsonData!
+  cloudMessagingPing(payload: JsonData): JsonData!
 }
 

@@ -1,10 +1,9 @@
 from firebase_admin import messaging
 
 
-def send(*, tokens, message_payload):
-  message = messaging.MulticastMessage(
-    notification = messaging.Notification(**message_payload),
-    tokens = list(tokens)
-  )
-  return messaging.send_multicast(message)
-
+def send(*, tokens, payload):  
+  return messaging.send_each(
+    [messaging.Message(
+      token        = tok, 
+      notification = messaging.Notification(**payload)
+    ) for tok in tokens])

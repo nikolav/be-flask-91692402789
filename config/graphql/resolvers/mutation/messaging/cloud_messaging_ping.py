@@ -1,7 +1,5 @@
 from flask       import g
 from marshmallow import EXCLUDE
-from datetime    import datetime
-from datetime    import timezone
 
 from flask_app                    import KEY_FCM_DEVICE_TOKENS
 from models.docs                  import Docs
@@ -12,14 +10,14 @@ from servcies.firebase.messaging  import send
 
 @mutation.field('cloudMessagingPing')
 def resolve_cloudMessagingPing(_obj, _info, 
-                               message = {
+                               payload = {
                                  'title' : 'message --ping', 
-                                 'body'  : str(datetime.now(tz = timezone.utc))
+                                 'body'  : 'body --ping'
                                 }):
   r = { 'error': None, 'status': None }
 
   try:
-    message_validated = SchemaValidateMessage(unknown = EXCLUDE).load(message)
+    message_validated = SchemaValidateMessage(unknown = EXCLUDE).load(payload)
     # message format ok
     
     d_tokens        = Docs.by_doc_id(f'{KEY_FCM_DEVICE_TOKENS}{g.user.id}')
@@ -27,8 +25,8 @@ def resolve_cloudMessagingPing(_obj, _info,
 
     if 0 < len(ls_tokens_valid):
       res = send(
-        tokens          = ls_tokens_valid,
-        message_payload = message_validated
+        tokens  = ls_tokens_valid,
+        payload = message_validated
       )
       r['status'] = str(res)
 
