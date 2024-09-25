@@ -96,6 +96,8 @@ class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
           Docs.tags.any(
             DocsTags.ASSETS_FORM_SUBMISSION.value == Tags.tag
           )
+        ).order_by(
+          Docs.created_at.desc()
         )
       )
     # default

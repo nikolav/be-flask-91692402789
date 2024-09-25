@@ -12,6 +12,9 @@ PATHS_SKIP_AUTH = (
   
   # storage.allow-download
   r'^/storage/[0-9a-fA-F]+$',
+
+  # webhook
+  r'^/webhook/.+',
 )
 
 TAG_VARS         = '@vars'

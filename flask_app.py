@@ -70,6 +70,7 @@ CORS(app,
     r'/auth'     : {'origins': '*'},
     r'/graphql'  : {'origins': '*'},
     r'/storage'  : {'origins': '*'},
+    r'/webhook'  : {'origins': '*'},
   }
 ) if PRODUCTION else CORS(app, supports_credentials = True)
 
@@ -117,6 +118,7 @@ with app.app_context():
 from blueprints         import bp_home
 from blueprints.auth    import bp_auth
 from blueprints.storage import bp_storage
+from blueprints.webhook import bp_webhook
 
 # @blueprints:mount
 #   /
@@ -127,6 +129,9 @@ app.register_blueprint(bp_auth)
 
 #   /storage
 app.register_blueprint(bp_storage)
+
+# /webhook
+app.register_blueprint(bp_webhook)
 
 if not PRODUCTION:
   #   /test
