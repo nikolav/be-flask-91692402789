@@ -5,12 +5,14 @@ from flask import render_template
 from babel.numbers import format_currency
 from babel.dates   import format_date
 
-from flask_app         import db
+from flask_app import db
+
 from models.users      import Users
 from models.orders     import Orders
-from src.services.pdf  import printHtmlToPDF
 
 from config.graphql.init import query
+
+from src.services.pdf import printHtmlToPDF
 
 
 def render_template_order_items(data):  
@@ -51,7 +53,7 @@ def render_template_order_items(data):
                         )
 
 def render_template_blank_a4(data):
-  return render_template('pdf/blank-a4.html', text = data.get('text'))
+  return render_template('pdf/blank-a4.html', content = data.get('content'))
 
 TEMPLATE = {
   'blank-a4'    : render_template_blank_a4,

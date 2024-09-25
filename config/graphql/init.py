@@ -26,7 +26,7 @@ schema = make_executable_schema(type_defs, query, mutation)
 
 # mount
 @app.route('/graphql', methods=('POST',))
-def graphql_handle():
+def route_handle_graphql():
     
     # GraphQL queries are always sent as POST
     data = request.get_json()

@@ -19,6 +19,10 @@ from . import ln_assets_assets
 from src.mixins import MixinTimestamps
 from src.mixins import MixinIncludesTags
 
+from models.docs import Docs
+from models.tags import Tags
+from models.docs import DocsTags
+
 
 class AssetsType(Enum):
   DIGITAL_FORM      = 'DIGITAL_FORM:TzZJs5PZqcWc'
@@ -78,6 +82,24 @@ class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
     backref        = backref( 'assets_belong', lazy='dynamic')
     # back_populates = 'assets'
   )
+
+  # public
+  def form_submissions_all(self):
+    if AssetsType.DIGITAL_FORM.value == self.type:
+      return db.session.scalars(
+        db.select(
+          Docs
+        ).join(
+          Docs.tags
+        ).where(
+          self.id == Docs.asset_id,
+          Docs.tags.any(
+            DocsTags.ASSETS_FORM_SUBMISSION.value == Tags.tag
+          )
+        )
+      )
+    # default
+    return []
 
 
   @staticmethod

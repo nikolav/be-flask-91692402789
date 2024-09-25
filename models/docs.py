@@ -2,6 +2,7 @@ import os
 import re
 import json
 
+from enum   import Enum
 from typing import List
 
 from sqlalchemy     import JSON
@@ -31,6 +32,10 @@ _schemaDocsDump     = SchemaSerializeDocJsonTimes()
 _schemaDocsDumpMany = SchemaSerializeDocJsonTimes(many = True)
 
 
+class DocsTags(Enum):
+  ASSETS_FORM_SUBMISSION = 'ASSETS_FORM_SUBMISSION:5JTfkV8'
+  
+
 # https://docs.sqlalchemy.org/en/20/tutorial/metadata.html#declaring-mapped-classes
 class Docs(MixinTimestamps, MixinIncludesTags, db.Model):
   __tablename__ = docsTable
@@ -58,8 +63,8 @@ class Docs(MixinTimestamps, MixinIncludesTags, db.Model):
   # magic
   def __repr__(self):
     return f'Docs({json.dumps(self.dump())})'
-
-
+  
+  
   @staticmethod
   def tagged(tag_name):
     tag = Tags.by_name(tag_name)
@@ -79,27 +84,27 @@ class Docs(MixinTimestamps, MixinIncludesTags, db.Model):
       doc = db.session.scalar(
         db.select(Docs)
           .join(Docs.tags)
-          .where(Tags.tag == tag, Docs.id == id))
+          .where(
+            Tags.tag == tag, 
+            Docs.id  == id))
       
     except:
       pass
     
     return doc
   
-  @staticmethod
-  def docs_profile_domain_from_docid(doc_id):
-    return f'{PREFIX_BY_DOC_ID}://{doc_id}@'
   
   @staticmethod
-  def docs_profile_domain_from_uid(uid):
-    return Docs.docs_profile_domain_from_docid(f'{TAG_USER_PROFILE_prefix}{uid}')
+  def docs_domain_from_docid(doc_id):
+    return f'{PREFIX_BY_DOC_ID}://{doc_id}@'
+    
   
   @staticmethod
   def by_doc_id(doc_id, *, create = False):
     # get single doc by id `doc_id: string` cached in 
     # `@tags.tag` collection, 
     #   ex. `kmPtHAgrysK://{doc_id}@56` 
-    domain_ = Docs.docs_profile_domain_from_docid(doc_id)
+    domain_ = Docs.docs_domain_from_docid(doc_id)
     tag_    = None
     doc     = None
 
@@ -131,10 +136,11 @@ class Docs(MixinTimestamps, MixinIncludesTags, db.Model):
 
     return doc
     
-    
+  
   def dump(self, **kwargs):
     return _schemaDocsDump.dump(self, **kwargs)
 
+  
   # vars
   @staticmethod
   def var_by_name(var_name):
@@ -144,6 +150,7 @@ class Docs(MixinTimestamps, MixinIncludesTags, db.Model):
         Docs.data.contains(var_name)
       )
     )
+  
   
   @staticmethod
   def vars_list():
