@@ -21,8 +21,11 @@ from . import ln_docs_tags
 from .tags import Tags
 from src.mixins import MixinTimestamps
 from src.mixins import MixinIncludesTags
+from src.mixins import MixinExistsID
 from schemas.serialization import SchemaSerializeDocJsonTimes
 from config import TAG_VARS
+
+from flask_app import VIBER_CHANNELS_DOCID
 
 
 PREFIX_BY_DOC_ID        = os.getenv('PREFIX_BY_DOC_ID')
@@ -37,7 +40,7 @@ class DocsTags(Enum):
   
 
 # https://docs.sqlalchemy.org/en/20/tutorial/metadata.html#declaring-mapped-classes
-class Docs(MixinTimestamps, MixinIncludesTags, db.Model):
+class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
   __tablename__ = docsTable
 
   id   : Mapped[int]  = mapped_column(primary_key = True)
@@ -64,6 +67,10 @@ class Docs(MixinTimestamps, MixinIncludesTags, db.Model):
   def __repr__(self):
     return f'Docs({json.dumps(self.dump())})'
   
+  
+  @staticmethod
+  def viber_channels():
+    return Docs.by_doc_id(VIBER_CHANNELS_DOCID, create = True)
   
   @staticmethod
   def tagged(tag_name):
@@ -107,33 +114,36 @@ class Docs(MixinTimestamps, MixinIncludesTags, db.Model):
     domain_ = Docs.docs_domain_from_docid(doc_id)
     tag_    = None
     doc     = None
-
+    
     try:
       tag_ = db.session.scalar(
         db.select(Tags)
           .where(Tags.tag.like(f'{domain_}%')))
-    
-    except:
-      pass
-    
-    else:
-      if tag_:
-        # doc found, resolve
-        doc = db.session.get(Docs, re.match(r'.*@(\d+)$', tag_.tag).groups()[0])
       
-      else:
-        if True == create:
-          
-          # add default blank doc
-          doc = Docs(data = {})          
-          db.session.add(doc)
-          db.session.commit()
-          
-          # add related tag
-          tag_ = Tags(tag = f'{domain_}{doc.id}')
-          db.session.add(tag_)
-          db.session.commit()
+      if not tag_:
+        raise Exception
 
+      doc = db.session.get(Docs, 
+              re.match(r'.*@(\d+)$', tag_.tag).groups()[0])
+      
+      if not doc:
+        raise Exception
+
+    except:
+      if True == create:
+        # add default blank doc
+        doc = Docs(data = {})
+        db.session.add(doc)
+        db.session.commit()
+        
+        # add related tag
+        if not tag_:
+          tag_ = Tags(tag = f'{domain_}{doc.id}')
+        else:
+          tag_.tag = f'{domain_}{doc.id}'
+        db.session.add(tag_)
+        db.session.commit()
+    
     return doc
     
   

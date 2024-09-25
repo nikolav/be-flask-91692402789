@@ -14,7 +14,7 @@ PATHS_SKIP_AUTH = (
   r'^/storage/[0-9a-fA-F]+$',
 
   # webhook
-  r'^/webhook/.+',
+  r'^/webhook_viber_channel/.+',
 )
 
 TAG_VARS         = '@vars'

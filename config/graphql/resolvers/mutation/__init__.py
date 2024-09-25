@@ -27,4 +27,6 @@ from .accounts import verify_email
 from .mail import sendmail
 
 from .messaging import cloud_messaging_ping
+from .messaging import viber_send_message
+
 

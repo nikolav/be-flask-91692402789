@@ -1,7 +1,10 @@
 import os
 
 from flask_app    import db
+
 from flask_app    import APP_NAME
+from flask_app    import VIBER_CHANNELS_DOCID
+
 from models.users import Users
 from models.tags  import Tags
 from models.docs  import Docs
@@ -108,3 +111,11 @@ user_admin.policies_add(
 #   tagPolicyFS.users.append(user_default)
 
 db.session.commit()
+
+
+d_vibchannels = Docs.viber_channels()
+if 0 == len(d_vibchannels.data):
+  from config.vars import viber_channels
+  d_vibchannels.data = viber_channels.copy()
+  db.session.commit()
+

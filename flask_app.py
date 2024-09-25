@@ -34,6 +34,8 @@ TAG_USERS_EXTERNAL            = os.getenv('TAG_USERS_EXTERNAL')
 CLOUD_MESSAGING_INIT          = bool(os.getenv('CLOUD_MESSAGING_INIT'))
 KEY_FCM_DEVICE_TOKENS         = os.getenv('KEY_FCM_DEVICE_TOKENS')
 CLOUD_MESSAGING_CERTIFICATE   = os.getenv('CLOUD_MESSAGING_CERTIFICATE')
+VIBER_CHANNELS_DOCID          = os.getenv('VIBER_CHANNELS_DOCID')
+URL_VIBER_MESSAGE_POST        = os.getenv('URL_VIBER_MESSAGE_POST')
 
 IO_CORS_ALLOW_ORIGINS = (
   os.getenv('IOCORS_ALLOW_ORIGIN_dev'),
@@ -67,10 +69,10 @@ app.config['MAIL_ASCII_ATTACHMENTS'] = bool(os.getenv('MAIL_ASCII_ATTACHMENTS'))
 CORS(app, 
   supports_credentials = True, 
   resources = {
-    r'/auth'     : {'origins': '*'},
-    r'/graphql'  : {'origins': '*'},
-    r'/storage'  : {'origins': '*'},
-    r'/webhook'  : {'origins': '*'},
+    r'/auth'                  : {'origins': '*'},
+    r'/graphql'               : {'origins': '*'},
+    r'/storage'               : {'origins': '*'},
+    r'/webhook_viber_channel' : {'origins': '*'},
   }
 ) if PRODUCTION else CORS(app, supports_credentials = True)
 
@@ -115,10 +117,10 @@ with app.app_context():
 # from resources.docs import DocsResource
 # api.add_resource(DocsResource, '/docs/<string:tag_name>')
 
-from blueprints         import bp_home
-from blueprints.auth    import bp_auth
-from blueprints.storage import bp_storage
-from blueprints.webhook import bp_webhook
+from blueprints                       import bp_home
+from blueprints.auth                  import bp_auth
+from blueprints.storage               import bp_storage
+from blueprints.webhook_viber_channel import bp_webhook_viber_channel
 
 # @blueprints:mount
 #   /
@@ -131,7 +133,7 @@ app.register_blueprint(bp_auth)
 app.register_blueprint(bp_storage)
 
 # /webhook
-app.register_blueprint(bp_webhook)
+app.register_blueprint(bp_webhook_viber_channel)
 
 if not PRODUCTION:
   #   /test
