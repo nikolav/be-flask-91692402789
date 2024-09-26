@@ -120,8 +120,8 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
 
   # alias .by_key
   @staticmethod
-  def by_doc_id(self, *args, **kwargs):
-    return self.by_key(*args, **kwargs)
+  def by_doc_id(key, *, create = False):
+    return Docs.by_key(key, create = create)
     
   
   # vars

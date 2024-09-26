@@ -17,7 +17,6 @@ def resolve_cloudMessagingPing(_obj, _info,
   try:
     message_validated = SchemaValidateMessage(unknown = EXCLUDE).load(payload)
     # message format ok
-    
     res = send(
       tokens  = g.user.cloud_messaging_device_tokens(),
       payload = message_validated

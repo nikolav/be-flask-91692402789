@@ -6,5 +6,5 @@ def send(*, tokens, payload):
     [messaging.Message(
       token = tok, 
       data  = payload,
-      # notification = messaging.Notification(**payload),
     ) for tok in tokens])
+
