@@ -5,14 +5,14 @@ from flask import request
 from flask import make_response
 from flask import jsonify
 
-from flask_app import db
+from flask_app   import db
 from models.docs import Docs
 from models.tags import Tags
 
 
 bp_webhook_viber_channel = Blueprint('webhook_viber_channel', __name__, url_prefix = '/webhook_viber_channel')
 
-# cors blueprints as wel for cross-domain requests
+# cors blueprints
 CORS(bp_webhook_viber_channel)
 
 

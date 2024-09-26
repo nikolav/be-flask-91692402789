@@ -4,6 +4,7 @@ import json
 
 from enum   import Enum
 from typing import List
+from typing import Optional
 
 from sqlalchemy     import JSON
 from sqlalchemy.orm import Mapped
@@ -28,7 +29,6 @@ from config import TAG_VARS
 from flask_app import VIBER_CHANNELS_DOCID
 
 
-PREFIX_BY_DOC_ID        = os.getenv('PREFIX_BY_DOC_ID')
 TAG_USER_PROFILE_prefix = os.getenv('TAG_USER_PROFILE_prefix')
 
 _schemaDocsDump     = SchemaSerializeDocJsonTimes()
@@ -45,6 +45,9 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
 
   id   : Mapped[int]  = mapped_column(primary_key = True)
   data : Mapped[dict] = mapped_column(JSON)
+  # unique key
+  #  get records by unique name
+  key  : Mapped[Optional[str]] = mapped_column(unique = True)
   user_id    = mapped_column(db.ForeignKey(f'{usersTable}.id'))
   post_id    = mapped_column(db.ForeignKey(f'{postsTable}.id'))
   product_id = mapped_column(db.ForeignKey(f'{productsTable}.id'))
@@ -70,8 +73,9 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
   
   @staticmethod
   def viber_channels():
-    return Docs.by_doc_id(VIBER_CHANNELS_DOCID, create = True)
+    return Docs.by_key(VIBER_CHANNELS_DOCID, create = True)
   
+
   @staticmethod
   def tagged(tag_name):
     tag = Tags.by_name(tag_name)
@@ -82,74 +86,43 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
   def dicts(docs, **kwargs):
     return _schemaDocsDumpMany.dump(docs, **kwargs)
   
-  
+    
   @staticmethod
   def by_tag_and_id(tag, id):
-    doc = None
-
-    try:
-      doc = db.session.scalar(
-        db.select(Docs)
-          .join(Docs.tags)
-          .where(
-            Tags.tag == tag, 
-            Docs.id  == id))
+    return db.session.scalar(
+      db.select(Docs)
+        .join(Docs.tags)
+        .where(
+          Tags.tag == tag, 
+          Docs.id  == id))
       
-    except:
-      pass
-    
-    return doc
-  
   
   @staticmethod
-  def docs_domain_from_docid(doc_id):
-    return f'{PREFIX_BY_DOC_ID}://{doc_id}@'
+  def by_key(key, *, create = False):
+    d = None
+    if key:
+      d = db.session.scalar(
+        db.select(
+          Docs
+        ).where(
+          key == Docs.key
+        )
+      )
+      if not d:
+        if create == True:
+          # add
+          d = Docs(data = {}, key = key)
+          db.session.add(d)
+          db.session.commit()
     
+    return d
   
+
+  # alias .by_key
   @staticmethod
-  def by_doc_id(doc_id, *, create = False):
-    # get single doc by id `doc_id: string` cached in 
-    # `@tags.tag` collection, 
-    #   ex. `kmPtHAgrysK://{doc_id}@56` 
-    domain_ = Docs.docs_domain_from_docid(doc_id)
-    tag_    = None
-    doc     = None
+  def by_doc_id(self, *args, **kwargs):
+    return self.by_key(*args, **kwargs)
     
-    try:
-      tag_ = db.session.scalar(
-        db.select(Tags)
-          .where(Tags.tag.like(f'{domain_}%')))
-      
-      if not tag_:
-        raise Exception
-
-      doc = db.session.get(Docs, 
-              re.match(r'.*@(\d+)$', tag_.tag).groups()[0])
-      
-      if not doc:
-        raise Exception
-
-    except:
-      if True == create:
-        # add default blank doc
-        doc = Docs(data = {})
-        db.session.add(doc)
-        db.session.commit()
-        
-        # add related tag
-        if not tag_:
-          tag_ = Tags(tag = f'{domain_}{doc.id}')
-        else:
-          tag_.tag = f'{domain_}{doc.id}'
-        db.session.add(tag_)
-        db.session.commit()
-    
-    return doc
-    
-  
-  def dump(self, **kwargs):
-    return _schemaDocsDump.dump(self, **kwargs)
-
   
   # vars
   @staticmethod
@@ -169,3 +142,8 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
       for name, value in doc.data.items():
         res.append({ 'id': doc.id, 'name': name, 'value': value })
     return res
+
+
+  def dump(self, **kwargs):
+    return _schemaDocsDump.dump(self, **kwargs)
+

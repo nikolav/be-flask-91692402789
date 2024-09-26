@@ -154,12 +154,6 @@ def auth_social():
     try:
       # store social auth data
       u.profile_update(authProvider = auth_data)
-      # doc_profile = Docs.by_doc_id(
-      #   f'{TAG_USER_PROFILE_prefix}{u.id}', create = True)
-      # d = doc_profile.data.copy()
-      # d['authProvider'] = auth_data
-      # doc_profile.data = d
-
       db.session.commit()
 
     except Exception as err:
