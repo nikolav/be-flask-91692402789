@@ -71,6 +71,7 @@ class SchemaSerializeUsersWho(SchemaSerializeTimes):
   admin          = fields.Method('calc_admin')
   approved       = fields.Method('calc_approved')
   email_verified = fields.Method('calc_email_verified')
+  external       = fields.Method('calc_is_external')
   manager        = fields.Method('calc_manager')
 
 
@@ -85,6 +86,10 @@ class SchemaSerializeUsersWho(SchemaSerializeTimes):
   
   def calc_manager(self, u):
     return u.is_manager()
+  
+  def calc_is_external(self, u):
+    return u.is_external()
+
   
 class SchemaSerializeProductsTimes(SchemaSerializeTimes):
   id            = fields.Integer()

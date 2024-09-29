@@ -2,47 +2,56 @@ import os
 
 from dotenv           import load_dotenv
 from flask            import Flask
-# from flask_restful    import Api
 from flask_cors       import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_talisman   import Talisman
+
 # https://github.com/miguelgrinberg/flask-socketio/issues/40#issuecomment-48268526
 from flask_socketio import SocketIO
+
 # https://pythonhosted.org/Flask-Mail/
 from flask_mail import Mail
+
 
 from src.classes import Base as DbModelBaseClass
 
 
+# init env variables
 load_dotenv()
 
-ENV             = os.getenv('ENV')
-PRODUCTION      = 'production' == ENV
+ENV        = os.getenv('ENV')
+PRODUCTION = 'production' == ENV
 
 ADMIN_EMAIL                    = os.getenv('ADMIN_EMAIL')
-APP_NAME                       = os.getenv('APP_NAME')
 APP_DOMAIN                     = os.getenv('APP_DOMAIN')
-DATABASE_URI                   = os.getenv('DATABASE_URI_production') if PRODUCTION else os.getenv('DATABASE_URI_dev')
-POLICY_ADMINS                  = os.getenv('POLICY_ADMINS')
-POLICY_MANAGERS                = os.getenv('POLICY_MANAGERS')
-REBUILD_SCHEMA                 = bool(os.getenv('REBUILD_SCHEMA'))
-UPLOAD_DIR                     = os.getenv('UPLOAD_DIR')
-UPLOAD_PATH                    = os.getenv('UPLOAD_PATH')
-USER_EMAIL                     = os.getenv('USER_EMAIL')
-SCHEDULER_INIT                 = bool(os.getenv('SCHEDULER_INIT'))
-CLOUD_MESSAGING_INIT           = bool(os.getenv('CLOUD_MESSAGING_INIT'))
-KEY_FCM_DEVICE_TOKENS          = os.getenv('KEY_FCM_DEVICE_TOKENS')
-CLOUD_MESSAGING_CERTIFICATE    = os.getenv('CLOUD_MESSAGING_CERTIFICATE')
-VIBER_CHANNELS_DOCID           = os.getenv('VIBER_CHANNELS_DOCID')
-URL_VIBER_MESSAGE_POST         = os.getenv('URL_VIBER_MESSAGE_POST')
+APP_NAME                       = os.getenv('APP_NAME')
+APP_SECRET_KEY                 = os.getenv('SECRET_KEY')
 AWS_END_USER_MESSAGING_ENABLED = bool(os.getenv('AWS_END_USER_MESSAGING_ENABLED'))
-TAG_ARCHIVED                   = os.getenv('TAG_ARCHIVED')
+CLOUD_MESSAGING_CERTIFICATE    = os.getenv('CLOUD_MESSAGING_CERTIFICATE')
+CLOUD_MESSAGING_INIT           = bool(os.getenv('CLOUD_MESSAGING_INIT'))
+DATABASE_URI                   = os.getenv('DATABASE_URI_production') if PRODUCTION else os.getenv('DATABASE_URI_dev')
+KEY_FCM_DEVICE_TOKENS          = os.getenv('KEY_FCM_DEVICE_TOKENS')
+POLICY_ADMINS                  = os.getenv('POLICY_ADMINS')
 POLICY_APPROVED                = os.getenv('POLICY_APPROVED')
 POLICY_EMAIL                   = os.getenv('POLICY_EMAIL')
 POLICY_FILESTORAGE             = os.getenv('POLICY_FILESTORAGE')
+POLICY_MANAGERS                = os.getenv('POLICY_MANAGERS')
+REBUILD_SCHEMA                 = bool(os.getenv('REBUILD_SCHEMA'))
+SCHEDULER_INIT                 = bool(os.getenv('SCHEDULER_INIT'))
+TAG_ARCHIVED                   = os.getenv('TAG_ARCHIVED')
 TAG_EMAIL_VERIFIED             = os.getenv('TAG_EMAIL_VERIFIED')
 TAG_USERS_EXTERNAL             = os.getenv('TAG_USERS_EXTERNAL')
+UPLOAD_DIR                     = os.getenv('UPLOAD_DIR')
+UPLOAD_PATH                    = os.getenv('UPLOAD_PATH')
+URL_VIBER_MESSAGE_POST         = os.getenv('URL_VIBER_MESSAGE_POST')
+USER_EMAIL                     = os.getenv('USER_EMAIL')
+VIBER_CHANNELS_DOCID           = os.getenv('VIBER_CHANNELS_DOCID')
 
+# vars:secret
+JWT_SECRET_VERIFY_EMAIL   = os.getenv('JWT_SECRET_VERIFY_EMAIL')
+JWT_SECRET_PASSWORD_RESET = os.getenv('JWT_SECRET_PASSWORD_RESET')
+
+# vars:cors
 IO_CORS_ALLOW_ORIGINS = (
   os.getenv('IOCORS_ALLOW_ORIGIN_dev'),
   os.getenv('IOCORS_ALLOW_ORIGIN_dev2'),
@@ -51,16 +60,17 @@ IO_CORS_ALLOW_ORIGINS = (
   os.getenv('IOCORS_ALLOW_ORIGIN_frikomnikolavrs')
 )
 
-# load io-events
+# vars:io-events
 IOEVENT_ACCOUNTS_UPDATED        = os.getenv('IOEVENT_ACCOUNTS_UPDATED')
 IOEVENT_ACCOUNTS_UPDATED_prefix = os.getenv('IOEVENT_ACCOUNTS_UPDATED_prefix')
-JWT_SECRET_VERIFY_EMAIL         = os.getenv('JWT_SECRET_VERIFY_EMAIL')
+IOEVENT_AUTH_NEWUSER            = os.getenv('IOEVENT_AUTH_NEWUSER')
 
 
+# app:main
 app = Flask(__name__)
 
 # app-config
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SECRET_KEY'] = APP_SECRET_KEY
 
 # app-config:db
 app.config['SQLALCHEMY_DATABASE_URI']        = DATABASE_URI

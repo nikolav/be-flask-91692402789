@@ -291,9 +291,10 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   @staticmethod
   def email_exists(email):
     return 0 < db.session.scalar(
-      db.select(func.count(Users.id))
-        .where(email == Users.email)
-    )
+      db.select(
+        func.count(Users.id)
+      ).where(
+        email == Users.email))
 
   @staticmethod
   def by_uids(*uids):

@@ -1,4 +1,3 @@
-import os
 import secrets
 
 from flask      import Blueprint
@@ -13,7 +12,6 @@ from flask_app      import io
 from flask_app      import mail
 
 from models.users    import Users
-from models.docs     import Docs
 
 from utils.pw       import hash  as hashPassword
 from utils.pw       import check as checkPassword
@@ -31,11 +29,14 @@ from schemas.validation.auth import SchemaEmailResetObnovaLozinke
 from schemas.serialization   import SchemaSerializeUsersWho
 
 from flask_app import APP_NAME
+from flask_app import APP_DOMAIN
+from flask_app import JWT_SECRET_PASSWORD_RESET
+from flask_app import IOEVENT_AUTH_NEWUSER
+
+from flask_app import io
+from flask_app import IOEVENT_ACCOUNTS_UPDATED_prefix
 
 
-# TAG_USER_PROFILE_prefix    = os.getenv('TAG_USER_PROFILE_prefix')
-IOEVENT_AUTH_NEWUSER       = os.getenv('IOEVENT_AUTH_NEWUSER')
-JWT_SECRET_PASSWORD_RESET  = os.getenv('JWT_SECRET_PASSWORD_RESET')
 
 # router config
 bp_auth = Blueprint('auth', __name__, url_prefix = '/auth')
@@ -195,34 +196,49 @@ def auth_who():
 @bp_auth.route('/password-reset-obnova-lozinke', methods = ('POST',))
 def password_reset_obnova_lozinke():
 
+  r       = { 'error': None, 'status': None }
   d       = None
   payload = None
+  id      = None
   
   try:
     d       = SchemaEmailResetObnovaLozinke().load(request.get_json())
-    payload = decode_secret(d['key'], JWT_SECRET_PASSWORD_RESET)
+    payload = decode_secret(d['key'], 
+                            JWT_SECRET_PASSWORD_RESET)
 
     u = db.session.scalar(
-      db.select(Users)
-        .where(Users.email == payload['email'])
-    )
+      db.select(
+        Users
+      ).where(
+        payload['email'] == Users.email
+      ))
+
     if not u:
-      raise Exception('access denied --no-user')
+      raise Exception('password_reset_obnova_lozinke --no-user')
     
     u.password = hashPassword(d['password'])
     db.session.commit()
+
+    # affeced uid
+    id = u.id
+
     
   except Exception as err:
-    raise err
+    r['error'] = str(err)
+
     
   else:
-    return payload['email'] if 'email' in payload else None
+    r['status'] = { 'id': id }
+    if id:
+      io.emit(f'{IOEVENT_ACCOUNTS_UPDATED_prefix}{id}')
   
-  return None
+  
+  return r
 
 @bp_auth.route('/password-reset-email-link', methods = ('POST',))
 def password_reset_email_link():
   
+  r   = { 'error': None, 'status': None }
   d   = None
   res = None
 
@@ -230,40 +246,37 @@ def password_reset_email_link():
     d = SchemaEmailResetRequest().load(request.get_json())
 
     if not Users.email_exists(d['email']):
-      raise Exception('access denied --no-user')
+      raise Exception('password_reset_email_link --no-user')
+    
+    key = encode_secret({ 'email': d['email'] }, 
+                          JWT_SECRET_PASSWORD_RESET)
+
+    res = mail.send(
+      Message(
+        
+        # subject
+        f'obnova lozinke | {APP_DOMAIN}',
+
+        # from
+        sender = (APP_NAME, f'{APP_NAME}@{APP_DOMAIN}'),
+        
+        # default recepiens ls
+        recipients = [d['email']],
+        
+        # pass all data to mail template
+        html = render_template(
+          'mail/password-reset-button-link.html', 
+          url = f'{str(d['url']).rstrip("/")}/?key={key}')
+      ))
+
 
   except Exception as err:
-    raise err
+    r['error'] = str(err)
+    
 
   else:
-    
-    try:
-      key = encode_secret({ 'email': d['email'] }, JWT_SECRET_PASSWORD_RESET)
-      
-      res = mail.send(
-        Message(
-          
-          # subject
-          f'password-reset@{APP_NAME}.rs',
-
-          # from
-          sender = (APP_NAME, f'app@{APP_NAME}.rs'),
-          
-          # default recepiens ls
-          recipients = [d['email']],
-          
-          # pass all data to mail template
-          html = render_template(
-            'mail/password-reset-button-link.html', 
-            url = f'{str(d['url']).rstrip("/")}/?key={key}')
-        )
-      )
-
-    except Exception as err:
-      raise 
-    
-    else:
-      return d['email'] if not res else None
+    r['status'] = { 'email': d['email'] if not res else None }
   
-  return None
+  
+  return r
 
