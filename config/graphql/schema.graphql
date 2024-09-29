@@ -67,6 +67,7 @@ type User {
   is_admin: Boolean
   is_external: Boolean
   groups: [String!]
+  email_verified: Boolean
   created_at: String
   updated_at: String
 }
@@ -194,7 +195,7 @@ type Query {
   ordersReceived: [Order!]!
   ordersProducts(oid: ID!): [ProductWithAmount!]!
   ordersReceivedProducts(order_id: ID!): [ProductWithAmount!]!
-  
+
   # posts
   postsList(uid: ID): [Post!]!
   postsListOnly(sids: [ID!]!): [Post!]!
@@ -236,7 +237,12 @@ type Mutation {
   # docs
   docsUpsert(topic: String!, data: JsonData!, id: ID): JsonData!
   docsRm(topic: String!, id: ID!): JsonData
-  docUpsert(doc_id: String!, data: JsonData!, merge: Boolean!, shallow: Boolean!): JsonData!
+  docUpsert(
+    doc_id: String!
+    data: JsonData!
+    merge: Boolean!
+    shallow: Boolean!
+  ): JsonData!
   docsRmById(id: ID!): JsonData
 
   # manage docs/tags: id, { "@tag/foo": true, "@tag/bar": false }
@@ -249,11 +255,16 @@ type Mutation {
   accountsAdd(payload: JsonData!): JsonData!
   accountsDrop(uid: ID!): JsonData!
   accountsPoliciesManage(policies: JsonData!): JsonData!
-  accountsSendVerifyEmailLink(uid: ID!, url: String!): ID
-  accountsVeifyEmail(data: JsonData!): String
+  accountsProfilePatch(uid: ID!, patch: JsonData!): JsonData!
+  accountsSendVerifyEmailLink(uid: ID!, url: String!): JsonData!
+  accountsVeifyEmail(data: JsonData!): JsonData!
 
   # mail
-  sendmail(subject: String!, template: String!, data: JsonData!): ResultMailStatus!
+  sendmail(
+    subject: String!
+    template: String!
+    data: JsonData!
+  ): ResultMailStatus!
 
   # cloud_messaging
   cloudMessagingPing(payload: JsonData): JsonData!
@@ -262,4 +273,3 @@ type Mutation {
   # https://developers.viber.com/docs/tools/channels-post-api/
   viberSendTextMessage(payload: JsonData!): JsonData!
 }
-

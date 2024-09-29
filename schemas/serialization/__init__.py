@@ -34,11 +34,12 @@ class SchemaSerializeUsersTimes(SchemaSerializeTimes):
   posts     = fields.List(fields.Nested(lambda: SchemaSerializePosts(exclude = ('user',))))
   
   # computed
-  is_approved = fields.Method('calc_is_approved')
-  is_manager  = fields.Method('calc_is_manager')
-  is_admin    = fields.Method('calc_is_admin')
-  is_external = fields.Method('calc_is_external')
-  groups      = fields.Method('calc_groups')
+  is_approved    = fields.Method('calc_is_approved')
+  is_manager     = fields.Method('calc_is_manager')
+  is_admin       = fields.Method('calc_is_admin')
+  is_external    = fields.Method('calc_is_external')
+  groups         = fields.Method('calc_groups')
+  email_verified = fields.Method('calc_email_verified')
 
 
   def calc_groups(self, u):
@@ -55,6 +56,9 @@ class SchemaSerializeUsersTimes(SchemaSerializeTimes):
   
   def calc_is_external(self, u):
     return u.is_external()
+
+  def calc_email_verified(self, u):
+    return u.email_verified()
     
 
 class SchemaSerializeUsersWho(SchemaSerializeTimes):

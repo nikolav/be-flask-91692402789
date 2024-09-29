@@ -1,4 +1,4 @@
-import os
+
 from flask import g
 from flask import render_template
 
@@ -12,21 +12,28 @@ from models.users import Users
 from utils.jwtToken      import encode_secret
 from config.graphql.init import mutation
 
-APP_NAME                = os.getenv('APP_NAME')
-JWT_SECRET_VERIFY_EMAIL = os.getenv('JWT_SECRET_VERIFY_EMAIL')
+from flask_app import APP_NAME
+from flask_app import APP_DOMAIN
+from flask_app import JWT_SECRET_VERIFY_EMAIL
 
 
 @mutation.field('accountsSendVerifyEmailLink')
 def resolve_accountsSendVerifyEmailLink(_o, _i, uid, url):
+  r   = { 'error': None, 'status': None }
   res = None
+  
   try:
     u = db.session.get(Users, uid)
 
-    if u.email_verified():
-      raise Exception('access denied')
-      
+    if not u:
+      raise Exception('accountsSendVerifyEmailLink --no-user')
+
     if not u.id == g.user.id:
-      raise Exception('access denied')
+      raise Exception('accountsSendVerifyEmailLink --access-denied')
+
+    if u.email_verified():
+      raise Exception('accountsSendVerifyEmailLink --email-verified')
+      
         
     key = encode_secret({ 'uid': u.id, 'email': u.email }, 
                         JWT_SECRET_VERIFY_EMAIL)
@@ -35,10 +42,10 @@ def resolve_accountsSendVerifyEmailLink(_o, _i, uid, url):
       Message(
         
         # subject
-        f'potvrda-email-adrese@{APP_NAME}.rs',
+        f'Potvrda email adrese | {APP_DOMAIN}',
 
         # from
-        sender = (APP_NAME, f'app@{APP_NAME}.rs'),
+        sender = (APP_NAME, f'{APP_NAME}@{APP_DOMAIN}'),
         
         # default recepiens ls
         recipients = [u.email],
@@ -50,11 +57,14 @@ def resolve_accountsSendVerifyEmailLink(_o, _i, uid, url):
       )
     )
     
+
   except Exception as err:
-    raise err
+    r['error'] = str(err)
+
 
   else:
-    return u.id if not res else None
+    r['status'] = { 'id': u.id if not res else None }
   
-  return None
+  
+  return r
 
