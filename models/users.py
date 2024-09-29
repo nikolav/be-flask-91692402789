@@ -3,6 +3,8 @@ import shutil
 from typing import List
 from typing import Optional
 
+from flask import g
+
 from sqlalchemy     import func
 from sqlalchemy     import JSON
 from sqlalchemy.orm import Mapped
@@ -72,6 +74,10 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   # magic
   def __repr__(self):
     return f'<Users(id={self.id!r}, email={self.email!r})>'
+  
+  # public
+  def can_manage_account(self, uid):
+    return any((uid == g.user.id, g.user.is_admin(),))
   
   # public
   def cloud_messaging_device_tokens(self):
@@ -213,6 +219,8 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
     
     if 0 < changes:
       db.session.commit()
+    
+    return changes
 
   # public 
   def policies_rm(self, *policies):
@@ -225,7 +233,18 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
     
     if 0 < changes:
       db.session.commit()
+    
+    return changes
   
+  # policies, batch-add-rm
+  def policies_patch(self, policies):
+    changes = 0
+    changes += self.policies_add(
+      *[pname for pname, value in policies.items() if bool(value)])
+    changes += self.policies_rm(
+      *[pname for pname, value in policies.items() if not bool(value)])
+    return changes
+    
   @staticmethod
   def clear_storage(uid):
     directory = os.path.join(UPLOAD_PATH.rstrip("/\\"), 'storage', str(uid))
@@ -276,3 +295,14 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
         .where(email == Users.email)
     )
 
+  @staticmethod
+  def by_uids(*uids):
+    return db.session.scalars(
+      db.select(
+        Users
+      ).where(
+        Users.id.in_(uids)
+      )
+    )
+  
+  

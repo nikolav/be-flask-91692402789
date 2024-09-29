@@ -30,13 +30,18 @@ UPLOAD_DIR                     = os.getenv('UPLOAD_DIR')
 UPLOAD_PATH                    = os.getenv('UPLOAD_PATH')
 USER_EMAIL                     = os.getenv('USER_EMAIL')
 SCHEDULER_INIT                 = bool(os.getenv('SCHEDULER_INIT'))
-TAG_USERS_EXTERNAL             = os.getenv('TAG_USERS_EXTERNAL')
 CLOUD_MESSAGING_INIT           = bool(os.getenv('CLOUD_MESSAGING_INIT'))
 KEY_FCM_DEVICE_TOKENS          = os.getenv('KEY_FCM_DEVICE_TOKENS')
 CLOUD_MESSAGING_CERTIFICATE    = os.getenv('CLOUD_MESSAGING_CERTIFICATE')
 VIBER_CHANNELS_DOCID           = os.getenv('VIBER_CHANNELS_DOCID')
 URL_VIBER_MESSAGE_POST         = os.getenv('URL_VIBER_MESSAGE_POST')
 AWS_END_USER_MESSAGING_ENABLED = bool(os.getenv('AWS_END_USER_MESSAGING_ENABLED'))
+TAG_ARCHIVED                   = os.getenv('TAG_ARCHIVED')
+POLICY_APPROVED                = os.getenv('POLICY_APPROVED')
+POLICY_EMAIL                   = os.getenv('POLICY_EMAIL')
+POLICY_FILESTORAGE             = os.getenv('POLICY_FILESTORAGE')
+TAG_EMAIL_VERIFIED             = os.getenv('TAG_EMAIL_VERIFIED')
+TAG_USERS_EXTERNAL             = os.getenv('TAG_USERS_EXTERNAL')
 
 IO_CORS_ALLOW_ORIGINS = (
   os.getenv('IOCORS_ALLOW_ORIGIN_dev'),
@@ -45,6 +50,9 @@ IO_CORS_ALLOW_ORIGINS = (
   os.getenv('IOCORS_ALLOW_ORIGIN_nikolavrs'),
   os.getenv('IOCORS_ALLOW_ORIGIN_frikomnikolavrs')
 )
+
+# load io-events
+IOEVENT_ACCOUNTS_UPDATED = os.getenv('IOEVENT_ACCOUNTS_UPDATED')
 
 
 app = Flask(__name__)

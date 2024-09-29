@@ -247,8 +247,8 @@ type Mutation {
 
   # accounts
   accountsAdd(payload: JsonData!): JsonData!
-  accountsArchive(uid: ID!): ID
-  accountsDrop(uid: ID!): ID
+  accountsDrop(uid: ID!): JsonData!
+  accountsPoliciesManage(policies: JsonData!): JsonData!
   accountsSendVerifyEmailLink(uid: ID!, url: String!): ID
   accountsVeifyEmail(data: JsonData!): String
 

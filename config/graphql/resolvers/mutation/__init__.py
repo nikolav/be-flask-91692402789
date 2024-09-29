@@ -19,11 +19,11 @@ from .posts import posts_upsert
 from .posts import posts_rm
 from .posts import posts_images_drop
 
-from .accounts import account_archive
 from .accounts import account_drop
 from .accounts import accounts_send_verify_email_link
 from .accounts import verify_email
 from .accounts import accounts_add
+from .accounts import policies_manage
 
 from .mail import sendmail
 
