@@ -43,11 +43,11 @@ class DocsTags(Enum):
 class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
   __tablename__ = docsTable
 
-  id   : Mapped[int]  = mapped_column(primary_key = True)
-  data : Mapped[dict] = mapped_column(JSON)
-  # unique key
-  #  get records by unique name
+  id   : Mapped[int]           = mapped_column(primary_key = True)
+  # unique .key; get records by unique name
   key  : Mapped[Optional[str]] = mapped_column(unique = True)
+  data : Mapped[dict]          = mapped_column(JSON)
+  # foreignkey
   user_id    = mapped_column(db.ForeignKey(f'{usersTable}.id'))
   post_id    = mapped_column(db.ForeignKey(f'{postsTable}.id'))
   product_id = mapped_column(db.ForeignKey(f'{productsTable}.id'))
@@ -74,7 +74,7 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
   @staticmethod
   def viber_channels():
     return Docs.by_key(VIBER_CHANNELS_DOCID, create = True)
-  
+
 
   @staticmethod
   def tagged(tag_name):

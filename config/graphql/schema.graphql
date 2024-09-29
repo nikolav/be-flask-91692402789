@@ -246,6 +246,7 @@ type Mutation {
   storageRemoveFile(file_id: String!): StorageFileRemovedInfo
 
   # accounts
+  accountsAdd(payload: JsonData!): JsonData!
   accountsArchive(uid: ID!): ID
   accountsDrop(uid: ID!): ID
   accountsSendVerifyEmailLink(uid: ID!, url: String!): ID

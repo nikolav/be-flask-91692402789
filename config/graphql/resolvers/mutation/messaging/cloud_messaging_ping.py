@@ -3,7 +3,7 @@ from marshmallow import EXCLUDE
 
 from config.graphql.init          import mutation
 from schemas.validation.messaging import SchemaValidateMessage
-from servcies.firebase.messaging  import send
+from servcies.firebase.messaging  import fcm_send
 
 
 @mutation.field('cloudMessagingPing')
@@ -17,7 +17,7 @@ def resolve_cloudMessagingPing(_obj, _info,
   try:
     message_validated = SchemaValidateMessage(unknown = EXCLUDE).load(payload)
     # message format ok
-    res = send(
+    res = fcm_send(
       tokens  = g.user.cloud_messaging_device_tokens(),
       payload = message_validated
     )

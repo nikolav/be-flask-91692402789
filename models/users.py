@@ -44,7 +44,11 @@ POLICY_APPROVED    = os.getenv('POLICY_APPROVED')
 POLICY_EMAIL       = os.getenv('POLICY_EMAIL')
 POLICY_FILESTORAGE = os.getenv('POLICY_FILESTORAGE')
 
-DEFAULT_USER_CREATE_POLICIES = (POLICY_APPROVED, POLICY_EMAIL, POLICY_FILESTORAGE,)
+DEFAULT_USER_CREATE_POLICIES = (
+  POLICY_APPROVED, 
+  POLICY_EMAIL, 
+  POLICY_FILESTORAGE,
+)
 
 
 class Users(MixinTimestamps, MixinIncludesTags, db.Model):
@@ -240,7 +244,7 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
 
   @staticmethod
   def create_user(*, email, password, 
-                  policies = DEFAULT_USER_CREATE_POLICIES):
+                policies = DEFAULT_USER_CREATE_POLICIES):
     u = Users(
       email    = email,
       password = hashPassword(password)
@@ -269,6 +273,6 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   def email_exists(email):
     return 0 < db.session.scalar(
       db.select(func.count(Users.id))
-        .where(Users.email == email)
+        .where(email == Users.email)
     )
 

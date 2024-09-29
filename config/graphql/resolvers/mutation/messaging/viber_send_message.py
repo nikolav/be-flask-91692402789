@@ -7,7 +7,7 @@ from flask_app           import URL_VIBER_MESSAGE_POST
 
 @mutation.field('viberSendTextMessage')
 def resolve_viberSendTextMessage(_obj, _info, payload):
-  status = { 'error': None, 'result': None }
+  r = { 'error': None, 'status': None }
   result = None
 
   try:
@@ -23,10 +23,10 @@ def resolve_viberSendTextMessage(_obj, _info, payload):
                     if channel_name in vib_channels]
   
   except Exception as err:
-    status['error'] = str(err)
+    r['error'] = str(err)
     
   else:
-    status['result'] = result
+    r['status'] = result
     
-  return status
+  return r
 

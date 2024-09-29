@@ -1,10 +1,10 @@
 from firebase_admin import messaging
 
 
-def send(*, tokens, payload):  
+def fcm_send(tokens, payload):
   return messaging.send_each(
     [messaging.Message(
-      token = tok, 
-      data  = payload,
-    ) for tok in tokens])
+                token = token, 
+                data  = payload
+              ) for token in tokens])
 

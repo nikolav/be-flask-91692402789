@@ -1,6 +1,7 @@
 #!/bin/bash
 
 WSERVER="./wserver.sh"
+VARS_PATH="./deploy-vars.sh"
 
 
 # update packages
@@ -45,15 +46,20 @@ ufw allow 5544
 ufw enable
 
 
-# shortcuts
-alias ll='ls -AlFht --color=auto --group-directories-first '
-alias gs='git status '
-
+# set env variables
+if [ -f "$VARS_PATH" ]; then
+  source "$VARS_PATH"
+fi
 
 #  exe server script
 if [ -e "$WSERVER" ]; then
   chmod 755 $WSERVER
 fi
+
+
+# shortcuts
+alias ll='ls -AlFht --color=auto --group-directories-first '
+alias gs='git status '
 
 
 # status check
