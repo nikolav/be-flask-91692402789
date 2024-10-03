@@ -48,8 +48,8 @@ CORS(bp_auth)
 @arguments_schema(SchemaAuthRegister())
 def auth_register():
 
-  email    = g.arguments['email']
-  password = g.arguments['password']
+  email     = g.arguments['email']
+  password  = g.arguments['password']
   
   token = ''
   error = '@error/auth:register'
@@ -123,9 +123,9 @@ def auth_social():
   #   uid?
   #   photoURL?
   #   displayName?
-  token      = ''
-  error      = '@error/auth:social'
-  user_added = False
+  token      = None
+  user_added = None
+  error      = None
   
   try:
     data      = request.get_json()
@@ -133,33 +133,30 @@ def auth_social():
     
     # schema validated; authenticate authdata
     u = db.session.scalar(
-      db.select(Users)
-        .where(Users.email == auth_data['email'])
-    )
+      db.select(
+        Users
+      ).where(
+        auth_data['email'] == Users.email
+      ))
         
     if not u:
       u = Users.create_user(
         email    = auth_data['email'],
-        password = auth_data['uid'] if 'uid' in auth_data else secrets.token_bytes(1024).hex(),
+        # password = auth_data['uid'] if 'uid' in auth_data else secrets.token_bytes().hex(),
+        password = auth_data['email'],
       )
-      user_added = True
-
+      user_added = u.id
+    
     # issue token
     token = issueToken({ 'id' : u.id })
+          
+    u.profile_update(patch = { 'authProvider': auth_data })
+    db.session.commit()
           
   except Exception as err:
     error = err
   
   else:
-
-    try:
-      # store social auth data
-      u.profile_update(authProvider = auth_data)
-      db.session.commit()
-
-    except Exception as err:
-      raise err
-
     # auth social valid, send token, 201
     if user_added and token:
       io.emit(IOEVENT_AUTH_NEWUSER)

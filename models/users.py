@@ -180,7 +180,7 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   
   # public
   def get_profile(self):
-    return self.profile if self.profile else {}
+    return self.profile if None != self.profile else {}
   
   # public
   def profile_updated(self, patch):

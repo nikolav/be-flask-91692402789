@@ -90,11 +90,14 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
   @staticmethod
   def by_tag_and_id(tag, id):
     return db.session.scalar(
-      db.select(Docs)
-        .join(Docs.tags)
-        .where(
-          Tags.tag == tag, 
-          Docs.id  == id))
+      db.select(
+        Docs
+      ).join(
+        Docs.tags
+      ).where(
+          tag == Tags.tag,
+          id  == Docs.id
+      ))
       
   
   @staticmethod

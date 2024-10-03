@@ -202,7 +202,7 @@ type Query {
   postsImages(id: ID): [JsonData!]!
 
   # docs
-  docsByTopic(topic: String!): [JsonData!]!
+  docsByTopic(topic: String!, order: Int): [JsonData!]!
   docByDocId(doc_id: String!): JsonData!
   tagsByDocId(id: ID!): [String!]!
 

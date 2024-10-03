@@ -25,6 +25,10 @@ from models.docs import DocsTags
 
 
 class AssetsType(Enum):
+  # communicate announcements; users can not comment in channels
+  DIGITAL_CHANNEL   = 'DIGITAL_CHANNEL:YqmefT'
+  # custom commnication for users
+  DIGITAL_CHAT      = 'DIGITAL_CHAT:4nASbEj8pFvqm'
   DIGITAL_FORM      = 'DIGITAL_FORM:TzZJs5PZqcWc'
   PEOPLE_GROUP_TEAM = 'PEOPLE_GROUP_TEAM:sEdkj9r'
   PHYSICAL_STORE    = 'PHYSICAL_STORE:5btoy9I8IKgT0RJO'

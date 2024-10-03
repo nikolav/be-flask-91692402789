@@ -10,3 +10,4 @@ def check(sPassword, hexPasswordHashed):
   bPassword       = sPassword.encode()
   bPasswordHashed = bytes.fromhex(hexPasswordHashed)
   return bcrypt.checkpw(bPassword, bPasswordHashed)
+
