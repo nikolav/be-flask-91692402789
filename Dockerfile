@@ -8,10 +8,11 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 # add chrome --headless for pdfs
 RUN apt update
+# RUN apt upgrade
 RUN apt-get update -y
 RUN curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
-RUN rm google-chrome-stable_current_amd64.deb
+RUN rm ./google-chrome-stable_current_amd64.deb
 
 COPY . .
 
