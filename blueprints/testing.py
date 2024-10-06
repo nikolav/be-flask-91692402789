@@ -9,13 +9,6 @@ CORS(bp_testing)
 
 @bp_testing.route('/', methods = ('POST',))
 def testing_home(): 
-  from flask_app import db
-  from models.users import Users
-  from models.users import UsersTagsStatus
-  u = db.session.get(Users, 1)
-  u.availability_commit(UsersTagsStatus.AWAY.value)
-  return { 'id': u.id }
-
   # from flask import g
   # from servcies.firebase.messaging import send
   # from datetime import datetime
