@@ -37,6 +37,7 @@ _schemaDocsDumpMany = SchemaSerializeDocJsonTimes(many = True)
 
 class DocsTags(Enum):
   ASSETS_FORM_SUBMISSION = 'ASSETS_FORM_SUBMISSION:5JTfkV8'
+  IMAGE_PRODUCT          = 'IMAGE_PRODUCT:06koI97IiCW'
   
 
 # https://docs.sqlalchemy.org/en/20/tutorial/metadata.html#declaring-mapped-classes

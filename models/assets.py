@@ -25,17 +25,21 @@ from models.docs import DocsTags
 
 
 class AssetsType(Enum):
-  # communicate announcements; users can not comment in channels
+  # DIGITAL = "Digital Asset"
+  #  communicate announcements; users can not comment in channels
   DIGITAL_CHANNEL   = 'DIGITAL_CHANNEL:YqmefT'
-  # custom commnication for users
+  #  custom commnication for users
   DIGITAL_CHAT      = 'DIGITAL_CHAT:4nASbEj8pFvqm'
   DIGITAL_FORM      = 'DIGITAL_FORM:TzZJs5PZqcWc'
+
+  # GROUP = "Grop Asset"
   PEOPLE_GROUP_TEAM = 'PEOPLE_GROUP_TEAM:sEdkj9r'
+
+  # PHYSICAL = "Physical Asset"
+  PHYSICAL_PRODUCT  = 'PHYSICAL_PRODUCT:u1zDoNxQnYLnHHbp'
   PHYSICAL_STORE    = 'PHYSICAL_STORE:5btoy9I8IKgT0RJO'
-  # DIGITAL   = "Digital Asset"
+
   # FINANCIAL = "Financial Asset"
-  # GROUP     = "Grop Asset"
-  # PHYSICAL  = "Physical Asset"
 
 
 class AssetsStatus(Enum):
@@ -43,6 +47,7 @@ class AssetsStatus(Enum):
   CANCELED = 'CANCELED:2whyBKhy6vv98bPcsUNc'
   CLOSED   = 'CLOSED:bGbGsEnAk2xu9sye7'
   DONE     = 'DONE:6jRIWy6fWT3mT3uNuF2'
+  INACTIVE = 'INACTIVE:fdHJBPHGyC'
   PENDING  = 'PENDING:P4kOFE3HF'
 
 
@@ -87,6 +92,24 @@ class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
     # back_populates = 'assets'
   )
 
+  
+  # public
+  def product_images_all(self):
+    if self.type == AssetsType.PHYSICAL_PRODUCT.value:
+      return db.session.scalars(
+        db.select(
+          Docs
+        ).join(
+          Docs.tags
+        ).where(
+          self.id == Docs.asset_id,
+          DocsTags.IMAGE_PRODUCT.value == Tags.tag
+        ))
+    
+    # default
+    return []
+
+  
   # public
   def form_submissions_all(self):
     if AssetsType.DIGITAL_FORM.value == self.type:
@@ -102,11 +125,21 @@ class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
           )
         ).order_by(
           Docs.created_at.desc()
-        )
-      )
+        ))
+    
     # default
     return []
 
+
+  @staticmethod
+  def products_all():
+    return db.session.scalars(
+      db.select(
+        Assets
+      ).where(
+        AssetsType.PHYSICAL_PRODUCT.value == Assets.type
+      ))
+  
 
   @staticmethod
   def groups_all():
@@ -114,7 +147,7 @@ class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
       db.select(
         Assets
       ).where(
-        Assets.type == AssetsType.PEOPLE_GROUP_TEAM.value
+        AssetsType.PEOPLE_GROUP_TEAM.value == Assets.type
       ))
 
 
@@ -124,7 +157,7 @@ class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
       db.select(
         Assets
       ).where(
-        Assets.type == AssetsType.PHYSICAL_STORE.value
+        AssetsType.PHYSICAL_STORE.value == Assets.type
       ))
 
 

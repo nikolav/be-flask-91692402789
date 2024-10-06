@@ -62,10 +62,12 @@ type User {
   profile: JsonData
   products: [Product!]
   posts: [Post!]
+  tags: [String!]
   is_approved: Boolean
   is_manager: Boolean
   is_admin: Boolean
   is_external: Boolean
+  is_available: Boolean
   groups: [String!]
   email_verified: Boolean
   created_at: String
@@ -165,6 +167,25 @@ type ResultMailStatus {
   status: String
 }
 
+type Asset {
+  id: ID!
+  name: String!
+  code: String
+  type: String
+  location: String
+  status: String
+  condition: String
+  data: JsonData
+  notes: String
+
+  tags: [String!]
+  users: [User!]
+  author: User
+
+  created_at: String
+  updated_at: String
+}
+
 #########
 ## @Query
 
@@ -181,9 +202,9 @@ type Query {
   usersOnly(uids: [ID!]!): [User!]!
 
   # products
-  productsListAll: [Product!]!
+  productsList(pids: [ID!]): [Asset!]!
+
   productsListByUser(user_id: ID!): [Product!]!
-  productsListExact(products: [ID!]!): [Product!]!
   productsListByTags(tags: [String!]!): [Product!]!
   productsListPopular(length: Int): [Product!]!
   productsTotalAmountOrdered(pid: ID!): ResultTotalAmountOrdered!

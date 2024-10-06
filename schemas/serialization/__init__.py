@@ -30,6 +30,7 @@ class SchemaSerializeUsersTimes(SchemaSerializeTimes):
   profile   = fields.Dict()
 
   # virtual
+  tags      = fields.List(fields.String())
   products  = fields.List(fields.Nested(lambda: SchemaSerializeProductsTimes(exclude = ('user',))))
   posts     = fields.List(fields.Nested(lambda: SchemaSerializePosts(exclude = ('user',))))
   
@@ -40,8 +41,12 @@ class SchemaSerializeUsersTimes(SchemaSerializeTimes):
   is_external    = fields.Method('calc_is_external')
   groups         = fields.Method('calc_groups')
   email_verified = fields.Method('calc_email_verified')
+  is_available   = fields.Method('calc_is_available')
 
 
+  def calc_is_available(self, u):
+    return u.is_available()
+  
   def calc_groups(self, u):
     return [g.name for g in u.groups()]
   
@@ -64,8 +69,9 @@ class SchemaSerializeUsersTimes(SchemaSerializeTimes):
 class SchemaSerializeUsersWho(SchemaSerializeTimes):
 
   # fields
-  id    = fields.Integer()
-  email = fields.String()
+  id      = fields.Integer()
+  email   = fields.String()
+  profile = fields.Dict()
   
   # computed
   admin          = fields.Method('calc_admin')
@@ -141,15 +147,14 @@ class SchemaSerializeAssets(SchemaSerializeTimes):
   location  = fields.String()
   status    = fields.String()
   condition = fields.String()
-  meta      = fields.Dict()
+  data      = fields.Dict()
   notes     = fields.String()
   
   # virtal
   # users = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password',))))
   users      = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password', 'posts', 'products'))))
+  author     = fields.Nested(SchemaSerializeUsersTimes(exclude = ('password', 'posts', 'products')))
   tags       = fields.List(fields.String())
   docs       = fields.List(fields.Nested(SchemaSerializeDocJsonTimes()))
-  author     = fields.Nested(SchemaSerializeUsersTimes(exclude = ('password', 'posts', 'products')))
   assets_has = fields.List(fields.Nested(lambda: SchemaSerializeAssets(exclude = ('assets_has',))))
-
 

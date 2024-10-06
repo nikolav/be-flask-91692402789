@@ -2,6 +2,7 @@ import os
 import shutil
 from typing import List
 from typing import Optional
+from enum import Enum
 
 from flask import g
 
@@ -53,6 +54,15 @@ DEFAULT_USER_CREATE_POLICIES = (
 )
 
 
+# https://help.zoho.com/galleryDocuments/edbsne9896a615107dc695c0c42640947c15396f645651fa8eb1ae6632e434ba6231388ce5ff6e47742393c1b76377ff36fff?inline=true
+class UsersTagsStatus(Enum):
+  AVAILABLE      = 'AVAILABLE:vmWsUhVctBpu1BAp'
+  AWAY           = 'AWAY:p2oLyHH'
+  BUSY           = 'BUSY:woxs5B8Slw'
+  DO_NOT_DISTURB = 'DO_NOT_DISTURB:eb6Y5nXzlK'
+  INVISIBLE      = 'INVISIBLE:EDjVu'
+  
+
 class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   __tablename__ = usersTable
   
@@ -74,6 +84,19 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   # magic
   def __repr__(self):
     return f'<Users(id={self.id!r}, email={self.email!r})>'
+  
+  # public
+  def availability_commit(self, value):
+    self.profile_update(patch = { 'availability': value })
+    db.session.commit()
+  
+  # public
+  def availability_is(self, value):
+    return value == self.get_profile().get('availability')
+
+  # public
+  def is_available(self):
+    return self.availability_is(UsersTagsStatus.AVAILABLE.value)
   
   # public
   def can_manage_account(self, uid):
@@ -106,9 +129,8 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
         Users
       ).where(
         Assets.type.in_(types),
-        Users.id == self.id
-      )
-    )
+        self.id == Users.id
+      ))
   
   # public
   def groups(self):
@@ -128,6 +150,8 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
       self.policies_add(TAG_USERS_EXTERNAL)
     else:
       self.policies_rm(TAG_USERS_EXTERNAL)
+    
+    return self.is_external()
   
   # public
   def is_manager(self):
@@ -139,6 +163,8 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
       self.policies_add(POLICY_MANAGERS)
     else:
       self.policies_rm(POLICY_MANAGERS)
+    
+    return self.is_manager()
   
   # public
   def email_verified(self):
@@ -163,6 +189,8 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
       self.policies_add(POLICY_ADMINS)
     else:
       self.policies_rm(POLICY_ADMINS)
+    
+    return self.is_admin()
     
   # public
   def approved(self):

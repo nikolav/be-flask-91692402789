@@ -1,12 +1,9 @@
 
-from copy import deepcopy
-
 from flask import g
 
 from config.graphql.init    import mutation
 from flask_app              import db
 from models.users           import Users
-from utils.merge_strategies import dict_deepmerger_extend_lists as merger
 from flask_app              import IOEVENT_ACCOUNTS_UPDATED_prefix
 from flask_app              import io
 
@@ -25,7 +22,7 @@ def resolve_accountsProfilePatch(_obj, _inf, uid, patch):
       if not g.user.can_manage_account(u.id):
         raise Exception('accountsProfilePatch --access-denied')
       
-      profile_new = merger.merge(deepcopy(u.profile), patch)
+      profile_new = u.profile_updated(patch)
       u.profile = profile_new
       db.session.commit()
 
