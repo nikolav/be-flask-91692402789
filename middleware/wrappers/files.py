@@ -25,16 +25,19 @@ def files(fn_route):
           files_valid[name] = {
             # File{}
             'file': f,
+            
             # posted file data{}
             #   { 'title': 'foo', 'description': 'bar' }?
-            # 'data': json.loads(request.form[name]) if name in request.form else {},
-            'data': json.loads(request.form[f'{name}:data']) if f'{name}:data' in request.form else {},
-            'meta': json.loads(request.form[f'{name}:meta']) if f'{name}:meta' in request.form else {},
+            'data': json.loads(request.form.get(f'{name}:data', '{}')),
+            
+            # posted file meta{}
+            #   { 'tags': string[], 'emits': string }?
+            'meta': json.loads(request.form.get(f'{name}:meta', '{}'))
           }
 
       # abort if no files passed
       if not 0 < len(files_valid):
-        raise Exception
+        raise Exception('--no-files')
       
     except Exception as err:
       error  = err

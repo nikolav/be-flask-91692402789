@@ -8,11 +8,15 @@ from flask_app import APP_DOMAIN
 from config              import MAIL_RECIPIENTS
 from config.graphql.init import mutation
 
+from middleware.authguard import authguard
+from flask_app import POLICY_EMAIL
+
 
 @mutation.field('sendmail')
+@authguard(POLICY_EMAIL)
 def resolve_sendmail(_o, _i, subject, template, data):
+  r     = { 'error': None, 'status': None }
   res   = None
-  error = None
 
   try:
     res = mail.send(
@@ -32,9 +36,11 @@ def resolve_sendmail(_o, _i, subject, template, data):
     )
     
   except Exception as err:
-    error = err
+    r['error'] = str(err)
 
   else:
-    return { 'status': 'ok' if not res else str(res) }
+    # return { 'status': 'ok' if not res else str(res) }
+    r['status'] = 'ok' if not res else str(res)
   
-  return { 'error': str(error) }
+  return r
+

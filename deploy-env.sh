@@ -31,9 +31,9 @@ curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compo
 chmod +x /usr/local/bin/docker-compose
 
 
-## install selenium chrome webdriver
-## https://github.com/password123456/setup-selenium-with-chrome-driver-on-ubuntu_debian
-## https://chatgpt.com/c/24e8ac36-02ac-4688-8ae4-a7062929978e
+## selenium chrome webdriver, installation
+##  https://github.com/password123456/setup-selenium-with-chrome-driver-on-ubuntu_debian
+##  https://chatgpt.com/c/24e8ac36-02ac-4688-8ae4-a7062929978e
 
 
 # allow app @ports
@@ -41,7 +41,9 @@ ufw allow OpenSSH
 ufw allow http
 ufw allow https
 ufw allow 'Nginx Full'
+# endpoint:app
 ufw allow 5000
+# endpoint:db
 ufw allow 5544
 ufw enable
 

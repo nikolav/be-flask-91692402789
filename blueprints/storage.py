@@ -24,19 +24,23 @@ from config    import TAG_IS_FILE
 from flask_app import UPLOAD_DIR
 from flask_app import UPLOAD_PATH
 
+from middleware.authguard import authguard
+from flask_app            import POLICY_FILESTORAGE
+
+
 # router config
 bp_storage = Blueprint('storage', __name__, url_prefix = '/storage')
 
 # cors blueprints as wel for cross-domain requests
 CORS(bp_storage)
 
-
 @bp_storage.route('/', methods = ('POST',))
-# @authguard(os.getenv('POLICY_FILESTORAGE'))
+@authguard(POLICY_FILESTORAGE)
 @files
 def storage_upload():
   saved  = {}
   status = 400
+  
   tag_storage_ = f'{TAG_STORAGE}{g.user.id}'
 
   for name, node in g.files.items():
@@ -55,69 +59,63 @@ def storage_upload():
     )
 
     try:
-
       # ensure path exists
-      try:
-        os.makedirs(os.path.dirname(filepath_))
-
-      except:
-        pass
+      os.makedirs(os.path.dirname(filepath_), 
+                  exist_ok = True)
       
       # save file
       node['file'].save(filepath_)
+
+      if not os.path.exists(filepath_):
+        raise Exception('--no-os.path.exists')
+      
+      # get file:meta
+      file_data = {
+        'file_id'  : file_id_,
+        'user_id'  : g.user.id,
+        'filename' : filename_,
+        'path'     : filepath_,
+        'size'     : os.path.getsize(filepath_),
+        'mimetype' : mimetype(node['file']),
+      }
+      
+      # assign fields @.data { title, description }
+      #  can require `title` and `description` from users
+      #   (..supply additional data on nodes to app users)
+      file_data.update(node['data'])
+      file_data = SchemaStorageFile().load(file_data)
+
+      doc_file_data = Docs(data = file_data)
+      
+      tag_isfile = Tags.by_name(TAG_IS_FILE,  create = True)
+      tag        = Tags.by_name(tag_storage_, create = True)
+      
+      # link file tags
+      tag_isfile.docs.append(doc_file_data)
+      tag.docs.append(doc_file_data)
+
+      # additional tags/topics
+      #  for grouping/filtering
+      #   pass at client { .meta.tags[] }
+      for topic in node['meta'].get('tags', []):
+        t = Tags.by_name(topic, create = True)
+        t.docs.append(doc_file_data)
+
+      db.session.commit()
+
       
     except Exception as err:
       raise err
     
+    
     else:
-      if os.path.exists(filepath_):
-        file_data = {
-            'file_id'  : file_id_,
-            'user_id'  : g.user.id,
-            'filename' : filename_,
-            'path'     : filepath_,
-            'size'     : os.path.getsize(filepath_),
-            'mimetype' : mimetype(node['file']),
-          }
-        # assign fields @.data { title, description }
-        #  can require `title` and `description` from users
-        #   (..supply additional data on nodes to app users)
-        file_data.update(node['data'])
-
-        try:
-          file_data = SchemaStorageFile().load(file_data)
-
-        except:
-          pass
-
-        else:
-
-          # persist
-          try:
-            
-            doc_file_data = Docs(data = file_data)
-            
-            tag        = Tags.by_name(tag_storage_, create = True)
-            tag_isfile = Tags.by_name(TAG_IS_FILE,  create = True)
-            
-            # link file tags
-            tag.docs.append(doc_file_data)
-            tag_isfile.docs.append(doc_file_data)
-
-            db.session.commit()
-            
-          except:
-            pass
-          
-          else:
-
-            # @201; file uploaded, data cached
-            saved[name] = doc_plain(doc_file_data)
-            
-            # provide `node.emits` field at clients
-            #  send on demand signals to clients
-            if 'emits' in node['meta']:
-              io.emit(node['meta']['emits'])
+      # @201; file uploaded, data cached
+      saved[name] = doc_plain(doc_file_data)
+      
+      # send on demand signals to clients
+      #  provide `node.emits` field at clients
+      if 'emits' in node['meta']:
+        io.emit(node['meta']['emits'])
 
   
   if 0 < len(saved):

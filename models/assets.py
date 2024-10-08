@@ -32,7 +32,7 @@ class AssetsType(Enum):
   DIGITAL_CHAT      = 'DIGITAL_CHAT:4nASbEj8pFvqm'
   DIGITAL_FORM      = 'DIGITAL_FORM:TzZJs5PZqcWc'
 
-  # GROUP = "Grop Asset"
+  # GROUP = "Group Asset"
   PEOPLE_GROUP_TEAM = 'PEOPLE_GROUP_TEAM:sEdkj9r'
 
   # PHYSICAL = "Physical Asset"

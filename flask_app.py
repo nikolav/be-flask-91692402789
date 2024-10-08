@@ -16,6 +16,10 @@ from flask_mail import Mail
 from src.classes import Base as DbModelBaseClass
 
 
+from config import TAG_STORAGE
+from config import TAG_VARS
+from config import TAG_IS_FILE
+
 # init env variables
 load_dotenv()
 

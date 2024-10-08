@@ -1,5 +1,4 @@
 import os
-import re
 import json
 
 from enum   import Enum
@@ -19,14 +18,19 @@ from . import productsTable
 from . import ordersTable
 from . import assetsTable
 from . import ln_docs_tags
-from .tags import Tags
+
+from models.tags import Tags
+
 from src.mixins import MixinTimestamps
 from src.mixins import MixinIncludesTags
 from src.mixins import MixinExistsID
+
 from schemas.serialization import SchemaSerializeDocJsonTimes
-from config import TAG_VARS
 
 from flask_app import VIBER_CHANNELS_DOCID
+from flask_app import TAG_STORAGE
+from flask_app import TAG_VARS
+from flask_app import TAG_IS_FILE
 
 
 TAG_USER_PROFILE_prefix = os.getenv('TAG_USER_PROFILE_prefix')
@@ -70,6 +74,22 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
   # magic
   def __repr__(self):
     return f'Docs({json.dumps(self.dump())})'
+  
+  
+  # public
+  def get_data(self, updates = None):
+    d = self.data.copy()
+    if None != updates:
+      d.update(updates)
+    return d
+  
+  
+  @staticmethod
+  def storage_ls(uid = None):
+    return Docs.tagged(
+              TAG_IS_FILE 
+                if None == uid 
+                else f'{TAG_STORAGE}{uid}')
   
   
   @staticmethod
@@ -150,4 +170,5 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
 
   def dump(self, **kwargs):
     return _schemaDocsDump.dump(self, **kwargs)
+
 
