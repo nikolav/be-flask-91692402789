@@ -7,9 +7,14 @@ from sqlalchemy import DateTime
 from flask_app import db
 
 
-tblSuffix = os.getenv('TABLE_NAME_SUFFIX')
+from flask_app import PRODUCTION
+from flask_app import POLICY_APPROVED
 
-POLICY_APPROVED = os.getenv('POLICY_APPROVED')
+tblSuffix_dev        = os.getenv('TABLE_NAME_SUFFIX_dev')
+tblSuffix_production = os.getenv('TABLE_NAME_SUFFIX_production')
+
+tblSuffix = tblSuffix_production if PRODUCTION else tblSuffix_dev
+
 
 tagsTable     = f'tags{tblSuffix}'
 usersTable    = f'users{tblSuffix}'

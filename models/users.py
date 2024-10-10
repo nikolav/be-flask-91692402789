@@ -16,9 +16,9 @@ from . import db
 from . import usersTable
 from . import ln_users_tags
 from . import ln_users_assets
-from . import POLICY_APPROVED
 from src.mixins import MixinTimestamps
 from src.mixins import MixinIncludesTags
+from src.mixins import MixinByIds
 
 from models.tags     import Tags
 from models.docs     import Docs
@@ -32,27 +32,25 @@ from utils.pw  import hash as hashPassword
 from copy import deepcopy
 from utils.merge_strategies import dict_deepmerger_extend_lists as merger
 
-from flask_app import POLICY_MANAGERS
-from flask_app import TAG_USERS_EXTERNAL
 from flask_app import KEY_FCM_DEVICE_TOKENS
+from flask_app import POLICY_ADMINS
+from flask_app import POLICY_APPROVED
+from flask_app import POLICY_EMAIL
+from flask_app import POLICY_FILESTORAGE
+from flask_app import POLICY_MANAGERS
+from flask_app import TAG_ARCHIVED
+from flask_app import TAG_EMAIL_VERIFIED
+from flask_app import TAG_USERS_EXTERNAL
+from flask_app import UPLOAD_DIR
+from flask_app import UPLOAD_PATH
+from flask_app import USER_EMAIL
 
-
-POLICY_ADMINS         = os.getenv('POLICY_ADMINS')
-TAG_ARCHIVED          = os.getenv('TAG_ARCHIVED')
-TAG_EMAIL_VERIFIED    = os.getenv('TAG_EMAIL_VERIFIED')
-UPLOAD_PATH           = os.getenv('UPLOAD_PATH')
-USER_EMAIL            = os.getenv('USER_EMAIL')
-
-POLICY_APPROVED    = os.getenv('POLICY_APPROVED')
-POLICY_EMAIL       = os.getenv('POLICY_EMAIL')
-POLICY_FILESTORAGE = os.getenv('POLICY_FILESTORAGE')
 
 DEFAULT_USER_CREATE_POLICIES = (
   POLICY_APPROVED, 
   POLICY_EMAIL, 
   POLICY_FILESTORAGE,
 )
-
 
 # https://help.zoho.com/galleryDocuments/edbsne9896a615107dc695c0c42640947c15396f645651fa8eb1ae6632e434ba6231388ce5ff6e47742393c1b76377ff36fff?inline=true
 class UsersTagsStatus(Enum):
@@ -63,7 +61,7 @@ class UsersTagsStatus(Enum):
   INVISIBLE      = 'INVISIBLE:EDjVu'
   
 
-class Users(MixinTimestamps, MixinIncludesTags, db.Model):
+class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, db.Model):
   __tablename__ = usersTable
   
   id: Mapped[int] = mapped_column(primary_key = True)
@@ -84,6 +82,32 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
   # magic
   def __repr__(self):
     return f'<Users(id={self.id!r}, email={self.email!r})>'
+  
+  # public
+  def assets_belongs_to(self, *lsa, ANY = False):
+    return all(
+        self in a.users for a in lsa
+      ) if not ANY else any(
+        self in a.users for a in lsa
+      )
+    
+  # public
+  def assets_join(self, *lsa):
+    changes = 0
+    for g in filter(lambda a: self not in a.users, lsa):
+      g.users.append(self)
+      changes += 1
+
+    return changes
+
+  # public
+  def assets_leave(self, *lsa):
+    changes = 0
+    for g in filter(lambda a: self in a.users, lsa):
+      g.users.remove(self)
+      changes += 1
+
+    return changes
   
   # public
   def availability_commit(self, value):
@@ -275,7 +299,7 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
     
   @staticmethod
   def clear_storage(uid):
-    directory = os.path.join(UPLOAD_PATH.rstrip("/\\"), 'storage', str(uid))
+    directory = os.path.join(UPLOAD_PATH.rstrip("/\\"), UPLOAD_DIR, str(uid))
     if os.path.exists(directory) and os.path.isdir(directory):
       for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
@@ -333,5 +357,4 @@ class Users(MixinTimestamps, MixinIncludesTags, db.Model):
         Users.id.in_(uids)
       )
     )
-  
   

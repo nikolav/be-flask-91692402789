@@ -9,6 +9,7 @@ from sqlalchemy.orm import backref
 from sqlalchemy     import JSON
 
 from flask_app import db
+from flask_app import io
 
 from . import db
 from . import usersTable
@@ -18,10 +19,18 @@ from . import ln_users_assets
 from . import ln_assets_assets
 from src.mixins import MixinTimestamps
 from src.mixins import MixinIncludesTags
+from src.mixins import MixinByIds
+from src.mixins import MixinByIdsAndType
+from src.mixins import MixinExistsID
 
 from models.docs import Docs
 from models.tags import Tags
 from models.docs import DocsTags
+
+from utils import Unique
+
+from copy import deepcopy
+from utils.merge_strategies import dict_deepmerger_extend_lists as merger
 
 
 class AssetsType(Enum):
@@ -59,7 +68,13 @@ class AssetsCondition(Enum):
   OUT_OF_SERVICE = 'OUT_OF_SERVICE:KpJUn2IqM2oj'
 
 
-class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
+# io.emit(f{AssetsIOEvents.UPDATE.value}{ID})
+class AssetsIOEvents(Enum):
+  UPDATE        = 'UPDATE:4BPXLhqdWOf:'
+  GROUPS_CHANGE = 'GROUPS_CHANGE:nOvrgoYvY9lEtYW'
+
+
+class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, MixinExistsID, db.Model):
   __tablename__ = assetsTable
 
   # ID
@@ -92,6 +107,22 @@ class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
     # back_populates = 'assets'
   )
 
+  # public
+  def data_updated(self, patch):
+    return merger.merge(deepcopy(self.get_data()), patch)
+  # public
+  def data_update(self, *, patch, merge = True):
+    self.data = self.data_updated(patch) if merge else patch
+
+  # public
+  def get_data(self):
+    d = self.data if None != self.data else {}
+    return d.copy()
+
+  # public
+  def ioemit_update(self):
+    io.emit(f'{AssetsIOEvents.UPDATE.value}{self.id}')
+  
   
   # public
   def product_images_all(self):
@@ -132,6 +163,16 @@ class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
 
 
   @staticmethod
+  def ioemit_groups_change():
+    io.emit(AssetsIOEvents.GROUPS_CHANGE.value)
+
+
+  @staticmethod
+  def codegen(*, length = 4, prefix = 'Assets:'):
+    return f'{prefix}{Unique.id(length = length)}'
+
+
+  @staticmethod
   def products_all():
     return db.session.scalars(
       db.select(
@@ -148,6 +189,20 @@ class Assets(MixinTimestamps, MixinIncludesTags, db.Model):
         Assets
       ).where(
         AssetsType.PEOPLE_GROUP_TEAM.value == Assets.type
+      ))
+
+  
+  @staticmethod
+  def groups_only(gids):
+    '''
+      list groups by provided ids
+    '''
+    return db.session.scalars(
+      db.select(
+        Assets
+      ).where(
+        AssetsType.PEOPLE_GROUP_TEAM.value == Assets.type,
+        Assets.id.in_(gids)
       ))
 
 

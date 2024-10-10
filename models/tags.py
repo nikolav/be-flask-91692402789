@@ -48,17 +48,21 @@ class Tags(db.Model):
 
     try:
       tag = db.session.scalar(
-        db.select(Tags).where(Tags.tag == tag_name)
-      )
-
-    except Exception as error:
-      raise error
-
-    else:
+        db.select(
+          Tags
+        ).where(
+          Tags.tag == tag_name
+        ))
+      
       if not tag:
         if True == create:
           tag = Tags(tag = tag_name)
           db.session.add(tag)
           db.session.commit()
+
+
+    except Exception as error:
+      raise error
     
+        
     return tag

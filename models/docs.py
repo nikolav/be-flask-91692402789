@@ -6,6 +6,7 @@ from typing import List
 from typing import Optional
 
 from sqlalchemy     import JSON
+from sqlalchemy     import text
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
@@ -86,11 +87,7 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
   
   @staticmethod
   def storage_ls(uid = None):
-    return Docs.tagged(
-              TAG_IS_FILE 
-                if None == uid 
-                else f'{TAG_STORAGE}{uid}')
-  
+    return Docs.tagged(TAG_IS_FILE if None == uid else f'{TAG_STORAGE}{uid}')
   
   @staticmethod
   def viber_channels():
@@ -99,8 +96,14 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
 
   @staticmethod
   def tagged(tag_name):
-    tag = Tags.by_name(tag_name)
-    return tag.docs if tag else []
+    return db.session.scalars(
+      db.select(
+        Docs
+      ).join(
+        Docs.tags
+      ).where(
+        Tags.tag == tag_name
+      ))
   
   
   @staticmethod

@@ -137,9 +137,7 @@ def storage_download(file_id):
 
   try:
 
-    tag_isfile = Tags.by_name(TAG_IS_FILE, create = True)
-
-    for doc in tag_isfile.docs:
+    for doc in Docs.storage_ls():
       if file_id == doc.data['file_id']:
         doc_dl_file = doc
         break

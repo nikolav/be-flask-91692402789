@@ -31,3 +31,6 @@ from .posts import posts_images
 from .posts import posts_list_only
 
 from .pdf import pdf_download
+
+from .groups import groups_list
+

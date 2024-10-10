@@ -8,7 +8,9 @@ CORS(bp_testing)
 
 
 @bp_testing.route('/', methods = ('POST',))
-def testing_home(): 
+def testing_home():     
+  from schemas.validation.assets import SchemaInputAssetsAdd
+  return SchemaInputAssetsAdd().load({'location': 'foo'})
   # from flask import g
   # from servcies.firebase.messaging import send
   # from datetime import datetime

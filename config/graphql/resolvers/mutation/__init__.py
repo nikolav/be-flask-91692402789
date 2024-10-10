@@ -31,3 +31,9 @@ from .mail import sendmail
 from .messaging import cloud_messaging_ping
 from .messaging import viber_send_message
 
+from .assets import groups_configure
+from .assets import groups_add
+from .assets import assets_rm
+from .assets import assets_update
+
+

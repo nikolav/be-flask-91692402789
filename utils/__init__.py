@@ -1,7 +1,10 @@
 import re
+import secrets
+import string
 from random         import randbytes
 from functools      import reduce
 from werkzeug.utils import secure_filename
+
 
 
 re_base_ext = r'(.*)\.([^\.]+)'
@@ -18,3 +21,8 @@ class Lists():
   def intersection(*lists):
     return reduce(set.intersection, map(set, lists))
 
+class Unique():
+  @staticmethod
+  def id(*, length = 5):
+    alpha = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(alpha) for _ in range(length))

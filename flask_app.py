@@ -12,50 +12,51 @@ from flask_socketio import SocketIO
 # https://pythonhosted.org/Flask-Mail/
 from flask_mail import Mail
 
-
 from src.classes import Base as DbModelBaseClass
 
 
-from config import TAG_STORAGE
-from config import TAG_VARS
-from config import TAG_IS_FILE
+FLASKAPP_PATH = os.path.dirname(__file__)
 
-# init env variables
+# env:init
 load_dotenv()
 
 ENV        = os.getenv('ENV')
 PRODUCTION = 'production' == ENV
 
-ADMIN_EMAIL                    = os.getenv('ADMIN_EMAIL')
-APP_DOMAIN                     = os.getenv('APP_DOMAIN')
+# app
 APP_NAME                       = os.getenv('APP_NAME')
+APP_DOMAIN                     = os.getenv('APP_DOMAIN')
+ADMIN_EMAIL                    = os.getenv('ADMIN_EMAIL')
 APP_SECRET_KEY                 = os.getenv('SECRET_KEY')
-AWS_END_USER_MESSAGING_ENABLED = bool(os.getenv('AWS_END_USER_MESSAGING_ENABLED'))
-CLOUD_MESSAGING_CERTIFICATE    = os.getenv('CLOUD_MESSAGING_CERTIFICATE')
-CLOUD_MESSAGING_INIT           = bool(os.getenv('CLOUD_MESSAGING_INIT'))
-DATABASE_URI                   = os.getenv('DATABASE_URI_production') if PRODUCTION else os.getenv('DATABASE_URI_dev')
-KEY_FCM_DEVICE_TOKENS          = os.getenv('KEY_FCM_DEVICE_TOKENS')
+USER_EMAIL                     = os.getenv('USER_EMAIL')
+
+# policies
 POLICY_ADMINS                  = os.getenv('POLICY_ADMINS')
 POLICY_APPROVED                = os.getenv('POLICY_APPROVED')
 POLICY_EMAIL                   = os.getenv('POLICY_EMAIL')
 POLICY_FILESTORAGE             = os.getenv('POLICY_FILESTORAGE')
 POLICY_MANAGERS                = os.getenv('POLICY_MANAGERS')
+
+# db
+DATABASE_URI                   = os.getenv('DATABASE_URI_production') if PRODUCTION else os.getenv('DATABASE_URI_dev')
 REBUILD_SCHEMA                 = bool(os.getenv('REBUILD_SCHEMA'))
-SCHEDULER_INIT                 = bool(os.getenv('SCHEDULER_INIT'))
+# db records/tags
 TAG_ARCHIVED                   = os.getenv('TAG_ARCHIVED')
 TAG_EMAIL_VERIFIED             = os.getenv('TAG_EMAIL_VERIFIED')
 TAG_USERS_EXTERNAL             = os.getenv('TAG_USERS_EXTERNAL')
-UPLOAD_DIR                     = os.getenv('UPLOAD_DIR')
-UPLOAD_PATH                    = os.getenv('UPLOAD_PATH')
-URL_VIBER_MESSAGE_POST         = os.getenv('URL_VIBER_MESSAGE_POST')
-USER_EMAIL                     = os.getenv('USER_EMAIL')
-VIBER_CHANNELS_DOCID           = os.getenv('VIBER_CHANNELS_DOCID')
+from config import TAG_STORAGE
+from config import TAG_VARS
+from config import TAG_IS_FILE
 
-# vars:secret
+# paths
+UPLOAD_PATH                    = FLASKAPP_PATH
+UPLOAD_DIR                     = os.getenv('UPLOAD_DIR')
+
+# secrets, tokens
 JWT_SECRET_VERIFY_EMAIL   = os.getenv('JWT_SECRET_VERIFY_EMAIL')
 JWT_SECRET_PASSWORD_RESET = os.getenv('JWT_SECRET_PASSWORD_RESET')
 
-# vars:cors
+# cors
 IO_CORS_ALLOW_ORIGINS = (
   os.getenv('IOCORS_ALLOW_ORIGIN_dev'),
   os.getenv('IOCORS_ALLOW_ORIGIN_dev2'),
@@ -64,10 +65,24 @@ IO_CORS_ALLOW_ORIGINS = (
   os.getenv('IOCORS_ALLOW_ORIGIN_frikomnikolavrs')
 )
 
-# vars:io-events
+# io:events
 IOEVENT_ACCOUNTS_UPDATED        = os.getenv('IOEVENT_ACCOUNTS_UPDATED')
 IOEVENT_ACCOUNTS_UPDATED_prefix = os.getenv('IOEVENT_ACCOUNTS_UPDATED_prefix')
 IOEVENT_AUTH_NEWUSER            = os.getenv('IOEVENT_AUTH_NEWUSER')
+
+# scheduler
+SCHEDULER_INIT                 = bool(os.getenv('SCHEDULER_INIT'))
+
+# services:cloud
+#  firebase
+CLOUD_MESSAGING_CERTIFICATE    = os.getenv('CLOUD_MESSAGING_CERTIFICATE')
+CLOUD_MESSAGING_INIT           = bool(os.getenv('CLOUD_MESSAGING_INIT'))
+KEY_FCM_DEVICE_TOKENS          = os.getenv('KEY_FCM_DEVICE_TOKENS')
+#  aws
+AWS_END_USER_MESSAGING_ENABLED = bool(os.getenv('AWS_END_USER_MESSAGING_ENABLED'))
+#  viber
+URL_VIBER_MESSAGE_POST         = os.getenv('URL_VIBER_MESSAGE_POST')
+VIBER_CHANNELS_DOCID           = os.getenv('VIBER_CHANNELS_DOCID')
 
 
 # app:main

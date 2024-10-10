@@ -30,3 +30,27 @@ class MixinExistsID():
         id == cls.id
       )
     )
+
+class MixinByIds():
+  @classmethod
+  def by_ids(cls, *ids):
+    q = db.select(
+        cls
+      ).where(
+        cls.id.in_(ids))
+    return db.session.scalars(q)
+
+class MixinByIdsAndType():
+  @classmethod
+  def by_ids_and_type(cls, *ids, type = None):
+    q = db.select(
+        cls
+      ).where(
+        cls.id.in_(ids)
+      )
+    if None != type:
+      q = q.where(
+          type == cls.type
+        )
+    return db.session.scalars(q)
+

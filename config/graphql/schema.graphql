@@ -181,6 +181,7 @@ type Asset {
   tags: [String!]
   users: [User!]
   author: User
+  docs: [JsonData!]
 
   created_at: String
   updated_at: String
@@ -233,6 +234,9 @@ type Query {
   # storage
   storageList: [StorageFileInfo!]!
   storageListAll: [StorageFileInfo!]!
+
+  # groups
+  groupsList(gids: [ID!]): [Asset!]!
 }
 
 ############
@@ -293,4 +297,10 @@ type Mutation {
   # viber
   # https://developers.viber.com/docs/tools/channels-post-api/
   viberSendTextMessage(payload: JsonData!): JsonData!
+
+  # assets, groups
+  groupsAdd(name: String!, fields: JsonData): Asset
+  assetsRemove(aids: [ID!]!): JsonData!
+  groupsGUConfigure(guConfig: JsonData!): JsonData!
+  assetsUpdate(aid: ID!, fields: JsonData): JsonData!
 }
