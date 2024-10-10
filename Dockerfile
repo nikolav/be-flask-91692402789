@@ -1,10 +1,10 @@
-FROM python:3
+FROM python:3.12
 
 WORKDIR /home/app
 
 # requirements
 COPY requirements.txt ./
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # add chrome --headless for pdfs
 RUN apt update
