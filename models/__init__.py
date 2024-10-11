@@ -33,6 +33,9 @@ lnTablePostsTags      = f'ln_posts_tags{tblSuffix}'
 lnTableAssetsTags     = f'ln_assets_tags{tblSuffix}'
 lnTableUsersAssets    = f'ln_users_assets{tblSuffix}'
 lnTableAssetsAssets   = f'ln_assets_assets{tblSuffix}'
+lnTableUsersUsersFollow = f'ln_users_users_follow{tblSuffix}'
+lnTableUsersUsersManage = f'ln_users_users_manage{tblSuffix}'
+
 
 # link tables, *:*
 ln_users_tags = db.Table(
@@ -90,5 +93,17 @@ ln_assets_assets = db.Table(
   lnTableAssetsAssets,
   db.Column('asset_l_id', db.ForeignKey(f'{assetsTable}.id'),  primary_key = True),
   db.Column('asset_r_id', db.ForeignKey(f'{assetsTable}.id'),  primary_key = True),
+)
+
+ln_users_users_follow = db.Table(
+  lnTableUsersUsersFollow,
+  db.Column('users_l_id', db.ForeignKey(f'{usersTable}.id'),  primary_key = True),
+  db.Column('users_r_id', db.ForeignKey(f'{usersTable}.id'),  primary_key = True),
+)
+
+ln_users_users_manage = db.Table(
+  lnTableUsersUsersManage,
+  db.Column('users_l_id', db.ForeignKey(f'{usersTable}.id'),  primary_key = True),
+  db.Column('users_r_id', db.ForeignKey(f'{usersTable}.id'),  primary_key = True),
 )
 

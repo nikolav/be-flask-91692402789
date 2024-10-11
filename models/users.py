@@ -11,11 +11,14 @@ from sqlalchemy     import JSON
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref
 
 from . import db
 from . import usersTable
 from . import ln_users_tags
 from . import ln_users_assets
+from . import ln_users_users_follow
+from . import ln_users_users_manage
 from src.mixins import MixinTimestamps
 from src.mixins import MixinIncludesTags
 from src.mixins import MixinByIds
@@ -78,6 +81,25 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, db.Model):
   docs         : Mapped[List['Docs']]     = relationship(back_populates = 'user')
   assets       : Mapped[List['Assets']]   = relationship(secondary = ln_users_assets, back_populates = 'users')
   assets_owned : Mapped[List['Assets']]   = relationship(back_populates = 'author') # assets created by the user
+
+  # self-referential association, has|belongs-to assets
+  users_following: Mapped[List['Users']] = relationship(
+    secondary      = ln_users_users_follow, 
+    primaryjoin    = id == ln_users_users_follow.c.users_l_id, 
+    secondaryjoin  = id == ln_users_users_follow.c.users_r_id, 
+    backref        = backref( 'users_followers', lazy='dynamic')
+    # back_populates = 'assets'
+  )
+
+  # self-referential association, has|belongs-to assets
+  users_managing: Mapped[List['Users']] = relationship(
+    secondary      = ln_users_users_manage, 
+    primaryjoin    = id == ln_users_users_manage.c.users_l_id, 
+    secondaryjoin  = id == ln_users_users_manage.c.users_r_id, 
+    backref        = backref( 'users_managers', lazy='dynamic')
+    # back_populates = 'assets'
+  )
+
 
   # magic
   def __repr__(self):
