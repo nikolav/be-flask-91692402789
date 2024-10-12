@@ -34,3 +34,5 @@ from .pdf import pdf_download
 
 from .groups import groups_list
 
+from .assets import assets_list
+

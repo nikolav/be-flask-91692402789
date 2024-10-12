@@ -235,8 +235,9 @@ type Query {
   storageList: [StorageFileInfo!]!
   storageListAll: [StorageFileInfo!]!
 
-  # groups
+  # assets, groups
   groupsList(gids: [ID!]): [Asset!]!
+  assetsList(aids: [ID!], type: String): [Asset!]!
 }
 
 ############
@@ -299,8 +300,7 @@ type Mutation {
   viberSendTextMessage(payload: JsonData!): JsonData!
 
   # assets, groups
-  groupsAdd(name: String!, fields: JsonData): Asset
   assetsRemove(aids: [ID!]!): JsonData!
   groupsGUConfigure(guConfig: JsonData!): JsonData!
-  assetsUpdate(aid: ID!, fields: JsonData): JsonData!
+  assetsUpsert(fields: JsonData!, aid: ID): JsonData!
 }

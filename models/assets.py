@@ -22,6 +22,7 @@ from src.mixins import MixinIncludesTags
 from src.mixins import MixinByIds
 from src.mixins import MixinByIdsAndType
 from src.mixins import MixinExistsID
+from src.mixins import MixinFieldMergeable
 
 from models.docs import Docs
 from models.tags import Tags
@@ -53,6 +54,7 @@ class AssetsType(Enum):
 
 class AssetsStatus(Enum):
   ACTIVE   = 'ACTIVE:YjCrzsLhGtiE4f3ffO'
+  ARCHIVED = 'ARCHIVED:zfbooZxI5IXQmbZIZ'
   CANCELED = 'CANCELED:2whyBKhy6vv98bPcsUNc'
   CLOSED   = 'CLOSED:bGbGsEnAk2xu9sye7'
   DONE     = 'DONE:6jRIWy6fWT3mT3uNuF2'
@@ -68,13 +70,16 @@ class AssetsCondition(Enum):
   OUT_OF_SERVICE = 'OUT_OF_SERVICE:KpJUn2IqM2oj'
 
 
-# io.emit(f{AssetsIOEvents.UPDATE.value}{ID})
 class AssetsIOEvents(Enum):
-  UPDATE        = 'UPDATE:4BPXLhqdWOf:'
-  GROUPS_CHANGE = 'GROUPS_CHANGE:nOvrgoYvY9lEtYW'
+  UPDATE                  = 'UPDATE:4BPXLhqdWOf:'
 
 
-class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, MixinExistsID, db.Model):
+class AssetsCategories():
+  class PHYSICAL_PRODUCT(Enum):
+    sladoledi = 'PHYSICAL_PRODUCT_sladoledi:O9KsdYaGd032pPmruBK'
+
+
+class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, MixinExistsID, MixinFieldMergeable, db.Model):
   __tablename__ = assetsTable
 
   # ID
@@ -109,10 +114,12 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
 
   # public
   def data_updated(self, patch):
-    return merger.merge(deepcopy(self.get_data()), patch)
+    return self.dataField_updated(patch = patch)
+  
   # public
   def data_update(self, *, patch, merge = True):
-    self.data = self.data_updated(patch) if merge else patch
+    patched = self.data_updated(patch) if merge else patch
+    self.dataField_update(patch = patched)
 
   # public
   def get_data(self):
@@ -160,11 +167,6 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     
     # default
     return []
-
-
-  @staticmethod
-  def ioemit_groups_change():
-    io.emit(AssetsIOEvents.GROUPS_CHANGE.value)
 
 
   @staticmethod

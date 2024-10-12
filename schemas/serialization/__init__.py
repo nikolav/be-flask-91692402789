@@ -152,9 +152,9 @@ class SchemaSerializeAssets(SchemaSerializeTimes):
   
   # virtal
   # users = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password',))))
-  users      = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password', 'posts', 'products'))))
-  author     = fields.Nested(SchemaSerializeUsersTimes(exclude = ('password', 'posts', 'products')))
   tags       = fields.List(fields.String())
+  author     = fields.Nested(SchemaSerializeUsersTimes(exclude = ('password', 'posts', 'products')))
+  users      = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password', 'posts', 'products'))))
   docs       = fields.List(fields.Nested(SchemaSerializeDocJsonTimes()))
   assets_has = fields.List(fields.Nested(lambda: SchemaSerializeAssets(exclude = ('assets_has',))))
 

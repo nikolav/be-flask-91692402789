@@ -59,7 +59,7 @@ class MixinByIdsAndType():
 
 class MixinFieldMergeable():
   def dataField_updated(self, *, patch, FIELD = 'data'):
-    return merger.merge(deepcopy(getattr(self, FIELD)), patch)
+    return merger.merge(deepcopy(getattr(self, FIELD, {})), patch)
   
   def dataField_update(self, *, patch, FIELD = 'data'):
     setattr(self, FIELD, patch)

@@ -21,3 +21,8 @@ class SchemaInputAssets(SchemaInputAssetsAdd):
   type = fields.String()
 
 
+class SchemaInputAssetsCreate(SchemaInputAssetsAdd):
+  name = fields.String(required = True)
+  type = fields.String(required = True)
+
+

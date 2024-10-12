@@ -4,6 +4,7 @@ from sqlalchemy import func
 
 from config.graphql.init import mutation
 from flask_app           import db
+from flask_app           import io
 
 from models.assets import Assets
 from models        import ln_users_assets
@@ -15,16 +16,11 @@ from models        import ln_assets_assets
 def resolve_assetsRemove(_obj, _info, aids):
   r = { 'error': None, 'status': None }
   any_assets_removed = False
+  assets_affected = ()
 
   try:
-
-    assets_len_start = db.session.scalar(
-      db.select(
-        func.count(Assets.id)
-      ).where(
-        Assets.id.in_(aids)
-      ))
-    
+    assets_affected  = tuple(Assets.by_ids(*aids))
+    assets_len_start = len(assets_affected)
     
     if 0 < assets_len_start:
 
@@ -79,9 +75,10 @@ def resolve_assetsRemove(_obj, _info, aids):
   
   else:
     if any_assets_removed:
-      Assets.ioemit_groups_change()
+      for a_type in set(map(lambda a: a.type, assets_affected)):
+        if a_type:
+          io.emit(a_type)
 
 
   return r
-
 
