@@ -25,6 +25,7 @@ from models.tags import Tags
 from src.mixins import MixinTimestamps
 from src.mixins import MixinIncludesTags
 from src.mixins import MixinExistsID
+from src.mixins import MixinFieldMergeable
 
 from schemas.serialization import SchemaSerializeDocJsonTimes
 
@@ -41,12 +42,13 @@ _schemaDocsDumpMany = SchemaSerializeDocJsonTimes(many = True)
 
 
 class DocsTags(Enum):
-  ASSETS_FORM_SUBMISSION = 'ASSETS_FORM_SUBMISSION:5JTfkV8'
-  IMAGE_PRODUCT          = 'IMAGE_PRODUCT:06koI97IiCW'
+  ASSETS_FORM_SUBMISSION   = 'ASSETS_FORM_SUBMISSION:5JTfkV8'
+  IMAGE_PRODUCT            = 'IMAGE_PRODUCT:06koI97IiCW'
+  USER_AVAILABILITY_STATUS = 'USER_AVAILABILITY_STATUS:TOy5MSh9d7xmo94vvMED'
   
 
 # https://docs.sqlalchemy.org/en/20/tutorial/metadata.html#declaring-mapped-classes
-class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
+class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, MixinFieldMergeable, db.Model):
   __tablename__ = docsTable
 
   id   : Mapped[int]           = mapped_column(primary_key = True)
@@ -76,13 +78,18 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, db.Model):
   def __repr__(self):
     return f'Docs({json.dumps(self.dump())})'
   
-  
+    
   # public
   def get_data(self, updates = None):
     d = self.data.copy()
     if None != updates:
       d.update(updates)
     return d
+  
+  
+  @staticmethod
+  def users_availabilities():
+    return Docs.by_key(DocsTags.USER_AVAILABILITY_STATUS.value, create = True)
   
   
   @staticmethod

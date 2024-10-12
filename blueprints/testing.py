@@ -9,11 +9,6 @@ CORS(bp_testing)
 
 @bp_testing.route('/', methods = ('POST',))
 def testing_home():     
-  from flask_app import db
-  from models.users import Users
-  from schemas.serialization import SchemaSerializeUsersTimes
-  u2 = db.session.get(Users, 2)
-  return SchemaSerializeUsersTimes(many = True).dump(u2.users_followers)
   # from flask import g
   # from servcies.firebase.messaging import send
   # from datetime import datetime

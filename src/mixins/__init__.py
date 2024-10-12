@@ -7,6 +7,9 @@ from sqlalchemy.orm import mapped_column
 
 from flask_app import db
 
+from copy                   import deepcopy
+from utils.merge_strategies import dict_deepmerger_extend_lists as merger
+
 
 class MixinTimestamps():
   created_at: Mapped[datetime] = mapped_column(default = lambda: datetime.now(timezone.utc))
@@ -53,4 +56,11 @@ class MixinByIdsAndType():
           type == cls.type
         )
     return db.session.scalars(q)
+
+class MixinFieldMergeable():
+  def dataField_updated(self, *, patch, FIELD = 'data'):
+    return merger.merge(deepcopy(getattr(self, FIELD)), patch)
+  
+  def dataField_update(self, *, patch, FIELD = 'data'):
+    setattr(self, FIELD, patch)
 

@@ -22,6 +22,7 @@ from . import ln_users_users_manage
 from src.mixins import MixinTimestamps
 from src.mixins import MixinIncludesTags
 from src.mixins import MixinByIds
+from src.mixins import MixinFieldMergeable
 
 from models.tags     import Tags
 from models.docs     import Docs
@@ -64,7 +65,7 @@ class UsersTagsStatus(Enum):
   INVISIBLE      = 'INVISIBLE:EDjVu'
   
 
-class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, db.Model):
+class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable, db.Model):
   __tablename__ = usersTable
   
   id: Mapped[int] = mapped_column(primary_key = True)
@@ -133,12 +134,15 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, db.Model):
   
   # public
   def availability_commit(self, value):
-    self.profile_update(patch = { 'availability': value })
+    d = Docs.users_availabilities()
+    p = d.dataField_updated(patch = { str(self.id): value })
+    d.dataField_update(patch = p)
     db.session.commit()
   
   # public
   def availability_is(self, value):
-    return value == self.get_profile().get('availability')
+    d = Docs.users_availabilities()
+    return value == d.data.get(str(self.id))
 
   # public
   def is_available(self):
@@ -258,12 +262,14 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, db.Model):
   
   # public
   def profile_updated(self, patch):
-    return merger.merge(deepcopy(self.get_profile()), patch)
+    return self.dataField_updated(patch = patch, FIELD = 'profile')
   
   # public
   def profile_update(self, *, patch, merge = True):
     # patch: Dict<string:path, Any>
-    self.profile = self.profile_updated(patch) if merge else patch
+    # self.profile = self.profile_updated(patch) if merge else patch
+    patched = self.profile_updated(patch) if merge else patch
+    self.dataField_update(patch = patched, FIELD = 'profile')
     
   # public
   def is_archived(self):
