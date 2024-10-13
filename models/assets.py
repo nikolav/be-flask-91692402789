@@ -71,7 +71,7 @@ class AssetsCondition(Enum):
 
 
 class AssetsIOEvents(Enum):
-  UPDATE                  = 'UPDATE:4BPXLhqdWOf:'
+  UPDATE = 'UPDATE:4BPXLhqdWOf:'
 
 
 class AssetsCategories():
@@ -103,7 +103,7 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
   docs   : Mapped[List['Docs']]   = relationship(back_populates = 'asset') # addtional related records
   author : Mapped['Users']        = relationship(back_populates = 'assets_owned') # Who added the asset
 
-  # self-referential association, has|belongs-to assets
+  # self-referential, has|belongs-to assets
   assets_has: Mapped[List['Assets']] = relationship(
     secondary      = ln_assets_assets, 
     primaryjoin    = id == ln_assets_assets.c.asset_l_id, 
@@ -112,20 +112,24 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     # back_populates = 'assets'
   )
 
+  
   # public
   def data_updated(self, patch):
     return self.dataField_updated(patch = patch)
+  
   
   # public
   def data_update(self, *, patch, merge = True):
     patched = self.data_updated(patch) if merge else patch
     self.dataField_update(patch = patched)
 
+  
   # public
   def get_data(self):
     d = self.data if None != self.data else {}
     return d.copy()
 
+  
   # public
   def ioemit_update(self):
     io.emit(f'{AssetsIOEvents.UPDATE.value}{self.id}')

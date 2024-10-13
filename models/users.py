@@ -98,7 +98,7 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
   assets       : Mapped[List['Assets']]   = relationship(secondary = ln_users_assets, back_populates = 'users')
   assets_owned : Mapped[List['Assets']]   = relationship(back_populates = 'author') # assets created by the user
 
-  # self-referential association, has|belongs-to assets
+  # self-referential, has|belongs-to assets
   users_following: Mapped[List['Users']] = relationship(
     secondary      = ln_users_users_follow, 
     primaryjoin    = id == ln_users_users_follow.c.users_l_id, 
@@ -107,7 +107,7 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
     # back_populates = 'assets'
   )
 
-  # self-referential association, has|belongs-to assets
+  # self-referential, has|belongs-to assets
   users_managing: Mapped[List['Users']] = relationship(
     secondary      = ln_users_users_manage, 
     primaryjoin    = id == ln_users_users_manage.c.users_l_id, 
