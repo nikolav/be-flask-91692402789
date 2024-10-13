@@ -36,6 +36,7 @@ POLICY_APPROVED                = os.getenv('POLICY_APPROVED')
 POLICY_EMAIL                   = os.getenv('POLICY_EMAIL')
 POLICY_FILESTORAGE             = os.getenv('POLICY_FILESTORAGE')
 POLICY_MANAGERS                = os.getenv('POLICY_MANAGERS')
+POLICY_ALL                     = os.getenv('POLICY_ALL')
 
 # db
 DATABASE_URI                   = os.getenv('DATABASE_URI_production') if PRODUCTION else os.getenv('DATABASE_URI_dev')

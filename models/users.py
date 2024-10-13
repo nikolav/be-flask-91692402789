@@ -48,13 +48,8 @@ from flask_app import TAG_USERS_EXTERNAL
 from flask_app import UPLOAD_DIR
 from flask_app import UPLOAD_PATH
 from flask_app import USER_EMAIL
+from flask_app import POLICY_ALL
 
-
-DEFAULT_USER_CREATE_POLICIES = (
-  POLICY_APPROVED, 
-  POLICY_EMAIL, 
-  POLICY_FILESTORAGE,
-)
 
 # https://help.zoho.com/galleryDocuments/edbsne9896a615107dc695c0c42640947c15396f645651fa8eb1ae6632e434ba6231388ce5ff6e47742393c1b76377ff36fff?inline=true
 class UsersTagsStatus(Enum):
@@ -63,6 +58,26 @@ class UsersTagsStatus(Enum):
   BUSY           = 'BUSY:woxs5B8Slw'
   DO_NOT_DISTURB = 'DO_NOT_DISTURB:eb6Y5nXzlK'
   INVISIBLE      = 'INVISIBLE:EDjVu'
+
+
+class UsersPolicies(Enum):
+  APPROVED    = POLICY_APPROVED
+  ADMINS      = POLICY_ADMINS
+  EMAIL       = POLICY_EMAIL
+  FILESTORAGE = POLICY_FILESTORAGE
+  MANAGERS    = POLICY_MANAGERS
+  EXTERNAL    = TAG_USERS_EXTERNAL
+  MESSAGING   = '@policy:MESSAGING:tyULfGCZSQ9s7gGH'
+  ALL         = POLICY_ALL
+
+
+DEFAULT_USER_CREATE_POLICIES = (
+  POLICY_APPROVED, 
+  POLICY_EMAIL, 
+  POLICY_FILESTORAGE,
+  UsersPolicies.MESSAGING.value,
+)
+
   
 
 class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable, db.Model):
@@ -343,7 +358,7 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
 
   @staticmethod
   def create_user(*, email, password, 
-                policies = DEFAULT_USER_CREATE_POLICIES):
+                  policies = []):
     u = Users(
       email    = email,
       password = hashPassword(password)
@@ -353,7 +368,7 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
     db.session.commit()
 
     # add default policies
-    u.policies_add(*policies)
+    u.policies_add(*DEFAULT_USER_CREATE_POLICIES, *policies)
 
     return u
 

@@ -18,10 +18,11 @@ def resolve_accountsAdd(_obj, _inf, payload):
   account = None
 
   try:
-    credentials = SchemaAccountsAddCredentialsPayload(unknown = EXCLUDE).load(payload)
+    credentials = SchemaAccountsAddCredentialsPayload(unknown = EXCLUDE, partial = ('policies',)).load(payload)
     account     = Users.create_user(
       email    = credentials['email'],
       password = credentials['password'],
+      policies = [e.value for e in credentials.get('policies', [])],
     )
 
     if not account:
