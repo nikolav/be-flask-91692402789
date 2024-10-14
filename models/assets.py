@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import backref
+from sqlalchemy.orm import aliased
 from sqlalchemy     import JSON
 
 from flask_app import db
@@ -30,9 +31,6 @@ from models.docs import DocsTags
 
 from utils import Unique
 
-from copy import deepcopy
-from utils.merge_strategies import dict_deepmerger_extend_lists as merger
-
 
 class AssetsType(Enum):
   # DIGITAL = "Digital Asset"
@@ -50,6 +48,9 @@ class AssetsType(Enum):
   PHYSICAL_STORE    = 'PHYSICAL_STORE:5btoy9I8IKgT0RJO'
 
   # FINANCIAL = "Financial Asset"
+
+  # ISSUES
+  ISSUE_GENERAL = 'ISSUE_GENERAL:x53CJbY'
 
 
 class AssetsStatus(Enum):
@@ -171,6 +172,74 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     
     # default
     return []
+
+
+  @staticmethod
+  def assets_parents(*lsa, TYPE = None, DISTINCT = True):
+    '''
+      list provided node's parent assets; that contain provided nodes
+    '''
+    aids = map(lambda a: a.id, lsa)
+    AssetsAliasedParent = aliased(Assets)
+    q = db.select(
+      AssetsAliasedParent.id
+    ).join(
+      ln_assets_assets,
+      ln_assets_assets.c.asset_l_id == AssetsAliasedParent.id
+    ).join(
+      Assets,
+      ln_assets_assets.c.asset_r_id == Assets.id
+    ).where(
+      Assets.id.in_(aids))
+    
+    if TYPE:
+      q = q.where(
+        TYPE == AssetsAliasedParent.type)
+    
+    if DISTINCT:
+      q = q.distinct()
+    
+    subq = q.subquery()
+    
+    return db.session.scalars(
+      db.select(
+        Assets
+      ).where(
+        Assets.id.in_(subq)))
+
+  
+  @staticmethod
+  def assets_children(*lsa, TYPE = None, DISTINCT = True):
+    '''
+      list provided node's child assets; that belong to provided nodes
+    '''
+    aids = map(lambda a: a.id, lsa)
+    AssetsAliasedParrent = aliased(Assets)
+    q = db.select(
+      Assets.id
+    ).join(
+      ln_assets_assets,
+      ln_assets_assets.c.asset_r_id == Assets.id
+    ).join(
+      AssetsAliasedParrent,
+      ln_assets_assets.c.asset_l_id == AssetsAliasedParrent.id
+    ).where(
+      AssetsAliasedParrent.id.in_(aids))
+    
+    if None != TYPE:
+      q = q.where(
+        TYPE == Assets.type)
+    
+    if DISTINCT:
+      q = q.distinct()
+    
+    subq = q.subquery()
+    
+    return db.session.scalars(
+      db.select(
+        Assets
+      ).where(
+        Assets.id.in_(subq)))
 
 
   @staticmethod

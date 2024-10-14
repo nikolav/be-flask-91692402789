@@ -393,11 +393,5 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
 
   @staticmethod
   def by_uids(*uids):
-    return db.session.scalars(
-      db.select(
-        Users
-      ).where(
-        Users.id.in_(uids)
-      )
-    )
+    return Users.by_ids(*uids)
   

@@ -26,8 +26,8 @@ def resolve_docUpsert(_obj, _info, doc_id, data, merge = True, shallow = False):
     doc.data = d
     db.session.commit()
 
-  except:
-    pass
+  except Exception as err:
+    raise err
 
   else:
     # emit updated

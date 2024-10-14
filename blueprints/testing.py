@@ -9,9 +9,13 @@ CORS(bp_testing)
 
 @bp_testing.route('/', methods = ('POST',))
 def testing_home():     
-  from schemas.validation.acconts import SchemaAccountsAddCredentialsPayload
-  p = SchemaAccountsAddCredentialsPayload(partial = ('policies',)).load({'email': 'foo@foo.com', 'password': 'foo', 'policies': ['admin', 'external']})
-  return {'p': [e.value for e in p.get('policies', [])]}
+  from models.assets import Assets
+  from flask_app import db
+  from schemas.serialization import SchemaSerializeAssets
+  a = db.session.get(Assets, 1)
+  # a2 = db.session.get(Assets, 15)
+  ls = Assets.assets_parents(a, TYPE = 'DIGITAL_FORM:TzZJs5PZqcWc')
+  return SchemaSerializeAssets(many = True, exclude = ('assets_has',)).dump(ls)
   # from flask import g
   # from servcies.firebase.messaging import send
   # from datetime import datetime
