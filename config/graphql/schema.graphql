@@ -228,8 +228,9 @@ type Query {
   docByDocId(doc_id: String!): JsonData!
   tagsByDocId(id: ID!): [String!]!
 
-  # pdf
+  # pdf, file.dl
   pdfDownload(data: JsonData!): String!
+  dlFileB64(data: JsonData!): JsonData!
 
   # storage
   storageList: [StorageFileInfo!]!

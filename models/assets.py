@@ -35,10 +35,14 @@ from utils import Unique
 class AssetsType(Enum):
   # DIGITAL = "Digital Asset"
   #  communicate announcements; users can not comment in channels
-  DIGITAL_CHANNEL   = 'DIGITAL_CHANNEL:YqmefT'
+  DIGITAL_CHANNEL = 'DIGITAL_CHANNEL:YqmefT'
   #  custom commnication for users
-  DIGITAL_CHAT      = 'DIGITAL_CHAT:4nASbEj8pFvqm'
-  DIGITAL_FORM      = 'DIGITAL_FORM:TzZJs5PZqcWc'
+  DIGITAL_CHAT = 'DIGITAL_CHAT:4nASbEj8pFvqm'
+  DIGITAL_FORM = 'DIGITAL_FORM:TzZJs5PZqcWc'
+  # all users access
+  DIGITAL_CHANNEL_GLOBAL = 'DIGITAL_CHANNEL_GLOBAL:tQ6c5O1mRDtP6fDCCj'
+  DIGITAL_CHAT_GLOBAL    = 'DIGITAL_CHAT_GLOBAL:JS4nzSghZq4CZH'
+  DIGITAL_FORM_GLOBAL    = 'DIGITAL_FORM_GLOBAL:DKp32J'
 
   # GROUP = "Group Asset"
   PEOPLE_GROUP_TEAM = 'PEOPLE_GROUP_TEAM:sEdkj9r'

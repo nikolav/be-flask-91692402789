@@ -121,6 +121,10 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
   def __repr__(self):
     return f'<Users(id={self.id!r}, email={self.email!r})>'
   
+  def related_assets(self, *, TYPE = None, DISTINCT = True):
+    return Assets.assets_parents(*self.groups(), 
+                                 TYPE = TYPE, DISTINCT = DISTINCT)
+  
   # public
   def assets_belongs_to(self, *lsa, ANY = False):
     return all(
@@ -194,8 +198,7 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
         Users
       ).where(
         Assets.type.in_(types),
-        self.id == Users.id
-      ))
+        self.id == Users.id))
   
   # public
   def groups(self):
