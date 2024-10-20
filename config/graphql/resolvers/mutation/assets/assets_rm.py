@@ -15,12 +15,13 @@ from models        import ln_assets_assets
 @mutation.field('assetsRemove')
 def resolve_assetsRemove(_obj, _info, aids):
   r = { 'error': None, 'status': None }
-  any_assets_removed = False
+  removed = False
   assets_affected = ()
 
   try:
-    assets_affected  = tuple(Assets.by_ids(*aids))
-    assets_len_start = len(assets_affected)
+    assets_affected        = tuple(Assets.by_ids(*aids))
+    assets_len_start       = len(assets_affected)
+    assets_affected_types  = set(map(lambda a: a.type, assets_affected))
     
     if 0 < assets_len_start:
 
@@ -37,7 +38,7 @@ def resolve_assetsRemove(_obj, _info, aids):
           ln_users_assets
         ).where(
           ln_users_assets.c.asset_id.in_(aids)))
-
+      
       # rm --rel-assets
       db.session.execute(
         db.delete(
@@ -54,19 +55,19 @@ def resolve_assetsRemove(_obj, _info, aids):
           Assets
         ).where(
           Assets.id.in_(aids)))
-
+      
       db.session.commit()
 
       # sanity check
       #  compare deleted ids .count with ..start
-      any_assets_removed = db.session.scalar(
+      removed = db.session.scalar(
         db.select(
           func.count(Assets.id)
         ).where(
           Assets.id.in_(aids)
         )) < assets_len_start
 
-    r['status'] = { 'any_assets_removed': any_assets_removed }
+    r['status'] = { 'removed': removed }
 
 
   except Exception as err:
@@ -74,8 +75,8 @@ def resolve_assetsRemove(_obj, _info, aids):
   
   
   else:
-    if any_assets_removed:
-      for a_type in set(map(lambda a: a.type, assets_affected)):
+    if removed:
+      for a_type in assets_affected_types:
         if a_type:
           io.emit(a_type)
 
