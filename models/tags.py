@@ -43,7 +43,7 @@ class Tags(db.Model):
 
 
   @staticmethod
-  def by_name(tag_name, *, create = False):
+  def by_name(tag_name, *, create = False, _commit = True):
     tag = None
 
     try:
@@ -51,14 +51,15 @@ class Tags(db.Model):
         db.select(
           Tags
         ).where(
-          Tags.tag == tag_name
+          tag_name == Tags.tag
         ))
       
       if not tag:
         if True == create:
           tag = Tags(tag = tag_name)
           db.session.add(tag)
-          db.session.commit()
+          if _commit:
+            db.session.commit()
 
 
     except Exception as error:

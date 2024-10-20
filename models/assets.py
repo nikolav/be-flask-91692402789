@@ -32,6 +32,8 @@ from models.docs import DocsTags
 from utils import Unique
 
 
+CATEGORY_KEY_ASSETS_prefix = 'CATEGORY_KEY:ASSETS:hhPDiM:'
+
 class AssetsType(Enum):
   # DIGITAL = "Digital Asset"
   #  communicate announcements; users can not comment in channels
@@ -79,11 +81,6 @@ class AssetsIOEvents(Enum):
   UPDATE = 'UPDATE:4BPXLhqdWOf:'
 
 
-class AssetsCategories():
-  class PHYSICAL_PRODUCT(Enum):
-    sladoledi = 'PHYSICAL_PRODUCT_sladoledi:O9KsdYaGd032pPmruBK'
-
-
 class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, MixinExistsID, MixinFieldMergeable, db.Model):
   __tablename__ = assetsTable
 
@@ -117,6 +114,53 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     # back_populates = 'assets'
   )
 
+  
+  # public
+  def category_key(self):
+    return db.session.scalar(
+      db.select(
+        Tags.tag
+      ).join(
+        ln_assets_tags
+      ).join(
+        Assets
+      ).where(
+        self.id == Assets.id,
+        Tags.tag.startswith(CATEGORY_KEY_ASSETS_prefix)
+      )
+    )
+
+  
+  # public
+  def category_key_commit(self, c_key, *, _commit = True):
+    _status = False
+    if c_key:
+      c_tag = f'{CATEGORY_KEY_ASSETS_prefix}{c_key}'
+      if c_tag != self.category_key():
+        self.category_key_drop(_commit = _commit)
+        c = Tags.by_name(c_tag, create = True, _commit = _commit)
+        c.assets.append(self)
+        if _commit:
+          db.session.commit()
+        _status = True
+    
+    return _status
+
+  
+  # public
+  def category_key_drop(self, *, _commit = True):
+    changes = 0
+
+    for ct in filter(lambda t: t.tag.startswith(CATEGORY_KEY_ASSETS_prefix), self.tags):
+      ct.assets.remove(self)
+      changes += 1
+    
+    if 0 < changes:
+      if _commit:
+        db.session.commit()
+
+    return changes
+  
   
   # public
   def data_updated(self, patch):

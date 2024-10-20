@@ -14,11 +14,13 @@ class SchemaInputAssetsAdd(Schema):
   condition = fields.String()
   notes     = fields.String()
   data      = fields.Dict()
+  # 
+  category  = fields.String()
 
 
-class SchemaInputAssets(SchemaInputAssetsAdd):
-  name = fields.String()
-  type = fields.String()
+# class SchemaInputAssets(SchemaInputAssetsAdd):
+#   name = fields.String()
+#   type = fields.String()
 
 
 class SchemaInputAssetsCreate(SchemaInputAssetsAdd):

@@ -10,9 +10,9 @@ from models.assets       import AssetsType
 def resolve_groupsGUConfigure(_obj, _info, guConfig):
   r  = { 'error': None, 'status': None }
   ug = {
-    # 1: { 'join' : set(), 'leave': set() }
-    # 2: { 'join' : set(), 'leave': set() }
-    # etc..
+    # 1: { '+' : set(), '-': set() }
+    # 2: { '+' : set(), '-': set() }
+    #  etc.
   }
   changes = 0
 
@@ -22,21 +22,20 @@ def resolve_groupsGUConfigure(_obj, _info, guConfig):
       for uid in lsuids:
         for k in gKeys.split(' '):
           g = int(k[1:])
-          ug.setdefault(uid, { 'join': set(), 'leave': set() })['join' if k.startswith('+') else 'leave'].add(g)
-
+          ug.setdefault(uid, 
+            { '+': set(), '-': set() })[k[0]].add(g)
     
     for u in Users.by_ids(*ug.keys()):
       
-      if 0 < len(ug[u.id]['join']):
-        changes += u.assets_join(*Assets.by_ids_and_type(
-          *[ID for ID in ug[u.id]['join']], 
+      if 0 < len(ug[u.id]['+']):
+        changes += u.assets_join(
+          *Assets.by_ids_and_type(*[ID for ID in ug[u.id]['+']], 
           type = AssetsType.PEOPLE_GROUP_TEAM.value))
       
-      if 0 < len(ug[u.id]['leave']):
-        changes += u.assets_leave(*Assets.by_ids_and_type(
-          *[ID for ID in ug[u.id]['leave']], 
+      if 0 < len(ug[u.id]['-']):
+        changes += u.assets_leave(
+          *Assets.by_ids_and_type(*[ID for ID in ug[u.id]['-']], 
           type = AssetsType.PEOPLE_GROUP_TEAM.value))
-
     
     if 0 < changes:
       db.session.commit()
