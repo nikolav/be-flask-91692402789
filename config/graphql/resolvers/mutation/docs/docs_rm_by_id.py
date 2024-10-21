@@ -11,35 +11,36 @@ from . import IOEVENT_JsonData
 
 @mutation.field('docsRmById')
 def resolve_docsRmById(_obj, _info, id):
+  '''
+  remove/unlink doc by ID;
+  notify topics
+  '''
 
-  doc = None
+  doc    = None
   topics = []
 
   try:
     doc = db.session.get(Docs, id)
     
+    if doc:
+      for tag_ in doc.tags:
+        tag_.docs.remove(doc)
+        topics.append(tag_.tag)
+
+      db.session.delete(doc)
+      db.session.commit()
+
+
   except Exception as e:
     raise e
     # pass
   
   else:
     if doc:
-      for tag_ in doc.tags:
-        tag_.docs.remove(doc)
-        topics.append(tag_.tag)
-      
-      db.session.delete(doc)
-
-      try:
-        db.session.commit()
-        
-      except Exception as e:
-        raise e
-        # pass
-      
-      else:
-        for topic in topics:
-          io.emit(f'{IOEVENT_JsonData}{topic}')
-        return doc.dump()
+      for topic in topics:
+        io.emit(f'{IOEVENT_JsonData}{topic}')
+      return doc.dump()
   
+
   return None
+
