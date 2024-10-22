@@ -70,6 +70,7 @@ IO_CORS_ALLOW_ORIGINS = (
 IOEVENT_ACCOUNTS_UPDATED        = os.getenv('IOEVENT_ACCOUNTS_UPDATED')
 IOEVENT_ACCOUNTS_UPDATED_prefix = os.getenv('IOEVENT_ACCOUNTS_UPDATED_prefix')
 IOEVENT_AUTH_NEWUSER            = os.getenv('IOEVENT_AUTH_NEWUSER')
+IOEVENT_DOCS_CHANGE_JsonData    = os.getenv('IOEVENT_DOCS_CHANGE_JsonData')
 
 # scheduler
 SCHEDULER_INIT                 = bool(os.getenv('SCHEDULER_INIT'))
@@ -84,6 +85,8 @@ AWS_END_USER_MESSAGING_ENABLED = bool(os.getenv('AWS_END_USER_MESSAGING_ENABLED'
 #  viber
 URL_VIBER_MESSAGE_POST         = os.getenv('URL_VIBER_MESSAGE_POST')
 VIBER_CHANNELS_DOCID           = os.getenv('VIBER_CHANNELS_DOCID')
+# topics comms
+TOPIC_CHAT_USER_CHANNEL_prefix = os.getenv('TOPIC_CHAT_USER_CHANNEL_prefix')
 
 
 # app:main

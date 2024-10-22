@@ -35,3 +35,7 @@ from .assets import groups_configure
 from .assets import assets_rm
 from .assets import assets_upsert
 
+from .comms import comms_message_many
+
+
+

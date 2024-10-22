@@ -296,6 +296,9 @@ type Mutation {
   # cloud_messaging
   cloudMessagingPing(payload: JsonData): JsonData!
 
+  # communication
+  commsMessageMany(uids: [ID!]!, message: JsonData!): JsonData!
+
   # viber
   # https://developers.viber.com/docs/tools/channels-post-api/
   viberSendTextMessage(payload: JsonData!): JsonData!
