@@ -29,6 +29,7 @@ APP_DOMAIN                     = os.getenv('APP_DOMAIN')
 ADMIN_EMAIL                    = os.getenv('ADMIN_EMAIL')
 APP_SECRET_KEY                 = os.getenv('SECRET_KEY')
 USER_EMAIL                     = os.getenv('USER_EMAIL')
+DEFAULT_USER_ID                = os.getenv('DEFAULT_USER_ID')
 
 # policies
 POLICY_ADMINS                  = os.getenv('POLICY_ADMINS')
@@ -209,5 +210,4 @@ if SCHEDULER_INIT:
 
 if CLOUD_MESSAGING_INIT:
   import config.cloud_messaging.app_init
-
 

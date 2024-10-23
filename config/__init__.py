@@ -32,3 +32,8 @@ MAIL_RECIPIENTS = [
   'admin@frikom.nikolav.rs', 
 ]
 
+from flask_app import DEFAULT_USER_ID
+skip_list_users = (
+  DEFAULT_USER_ID,
+)
+
