@@ -180,7 +180,7 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
       # get tokens Docs{}
       dt  = Docs.by_key(f'{KEY_FCM_DEVICE_TOKENS}{self.id}')
       # generate valid key tokens
-      return (k_tok for k_tok, k_val in dt.data.items() if True == k_val)
+      return [k_tok for k_tok, k_val in dt.data.items() if True == k_val]
 
     except:
       pass
