@@ -1,0 +1,42 @@
+
+from config.graphql.init import mutation
+
+from schemas.validation.messaging import SchemaValidateNotificationMessage
+from servcies.firebase.messaging  import notification_send
+
+from models.users import Users
+
+
+# cloudMessagingNotifications(uids: [ID!]!, payload: JsonData!):JsonData!
+@mutation.field('cloudMessagingNotifications')
+def resolve_cloudMessagingNotifications(_obj, _info, uids, payload):
+  r         = { 'error': None, 'status': None }
+  responses = []
+
+  try:
+
+    p = SchemaValidateNotificationMessage().load(payload)
+    payload_ = { 'title': p['title'], 'body': p['body'] }
+    image_   = p.get('image')
+    
+    for u in Users.by_ids(*uids):
+      tokens = u.cloud_messaging_device_tokens()
+      if 0 < len(tokens):
+        responses.append(
+          notification_send(
+            tokens  = tokens,
+            payload = payload_,
+            image   = image_
+          ))
+
+
+  except Exception as err:
+    r['error'] = str(err)
+
+
+  else:
+    r['status'] = { 'responses': [str(res) for res in responses] }
+
+
+  return r
+

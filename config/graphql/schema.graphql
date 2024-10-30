@@ -295,6 +295,7 @@ type Mutation {
 
   # cloud_messaging
   cloudMessagingPing(payload: JsonData): JsonData!
+  cloudMessagingNotifications(uids: [ID!]!, payload: JsonData!): JsonData!
 
   # communication
   commsMessageMany(uids: [ID!]!, message: JsonData!): JsonData!
