@@ -239,6 +239,9 @@ type Query {
   # assets, groups
   groupsList(gids: [ID!]): [Asset!]!
   assetsList(aids: [ID!], type: String): [Asset!]!
+
+  # tags
+  tagsSearchTagLike(search: String!, prefix: String, attach: String): [String!]!
 }
 
 ############

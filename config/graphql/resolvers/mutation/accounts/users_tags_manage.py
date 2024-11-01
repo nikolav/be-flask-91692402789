@@ -2,7 +2,10 @@
 from functools import reduce
 
 from flask_app import db
+from flask_app import io
 from flask_app import USERS_TAGS_prefix
+from flask_app import IOEVENT_ACCOUNTS_UPDATED_prefix
+from flask_app import IOEVENT_ACCOUNTS_UPDATED
 
 from models.users import Users
 from config.graphql.init import mutation
@@ -57,6 +60,13 @@ def resolve_usersTagsManage(_obj, _info, tags):
 
   else:
     r['status'] = { 'num_changes': num_changes, 'changes': changes }
+
+    # emit updates @user
+    for uid, n in changes.items():
+      if 0 < n:
+        io.emit(f'{IOEVENT_ACCOUNTS_UPDATED_prefix}{uid}')
+    if 0 < num_changes:
+      io.emit(IOEVENT_ACCOUNTS_UPDATED)
   
 
   return r
