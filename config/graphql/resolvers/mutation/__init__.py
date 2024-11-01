@@ -25,6 +25,7 @@ from .accounts import policies_manage
 from .accounts import profile_patch
 from .accounts import accounts_send_verify_email_link
 from .accounts import verify_email
+from .accounts import users_tags_manage
 
 from .mail import sendmail
 

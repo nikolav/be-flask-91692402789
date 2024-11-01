@@ -285,6 +285,7 @@ type Mutation {
   accountsProfilePatch(uid: ID!, patch: JsonData!): JsonData!
   accountsSendVerifyEmailLink(uid: ID!, url: String!): JsonData!
   accountsVeifyEmail(data: JsonData!): JsonData!
+  usersTagsManage(tags: JsonData!): JsonData!
 
   # mail
   sendmail(

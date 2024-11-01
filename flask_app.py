@@ -49,6 +49,8 @@ TAG_USERS_EXTERNAL             = os.getenv('TAG_USERS_EXTERNAL')
 from config import TAG_STORAGE
 from config import TAG_VARS
 from config import TAG_IS_FILE
+USERS_TAGS_prefix              = os.getenv('USERS_TAGS_prefix')
+
 
 # paths
 UPLOAD_PATH                    = FLASKAPP_PATH

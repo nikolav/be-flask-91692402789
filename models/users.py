@@ -307,29 +307,29 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
     return Products.popular_sorted_user(self)
   
   # public 
-  def policies_add(self, *policies):
+  def policies_add(self, *policies, _commit = True):
     changes = 0
 
     for policy in filter(lambda p: not self.includes_tags(p), policies):
-      tp = Tags.by_name(policy, create = True)
+      tp = Tags.by_name(policy, create = True, _commit = _commit)
       tp.users.append(self)
       changes += 1
     
-    if 0 < changes:
+    if (0 < changes) and (True == _commit):
       db.session.commit()
     
     return changes
 
   # public 
-  def policies_rm(self, *policies):
+  def policies_rm(self, *policies, _commit = True):
     changes = 0
 
     for policy in filter(lambda p: self.includes_tags(p), policies):
-      tp = Tags.by_name(policy, create = True)
+      tp = Tags.by_name(policy, create = True, _commit = _commit)
       tp.users.remove(self)
       changes += 1
     
-    if 0 < changes:
+    if (0 < changes) and (True == _commit):
       db.session.commit()
     
     return changes
