@@ -242,6 +242,9 @@ type Query {
 
   # tags
   tagsSearchTagLike(search: String!, prefix: String, attach: String): [String!]!
+
+  # cache:redis
+  cacheRedisGetCacheByKey(cache_key: String!): JsonData!
 }
 
 ############
@@ -312,4 +315,8 @@ type Mutation {
   assetsRemove(aids: [ID!]!): JsonData!
   groupsGUConfigure(guConfig: JsonData!): JsonData!
   assetsUpsert(fields: JsonData!, aid: ID): JsonData!
+
+  # cache:redis
+  cacheRedisCommit(cache_key: String!, patch: JsonData, merge: Boolean): JsonData!
 }
+
