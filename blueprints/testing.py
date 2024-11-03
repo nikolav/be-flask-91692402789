@@ -8,7 +8,6 @@ CORS(bp_testing)
 
 
 @bp_testing.route('/', methods = ('POST',))
-def testing_home():     
+def testing_home():
   r = { 'error': None, 'status': None }
-  
   return r

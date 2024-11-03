@@ -87,6 +87,7 @@ SCHEDULER_INIT                 = bool(os.getenv('SCHEDULER_INIT'))
 # services
 # redis
 REDIS_INIT                     = bool(os.getenv('REDIS_INIT'))
+SESSION_REDIS_INIT             = bool(os.getenv('SESSION_REDIS_INIT'))
 #  firebase
 CLOUD_MESSAGING_CERTIFICATE    = os.getenv('CLOUD_MESSAGING_CERTIFICATE')
 CLOUD_MESSAGING_INIT           = bool(os.getenv('CLOUD_MESSAGING_INIT'))
@@ -139,6 +140,16 @@ Talisman(app,
   force_https = False)
 
 
+redis_client = None
+if REDIS_INIT:
+  from config.redis import redis_init
+  redis_client = redis_init(app)
+
+if SESSION_REDIS_INIT:
+  from config.session_redis import session_redis_init
+  session_redis_init(app, redis = redis_client)
+
+
 if CLOUD_MESSAGING_INIT:
   import config.cloud_messaging.app_init
 
@@ -146,12 +157,6 @@ if CLOUD_MESSAGING_INIT:
 if SCHEDULER_INIT:
   from config.scheduler import scheduler_configure
   scheduler_configure(app)
-
-
-redis_client = None
-if REDIS_INIT:
-  from config.redis import redis_init
-  redis_client = redis_init(app)
 
 
 # api   = Api(app)

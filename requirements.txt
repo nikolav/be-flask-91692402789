@@ -37,3 +37,4 @@ boto3==1.35.29
 # python-magic==0.4.27
 redis==5.2.0
 flask-redis==0.4.0
+Flask-Session==0.8.0

@@ -19,9 +19,14 @@ def redis_init(app):
     try:
       client = FlaskRedis()
       client.init_app(app)
-    
+
+      # access internal redis{} @redis-py
+      #  client._redis_client
+
+
     except Exception as err:
       error = err
+    
     
     initialized = True
     
