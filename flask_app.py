@@ -138,7 +138,21 @@ Talisman(app,
   force_https = False)
 
 
+if CLOUD_MESSAGING_INIT:
+  import config.cloud_messaging.app_init
+
+
+if SCHEDULER_INIT:
+  from config.scheduler import scheduler_configure
+  scheduler_configure(app)
+
+
 redis_client = None
+if REDIS_INIT:
+  from config.redis import redis_init
+  redis_client = redis_init(app)
+
+
 # api   = Api(app)
 db    = SQLAlchemy(app, model_class = DbModelBaseClass)
 io    = SocketIO(app, 
@@ -215,19 +229,4 @@ from middleware.authenticate import authenticate
 @app.before_request
 def before_request_authenticate():
   return authenticate()
-
-
-if REDIS_INIT:
-  from config.redis import redis_init
-  redis_client = redis_init(app)
-
-
-if CLOUD_MESSAGING_INIT:
-  import config.cloud_messaging.app_init
-
-
-if SCHEDULER_INIT:
-  from config.scheduler import scheduler_configure
-  scheduler_configure(app)
-
 
