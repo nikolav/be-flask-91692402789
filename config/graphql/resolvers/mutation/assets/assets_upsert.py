@@ -58,7 +58,9 @@ def resolve_assetsUpsert(_obj, _info, fields = {}, aid = None):
         **SchemaInputAssetsCreate(
             exclude = ('category',)
           ).load(fields),
-        author = g.user)
+        author = g.user,
+        users  = [g.user],
+      )
       
       a.category_key_commit(fields.get('category'), _commit = False)
       
