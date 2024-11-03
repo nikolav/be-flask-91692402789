@@ -51,6 +51,9 @@ from config import TAG_VARS
 from config import TAG_IS_FILE
 USERS_TAGS_prefix              = os.getenv('USERS_TAGS_prefix')
 
+# redis
+REDIS_URL = os.getenv('REDIS_URL')
+
 
 # paths
 UPLOAD_PATH = FLASKAPP_PATH
@@ -80,7 +83,9 @@ IOEVENT_DOCS_CHANGE_JsonData    = os.getenv('IOEVENT_DOCS_CHANGE_JsonData')
 # scheduler
 SCHEDULER_INIT                 = bool(os.getenv('SCHEDULER_INIT'))
 
-# services:cloud
+# services
+# redis
+REDIS_INIT                     = bool(os.getenv('REDIS_INIT'))
 #  firebase
 CLOUD_MESSAGING_CERTIFICATE    = os.getenv('CLOUD_MESSAGING_CERTIFICATE')
 CLOUD_MESSAGING_INIT           = bool(os.getenv('CLOUD_MESSAGING_INIT'))
@@ -90,6 +95,7 @@ AWS_END_USER_MESSAGING_ENABLED = bool(os.getenv('AWS_END_USER_MESSAGING_ENABLED'
 #  viber
 URL_VIBER_MESSAGE_POST         = os.getenv('URL_VIBER_MESSAGE_POST')
 VIBER_CHANNELS_DOCID           = os.getenv('VIBER_CHANNELS_DOCID')
+
 # topics comms
 TOPIC_CHAT_USER_CHANNEL_prefix = os.getenv('TOPIC_CHAT_USER_CHANNEL_prefix')
 
@@ -114,6 +120,9 @@ app.config['MAIL_USE_TLS']           = bool(os.getenv('MAIL_USE_TLS'))
 app.config['MAIL_USE_SSL']           = bool(os.getenv('MAIL_USE_SSL'))
 app.config['MAIL_ASCII_ATTACHMENTS'] = bool(os.getenv('MAIL_ASCII_ATTACHMENTS'))
 
+# app-config:redis
+app.config['REDIS_URL'] = REDIS_URL
+
 
 CORS(app, 
   supports_credentials = True, 
@@ -129,6 +138,7 @@ Talisman(app,
   force_https = False)
 
 
+redis_client = None
 # api   = Api(app)
 db    = SQLAlchemy(app, model_class = DbModelBaseClass)
 io    = SocketIO(app, 
@@ -205,6 +215,11 @@ from middleware.authenticate import authenticate
 @app.before_request
 def before_request_authenticate():
   return authenticate()
+
+
+if REDIS_INIT:
+  from config.redis import redis_init
+  redis_client = redis_init(app)
 
 
 if CLOUD_MESSAGING_INIT:
