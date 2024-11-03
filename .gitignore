@@ -287,3 +287,4 @@ config/vars.py
 .aws
 deploy-vars.sh
 credentials.xmQ56DFAZTRjIzg6.json
+redis.conf

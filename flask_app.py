@@ -53,8 +53,8 @@ USERS_TAGS_prefix              = os.getenv('USERS_TAGS_prefix')
 
 
 # paths
-UPLOAD_PATH                    = FLASKAPP_PATH
-UPLOAD_DIR                     = os.getenv('UPLOAD_DIR')
+UPLOAD_PATH = FLASKAPP_PATH
+UPLOAD_DIR  = os.getenv('UPLOAD_DIR')
 
 # secrets, tokens
 JWT_SECRET_VERIFY_EMAIL   = os.getenv('JWT_SECRET_VERIFY_EMAIL')
@@ -197,7 +197,7 @@ io.init_app(app)
 # io status check
 @io.on('connect')
 def io_connected():
-  print('@io/connection')
+  print('@connection:io')
 
 
 # authentication.middleware@init
@@ -207,11 +207,12 @@ def before_request_authenticate():
   return authenticate()
 
 
+if CLOUD_MESSAGING_INIT:
+  import config.cloud_messaging.app_init
+
+
 if SCHEDULER_INIT:
   from config.scheduler import scheduler_configure
   scheduler_configure(app)
 
-
-if CLOUD_MESSAGING_INIT:
-  import config.cloud_messaging.app_init
 
