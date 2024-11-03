@@ -51,6 +51,15 @@ def status_ok():
   
   uids_admin = [u.id for u in Tags.by_name(POLICY_ADMINS).users]
 
+  
+  redis_client_version = None
+  try:
+    from flask_app import redis_client
+    _err, redis_cli = redis_client
+    redis_client_version = redis_cli.info().get('redis_version')
+  except:
+    pass
+
   return {
     'status'        : 'ok',
     'app:name'      : app_name,
@@ -58,7 +67,8 @@ def status_ok():
     'admin:uid'     : uid_admin,
     'default:uid'   : uid,
     'token:default' : encode({ 'id': uid }),
-    'sqlalchemy'    : sqlalchemy.__version__,
     'admins'        : uids_admin,
+    'sqlalchemy'    : sqlalchemy.__version__,
+    'redis'         : redis_client_version,
   }
 

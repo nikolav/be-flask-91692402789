@@ -4,15 +4,22 @@ from flask_redis import FlaskRedis
 
 print('@redis:init')
 
-def redis_init(app):
-  cli   = None
-  error = None
+client = None
+error  = None
 
+def redis_init(app):
+  global client
+  global error
+
+  if client:
+    return (None, client)
+  
   try:
-    cli = FlaskRedis()
-    cli.init_app(app)
+    client = FlaskRedis()
+    client.init_app(app)
   
   except Exception as err:
     error = err
   
-  return (error, cli)
+  return (error, client)
+
