@@ -198,7 +198,7 @@ type Query {
   vars: [Var!]!
 
   # users
-  users: [User!]!
+  users(skip_external: Boolean): [User!]!
   usersById(uid: ID!): User
   usersOnly(uids: [ID!]!): [User!]!
 

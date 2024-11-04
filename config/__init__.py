@@ -37,3 +37,6 @@ skip_list_users = (
   DEFAULT_USER_ID,
 )
 
+# db
+DEFAULT_GRAPHQL_USERS_LIST_SKIP_EXTERNAL = False
+

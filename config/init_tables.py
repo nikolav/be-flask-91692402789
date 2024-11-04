@@ -1,24 +1,35 @@
-import os
 
 from flask_app    import db
-
-from flask_app    import APP_NAME
-from flask_app    import VIBER_CHANNELS_DOCID
 
 from models.users import Users
 from models.tags  import Tags
 from models.docs  import Docs
 from .            import init_docs_tags
-from config       import TAG_VARS
 from utils.pw     import hash as hashPassword
+
+from flask_app import ADMIN_EMAIL
+from flask_app import ADMIN_PASSWORD
+from flask_app import APP_NAME
+from flask_app import POLICY_ADMINS
+from flask_app import POLICY_ALL
+from flask_app import POLICY_APPROVED
+from flask_app import POLICY_EMAIL
+from flask_app import POLICY_FILESTORAGE
+from flask_app import POLICY_MANAGERS
+from flask_app import TAG_ARCHIVED
+from flask_app import TAG_EMAIL_VERIFIED
+from flask_app import TAG_USERS_EXTERNAL
+from flask_app import TAG_VARS
+from flask_app import USER_EMAIL
+from flask_app import USER_PASSWORD
 
 
 # --admin
-email_    = os.getenv('ADMIN_EMAIL')
-password_ = os.getenv('ADMIN_PASSWORD')
+email_    = ADMIN_EMAIL
+password_ = ADMIN_PASSWORD
 # --user
-emailUser_    = os.getenv('USER_EMAIL')
-passwordUser_ = os.getenv('USER_PASSWORD')
+emailUser_    = USER_EMAIL
+passwordUser_ = USER_PASSWORD
 
 user_admin   = db.session.scalar(db.select(Users).where(Users.email == email_))
 user_default = db.session.scalar(db.select(Users).where(Users.email == emailUser_))
@@ -51,18 +62,12 @@ db.session.commit()
 
 
 # default tags
-policy_fs_       = os.getenv('POLICY_FILESTORAGE')
-policy_approved_ = os.getenv('POLICY_APPROVED')
-policy_email_    = os.getenv('POLICY_EMAIL')
-policy_admins_   = os.getenv('POLICY_ADMINS')
-policy_managers_ = os.getenv('POLICY_MANAGERS')
-policy_all_      = os.getenv('POLICY_ALL')
-
-# misc
-TAG_ARCHIVED                    = os.getenv('TAG_ARCHIVED')
-TAG_EMAIL_VERIFIED              = os.getenv('TAG_EMAIL_VERIFIED')
-TAG_FEEDBACK_ON_ORDER_COMPLETED = os.getenv('TAG_FEEDBACK_ON_ORDER_COMPLETED')
-TAG_USERS_EXTERNAL              = os.getenv('TAG_USERS_EXTERNAL')
+policy_fs_       = POLICY_FILESTORAGE
+policy_approved_ = POLICY_APPROVED
+policy_email_    = POLICY_EMAIL
+policy_admins_   = POLICY_ADMINS
+policy_managers_ = POLICY_MANAGERS
+policy_all_      = POLICY_ALL
 
 # init
 tagPolicyADMINS          = Tags.by_name(policy_admins_,                  create = True)
@@ -73,42 +78,23 @@ tagPolicy_approved       = Tags.by_name(policy_approved_,                create 
 tagPolicyALL             = Tags.by_name(policy_all_,                     create = True)
 tag_archived             = Tags.by_name(TAG_ARCHIVED,                    create = True)
 tag_email_verified       = Tags.by_name(TAG_EMAIL_VERIFIED,              create = True)
-tag_order_email_feedback = Tags.by_name(TAG_FEEDBACK_ON_ORDER_COMPLETED, create = True)
 tag_users_external       = Tags.by_name(TAG_USERS_EXTERNAL,              create = True)
 
 # users:policies --default
 user_admin.policies_add(
-  # policy_all_,
   policy_approved_,
   policy_admins_,
-  policy_managers_,
   policy_email_,
   policy_fs_
+  # policy_managers_,
+  # policy_all_,
 )
-# if not user_admin.includes_tags(policy_admins_):
-#   tagPolicyADMINS.users.append(user_admin)
-# if not user_admin.includes_tags(policy_email_):
-#   tagPolicyEMAIL.users.append(user_admin)
-# if not user_admin.includes_tags(policy_fs_):
-#   tagPolicyFS.users.append(user_admin)
-# if not user_admin.includes_tags(policy_approved_):
-#   tagPolicy_approved.users.append(user_admin)
-# if not user_admin.includes_tags(policy_managers_):
-#   tagPolicyMANAGERS.users.append(user_admin)
-# if not user_admin.includes_tags(policy_all_):
-#   tagPolicyALL.users.append(user_admin)
 
 # user_default.policies_add(
 #   policy_approved_,
 #   policy_email_,
 #   policy_fs_
 # )
-# if not user_default.includes_tags(policy_approved_):
-#   tagPolicy_approved.users.append(user_default)
-# if not user_default.includes_tags(policy_email_):
-#   tagPolicyEMAIL.users.append(user_default)
-# if not user_default.includes_tags(policy_fs_):
-#   tagPolicyFS.users.append(user_default)
 
 db.session.commit()
 

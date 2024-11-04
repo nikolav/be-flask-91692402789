@@ -27,8 +27,10 @@ PRODUCTION = 'production' == ENV
 APP_NAME                       = os.getenv('APP_NAME')
 APP_DOMAIN                     = os.getenv('APP_DOMAIN')
 ADMIN_EMAIL                    = os.getenv('ADMIN_EMAIL')
+ADMIN_PASSWORD                 = os.getenv('ADMIN_PASSWORD')
 APP_SECRET_KEY                 = os.getenv('SECRET_KEY')
 USER_EMAIL                     = os.getenv('USER_EMAIL')
+USER_PASSWORD                  = os.getenv('USER_PASSWORD')
 DEFAULT_USER_ID                = os.getenv('DEFAULT_USER_ID')
 
 # policies
@@ -53,7 +55,6 @@ USERS_TAGS_prefix              = os.getenv('USERS_TAGS_prefix')
 
 # redis
 REDIS_URL = os.getenv('REDIS_URL')
-
 
 # paths
 UPLOAD_PATH = FLASKAPP_PATH
@@ -105,6 +106,7 @@ TOPIC_CHAT_USER_CHANNEL_prefix = os.getenv('TOPIC_CHAT_USER_CHANNEL_prefix')
 # app:main
 app = Flask(__name__)
 
+
 # app-config
 app.config['SECRET_KEY'] = APP_SECRET_KEY
 
@@ -135,6 +137,7 @@ CORS(app,
     r'/webhook_viber_channel' : {'origins': '*'},
   }
 ) if PRODUCTION else CORS(app, supports_credentials = True)
+
 
 Talisman(app, 
   force_https = False)
