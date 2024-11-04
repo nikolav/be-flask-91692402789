@@ -198,9 +198,13 @@ type Query {
   vars: [Var!]!
 
   # users
-  users(skip_external: Boolean): [User!]!
   usersById(uid: ID!): User
   usersOnly(uids: [ID!]!): [User!]!
+  users(skip_external: Boolean): [User!]!
+  # list users sharing groups with provided uids?
+  usersSharedGroups(uids: [ID!]): [User!]!
+  # list users with tags
+  usersTagged(tags: [String!]!, ALL: Boolean): [User!]!
 
   # products
   productsList(pids: [ID!]): [Asset!]!

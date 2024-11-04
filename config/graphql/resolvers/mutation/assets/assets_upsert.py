@@ -7,6 +7,7 @@ from flask_app     import db
 from flask_app     import io
 
 from models.assets import Assets
+from models.assets import AssetsType
 
 # from schemas.validation.assets import SchemaInputAssets
 from schemas.validation.assets import SchemaInputAssetsCreate
@@ -59,8 +60,15 @@ def resolve_assetsUpsert(_obj, _info, fields = {}, aid = None):
             exclude = ('category',)
           ).load(fields),
         author = g.user,
-        users  = [g.user],
+        # users  = [g.user],
       )
+
+      # include author in new asset:group
+      if a.type in (
+        AssetsType.PEOPLE_GROUP_TEAM.value,
+      ):
+        a.users = [g.user]
+      
       
       a.category_key_commit(fields.get('category'), _commit = False)
       
