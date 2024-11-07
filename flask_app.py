@@ -101,6 +101,7 @@ VIBER_CHANNELS_DOCID           = os.getenv('VIBER_CHANNELS_DOCID')
 
 # topics comms
 TOPIC_CHAT_USER_CHANNEL_prefix = os.getenv('TOPIC_CHAT_USER_CHANNEL_prefix')
+TOPIC_CHAT_ASSETS_prefix       = os.getenv('TOPIC_CHAT_ASSETS_prefix')
 
 
 # app:main

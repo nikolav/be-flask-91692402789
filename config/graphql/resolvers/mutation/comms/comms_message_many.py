@@ -15,18 +15,16 @@ from models.users import Users
 from models.docs  import Docs
 from models.tags  import Tags
 
+from src.classes import ResponseStatus
+from schemas.validation.messaging import SchemaChatMessage as SchemaMessageMany
 
-class SchemaMessageMany(Schema):
-  uid     = fields.Integer()
-  name    = fields.String()
-  message = fields.String(required = True)
 
 # commsMessageMany(uids: [ID!]!, message: JsonData!): JsonData!
 @mutation.field('commsMessageMany')
 def resolve_commsMessageMany(_obj, _info, uids, message):
   
   uids_affected = []
-  r = { 'error': None, 'status': None }
+  r = ResponseStatus()
 
   try:
     
@@ -45,14 +43,14 @@ def resolve_commsMessageMany(_obj, _info, uids, message):
 
 
   except Exception as err:
-    r['error'] = str(err)
+    r.error = err
 
 
   else:
-    r['status'] = { 'uids': uids_affected }
+    r.status = { 'uids': uids_affected }
     for uid_ in uids_affected:
       io.emit(f'{IOEVENT_DOCS_CHANGE_JsonData}{TOPIC_CHAT_USER_CHANNEL_prefix}{uid_}')
   
 
-  return r
+  return r.dump()
 

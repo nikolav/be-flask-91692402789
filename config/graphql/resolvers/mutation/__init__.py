@@ -38,6 +38,7 @@ from .assets import assets_rm
 from .assets import assets_upsert
 
 from .comms import comms_message_many
+from .comms import comms_group_message_many
 
 from .redis import cache_redis_commit
 

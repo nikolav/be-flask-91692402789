@@ -310,6 +310,7 @@ type Mutation {
 
   # communication
   commsMessageMany(uids: [ID!]!, message: JsonData!): JsonData!
+  commsGroupMessageMany(gids: [ID!]!, message: JsonData!): JsonData!
 
   # viber
   # https://developers.viber.com/docs/tools/channels-post-api/

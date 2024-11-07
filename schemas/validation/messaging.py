@@ -10,3 +10,8 @@ class SchemaValidateMessage(Schema):
 class SchemaValidateNotificationMessage(SchemaValidateMessage):
   image = fields.String()
 
+class SchemaChatMessage(Schema):
+  uid     = fields.Integer()
+  name    = fields.String()
+  message = fields.String(required = True)
+
