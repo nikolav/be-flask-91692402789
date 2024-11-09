@@ -38,3 +38,10 @@ boto3==1.35.29
 redis==5.2.0
 flask-redis==0.4.0
 Flask-Session==0.8.0
+
+# text searches
+fuzzywuzzy==0.18.0
+RapidFuzz==3.10.1
+Levenshtein==0.26.1
+python-Levenshtein==0.26.1
+

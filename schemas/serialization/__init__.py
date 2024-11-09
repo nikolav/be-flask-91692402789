@@ -158,3 +158,66 @@ class SchemaSerializeAssets(SchemaSerializeTimes):
   docs       = fields.List(fields.Nested(SchemaSerializeDocJsonTimes()))
   assets_has = fields.List(fields.Nested(lambda: SchemaSerializeAssets(exclude = ('assets_has',))))
 
+class SchemaSerializeUsersTextSearch(Schema):
+  email               = fields.String()
+  tags                = fields.Method('tags_joined')
+  groups              = fields.Method('groups_joined')
+  profile_firstName   = fields.Method('pull_profile_firstName')
+  profile_lastName    = fields.Method('pull_profile_lastName')
+  profile_displayName = fields.Method('pull_profile_displayName')
+  profile_job         = fields.Method('pull_profile_job')
+
+
+  def pull_profile_firstName(self, user):
+    return user.get_profile().get('firstName')
+
+  def pull_profile_lastName(self, user):
+    return user.get_profile().get('lastName')
+
+  def pull_profile_displayName(self, user):
+    return user.get_profile().get('displayName')
+
+  def pull_profile_job(self, user):
+    return user.get_profile().get('job')
+
+  def tags_joined(self, user):
+    return ' '.join([t.tag for t in user.tags])
+
+  def groups_joined(self, user):
+    ug = user.groups()
+    return ' '.join([g.name for g in ug])
+
+'''
+{
+  "email": "admin@nikolav.rs",
+  "profile": {
+    "firstName": "Nikola",
+    "lastName": "Vukovic",
+    "phone": "066 572 55 23",
+    "address": "mihaila milovanovica 76v, 11400 mladenovac",
+    "displayName": "nikolav",
+    "displayLocation": "Aenean ut eros et",
+    "job": "mercha",
+    "employed_at": "2024-11-04T23:00:00+00:00",
+    "avatarImage": "https://firebasestorage.googleapis.com/v0/b/jfejcxjyujx.appspot.com/o/media%2FAVATARS%3AyenDhzULhtZohA9yo%2F1%2FavatarImage?alt=media&token=ef4f4b83-f1ae-49ef-99c5-39567fb7b636"
+  },
+  "tags": [
+    "@policy:admins:ext0ZRQE9gmZ8Bvwb8GMq5DNmh8wEF",
+    "@policy:managers:Bc0b4kk",
+    "@policy:email:HRcEBSaJNx1HQfrzq5DNmh8wEF",
+    "@policy:storage:fDixi7hFsnq5DNmh8wEF",
+    "@policy:approved:r1loga1PP4",
+    "email-verified:hba0P",
+    "USERS_TAGS:6yXEQ5lK4e38jPN1:admins",
+    "foo",
+    "bar",
+    "baz"
+  ],
+  "groups": [
+    "Lorem Ipsums",
+    "Phasellus",
+    "Cras non",
+    "Nullam vel sem"
+  ]
+}
+'''

@@ -50,6 +50,9 @@ from flask_app import UPLOAD_PATH
 from flask_app import USER_EMAIL
 from flask_app import POLICY_ALL
 
+from schemas.serialization import SchemaSerializeUsersTextSearch
+from config                import skip_list_users
+
 
 # https://help.zoho.com/galleryDocuments/edbsne9896a615107dc695c0c42640947c15396f645651fa8eb1ae6632e434ba6231388ce5ff6e47742393c1b76377ff36fff?inline=true
 class UsersTagsStatus(Enum):
@@ -120,6 +123,10 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
   # magic
   def __repr__(self):
     return f'<Users(id={self.id!r}, email={self.email!r})>'
+  
+  # public
+  def serialize_to_text_search(self):
+    return ' '.join(v for v in SchemaSerializeUsersTextSearch().dump(self).values() if v).lower()
   
   def related_assets(self, *, TYPE = None, DISTINCT = True):
     return Assets.assets_parents(*self.groups(), 
@@ -342,6 +349,15 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
     changes += self.policies_rm(
       *[pname for pname, value in policies.items() if not bool(value)])
     return changes
+    
+  @staticmethod
+  def list_all_safe():
+    return db.session.scalars(
+      db.select(
+        Users
+      ).where(
+        ~Users.id.in_(skip_list_users)
+      ))
     
   @staticmethod
   def clear_storage(uid):
