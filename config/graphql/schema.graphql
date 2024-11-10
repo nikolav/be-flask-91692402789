@@ -207,6 +207,8 @@ type Query {
   usersTagged(tags: [String!]!, ALL: Boolean): [User!]!
   # list users by search query .q
   usersQ(q: String!, limit: Int): [User!]!
+  # list users in groups
+  usersByGroups(gids: [ID!]!, ALL: Boolean): [User!]!
 
   # products
   productsList(pids: [ID!]): [Asset!]!
