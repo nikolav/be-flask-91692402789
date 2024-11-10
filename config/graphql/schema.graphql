@@ -60,6 +60,7 @@ type User {
   email: String!
   password: String!
   profile: JsonData
+  key: String
   products: [Product!]
   posts: [Post!]
   tags: [String!]

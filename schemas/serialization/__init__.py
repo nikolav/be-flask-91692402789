@@ -28,6 +28,7 @@ class SchemaSerializeUsersTimes(SchemaSerializeTimes):
   email     = fields.String()
   password  = fields.String()
   profile   = fields.Dict()
+  key       = fields.String()
 
   # virtual
   tags      = fields.List(fields.String())
@@ -72,6 +73,7 @@ class SchemaSerializeUsersWho(SchemaSerializeTimes):
   id      = fields.Integer()
   email   = fields.String()
   profile = fields.Dict()
+  key     = fields.String()
   
   # computed
   admin          = fields.Method('calc_admin')
@@ -160,6 +162,7 @@ class SchemaSerializeAssets(SchemaSerializeTimes):
 
 class SchemaSerializeUsersTextSearch(Schema):
   email               = fields.String()
+  key                 = fields.String()
   tags                = fields.Method('tags_joined')
   groups              = fields.Method('groups_joined')
   profile_firstName   = fields.Method('pull_profile_firstName')

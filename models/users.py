@@ -53,6 +53,8 @@ from flask_app import POLICY_ALL
 from schemas.serialization import SchemaSerializeUsersTextSearch
 from config                import skip_list_users
 
+from utils.id_gen import id_gen
+
 
 # https://help.zoho.com/galleryDocuments/edbsne9896a615107dc695c0c42640947c15396f645651fa8eb1ae6632e434ba6231388ce5ff6e47742393c1b76377ff36fff?inline=true
 class UsersTagsStatus(Enum):
@@ -91,6 +93,8 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
   email    : Mapped[str] = mapped_column(unique = True)
   password : Mapped[str]
   profile  : Mapped[Optional[dict]] = mapped_column(JSON)
+  # assign key:string @create
+  key: Mapped[Optional[str]] = mapped_column(default = id_gen)
   
   # virtual
   tags         : Mapped[List['Tags']]     = relationship(secondary = ln_users_tags, back_populates = 'users')
