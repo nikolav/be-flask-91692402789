@@ -78,7 +78,8 @@ class AssetsCondition(Enum):
 
 
 class AssetsIOEvents(Enum):
-  UPDATE = 'UPDATE:4BPXLhqdWOf:'
+  UPDATE                                      = 'UPDATE:4BPXLhqdWOf:'
+  IOEVENT_PEOPLE_GROUP_TEAM_CONFIGURED_prefix = 'IOEVENT_PEOPLE_GROUP_TEAM_CONFIGURED:ZNvAgNYKcEG5TNI:'
 
 
 class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, MixinExistsID, MixinFieldMergeable, db.Model):

@@ -1,29 +1,34 @@
 
 from config.graphql.init import mutation
 from flask_app           import db
+from flask_app           import io
 from models.users        import Users
 from models.assets       import Assets
 from models.assets       import AssetsType
+from models.assets       import AssetsIOEvents
+
+from src.classes import ResponseStatus
 
 
 @mutation.field('groupsGUConfigure')
 def resolve_groupsGUConfigure(_obj, _info, guConfig):
-  r  = { 'error': None, 'status': None }
+  r  = ResponseStatus()
   ug = {
     # 1: { '+' : set(), '-': set() }
     # 2: { '+' : set(), '-': set() }
     #  etc.
   }
-  changes = 0
+  changes         = 0
+  groups_affected = set()
 
   try:
-    
     for gKeys, lsuids in guConfig.items():
       for uid in lsuids:
         for k in gKeys.split(' '):
           g = int(k[1:])
           ug.setdefault(uid, 
             { '+': set(), '-': set() })[k[0]].add(g)
+          groups_affected.add(g)
     
     for u in Users.by_ids(*ug.keys()):
       
@@ -42,12 +47,15 @@ def resolve_groupsGUConfigure(_obj, _info, guConfig):
     
 
   except Exception as err:
-    r['error'] = str(err)
+    r.error = err
 
 
   else:
-    r['status'] = { 'changes': changes }
+    r.status = { 'changes': changes }
+    if 0 < changes:
+      for gid in groups_affected:
+        io.emit(f'{AssetsIOEvents.IOEVENT_PEOPLE_GROUP_TEAM_CONFIGURED_prefix.value}{gid}')
 
   
-  return r
+  return r.dump()
 
