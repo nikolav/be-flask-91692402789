@@ -129,6 +129,10 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
     return f'<Users(id={self.id!r}, email={self.email!r})>'
   
   # public
+  def is_default_user(self):
+    return Users.is_default(self.id)
+  
+  # public
   def serialize_to_text_search(self):
     return ' '.join(v for v in SchemaSerializeUsersTextSearch().dump(self).values() if v).lower()
   
@@ -399,8 +403,12 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
   def is_default(id):
     try:
       return id == db.session.scalar(
-        db.select(Users.id)
-          .where(Users.email == USER_EMAIL))
+        db.select(
+          Users.id
+        ).where(
+          USER_EMAIL == Users.email
+        ))
+    
     except:
       pass
     

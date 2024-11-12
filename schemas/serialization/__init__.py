@@ -1,8 +1,6 @@
 from marshmallow import Schema
 from marshmallow import fields
-
 # https://marshmallow.readthedocs.io/en/stable/quickstart.html#field-validators-as-methods
-
 
 
 class SchemaSerializeTimes(Schema):
@@ -69,6 +67,10 @@ class SchemaSerializeUsersTimes(SchemaSerializeTimes):
 
 class SchemaSerializeUsersWho(SchemaSerializeTimes):
 
+  '''
+    @schema:client schemaAuthData
+  '''
+
   # fields
   id      = fields.Integer()
   email   = fields.String()
@@ -78,10 +80,10 @@ class SchemaSerializeUsersWho(SchemaSerializeTimes):
   # computed
   admin          = fields.Method('calc_admin')
   approved       = fields.Method('calc_approved')
+  default        = fields.Method('calc_is_default')
   email_verified = fields.Method('calc_email_verified')
   external       = fields.Method('calc_is_external')
   manager        = fields.Method('calc_manager')
-
 
   def calc_approved(self, u):
     return u.approved()
@@ -97,6 +99,9 @@ class SchemaSerializeUsersWho(SchemaSerializeTimes):
   
   def calc_is_external(self, u):
     return u.is_external()
+
+  def calc_is_default(self, u):
+    return u.is_default_user()
 
   
 class SchemaSerializeProductsTimes(SchemaSerializeTimes):
