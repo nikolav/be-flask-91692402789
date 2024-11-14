@@ -78,8 +78,11 @@ class AssetsCondition(Enum):
 
 
 class AssetsIOEvents(Enum):
-  UPDATE                                      = 'UPDATE:4BPXLhqdWOf:'
+  # UPDATE                                      = 'UPDATE:4BPXLhqdWOf:'
+  UPDATE                                      = 'IOEVENT:ASSETS:UPDATED:lwzAwwnpz:'
+  REMOVE                                      = 'IOEVENT:ASSETS:REMOVED:d3Gcrbv9ezTf7dyb7:'
   IOEVENT_PEOPLE_GROUP_TEAM_CONFIGURED_prefix = 'IOEVENT_PEOPLE_GROUP_TEAM_CONFIGURED:ZNvAgNYKcEG5TNI:'
+  IOEVENT_PEOPLE_GROUP_TEAM_REMOVED           = 'IOEVENT_PEOPLE_GROUP_TEAM_REMOVED:7xWnQnU:'
 
 
 class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, MixinExistsID, MixinFieldMergeable, db.Model):
@@ -183,8 +186,7 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
   # public
   def ioemit_update(self):
     io.emit(f'{AssetsIOEvents.UPDATE.value}{self.id}')
-  
-  
+
   # public
   def product_images_all(self):
     if self.type == AssetsType.PHYSICAL_PRODUCT.value:

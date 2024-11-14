@@ -22,16 +22,18 @@ def resolve_cloudMessagingNotifications(_obj, _info, uids, payload):
       'body' : p['body']
     }
     image_ = p.get('image')
+    tokens = set()
     
     for u in Users.by_ids(*uids):
-      tokens = u.cloud_messaging_device_tokens()
-      if 0 < len(tokens):
-        responses.append(
-          notification_send(
-            tokens  = tokens,
-            payload = payload_,
-            image   = image_
-          ))
+      tokens.update(u.cloud_messaging_device_tokens())
+    
+    if 0 < len(tokens):
+      responses.append(
+        notification_send(
+          tokens  = list(tokens),
+          payload = payload_,
+          image   = image_
+        ))
 
 
   except Exception as err:
