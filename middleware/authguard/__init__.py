@@ -23,11 +23,11 @@ def authguard_assets_own(*policies, ASSETS_OWN = None, ANY = False):
   def with_authguard_assets_own(fn_route):
     @wraps(fn_route)
     def wrapper(*args, **kwargs):
-      if not g.user.includes_tags(
+      if not (g.user.includes_tags(
         *policies, ANY = ANY
-      ) or not (ASSETS_OWN and all(
+      ) or (ASSETS_OWN and all(
         a.author.id == g.user.id for a in Assets.by_ids(*kwargs.get(ASSETS_OWN, []))
-      )):
+      ))):
         return abort(make_response('', 403))
       return fn_route(*args, **kwargs)
     return wrapper
