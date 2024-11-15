@@ -88,6 +88,7 @@ class AssetsIOEvents(Enum):
   REMOVE                                      = 'IOEVENT:ASSETS:REMOVED:d3Gcrbv9ezTf7dyb7:'
   IOEVENT_PEOPLE_GROUP_TEAM_CONFIGURED_prefix = 'IOEVENT_PEOPLE_GROUP_TEAM_CONFIGURED:ZNvAgNYKcEG5TNI:'
   IOEVENT_PEOPLE_GROUP_TEAM_REMOVED           = 'IOEVENT_PEOPLE_GROUP_TEAM_REMOVED:7xWnQnU:'
+  IOEVENT_SITE_GROUPS_CONFIGRED_prefix        = 'IOEVENT_SITE_GROUPS_CONFIGRED:dx8XECJUjkGwkA:'
 
 
 class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, MixinExistsID, MixinFieldMergeable, db.Model):
@@ -124,6 +125,26 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     # back_populates = 'assets'
   )
 
+  
+  # public
+  def assets_join(self, *lss):
+    changes = 0
+    for s in filter(lambda s: s not in self.assets_belong, lss):
+      self.assets_belong.append(s)
+      changes += 1
+
+    return changes
+  
+
+  # public
+  def assets_leave(self, *lss):
+    changes = 0
+    for s in filter(lambda s: s in self.assets_belong, lss):
+      self.assets_belong.remove(s)
+      changes += 1
+
+    return changes
+  
   
   # public
   def category_key(self):
@@ -235,6 +256,7 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
   def assets_parents(*lsa, PtAIDS = None, TYPE = None, DISTINCT = True, WITH_OWN = True):
     '''
       list provided node's parent assets; that contain provided nodes;
+      # for account's groups related parent assets:sites
         @PtAIDS; only provided parent assets IDs
         @WITH_OWN; include assets created by this account
     '''
@@ -275,7 +297,6 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
       q = union(q, q_own)
         
     subq = q.subquery()
-    
     
     return db.session.scalars(
       db.select(

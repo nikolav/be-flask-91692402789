@@ -19,7 +19,7 @@ from src.classes.policies import Policies
 
 # assetsRemove(aids: [ID!]!): JsonData!
 @mutation.field('assetsRemove')
-@authguard_assets_own(POLICY_ADMINS, Policies.ASSETS_GROUPS_REMOVE.value, ASSETS_OWN = "aids", ANY = True)
+@authguard_assets_own(Policies.ASSETS_REMOVE.value, POLICY_ADMINS, ASSETS_OWN = "aids", ANY = True)
 def resolve_assetsRemove(_obj, _info, aids):
   r = { 'error': None, 'status': None }
   removed = False
