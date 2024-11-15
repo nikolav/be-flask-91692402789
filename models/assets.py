@@ -1,6 +1,10 @@
+
+from flask import g
+
 from typing import List
 from typing import Optional
 from enum   import Enum
+from uuid   import uuid4 as uuid
 
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -8,6 +12,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import backref
 from sqlalchemy.orm import aliased
 from sqlalchemy     import JSON
+from sqlalchemy     import union
 
 from flask_app import db
 from flask_app import io
@@ -100,6 +105,7 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
   condition : Mapped[Optional[str]] # Condition of the asset (e.g., "New", "Good", "Needs Repair")
   notes     : Mapped[Optional[str]] # Detailed description of the asset
   data      : Mapped[Optional[dict]] = mapped_column(JSON) # additional data
+  key       : Mapped[Optional[str]]  = mapped_column(default = uuid)
 
   author_id = mapped_column(db.ForeignKey(f'{usersTable}.id')) # .uid added the asset
 
@@ -226,9 +232,11 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
 
 
   @staticmethod
-  def assets_parents(*lsa, TYPE = None, DISTINCT = True):
+  def assets_parents(*lsa, PtAIDS = None, TYPE = None, DISTINCT = True, WITH_OWN = True):
     '''
-      list provided node's parent assets; that contain provided nodes
+      list provided node's parent assets; that contain provided nodes;
+        @PtAIDS; only provided parent assets IDs
+        @WITH_OWN; include assets created by this account
     '''
     aids = map(lambda a: a.id, lsa)
     AssetsAliasedParent = aliased(Assets)
@@ -242,15 +250,32 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
       ln_assets_assets.c.asset_r_id == Assets.id
     ).where(
       Assets.id.in_(aids))
-    
+
     if TYPE:
       q = q.where(
         TYPE == AssetsAliasedParent.type)
     
+    if PtAIDS:
+      q = q.where(
+        AssetsAliasedParent.id.in_(PtAIDS))
+    
     if DISTINCT:
       q = q.distinct()
     
+    if True == WITH_OWN:
+      # union created assets:sites
+      q_own = db.select(
+        Assets.id
+      ).where(
+        g.user.id == Assets.author_id)
+      if TYPE:
+        q_own = q_own.where(
+          TYPE == Assets.type)
+
+      q = union(q, q_own)
+        
     subq = q.subquery()
+    
     
     return db.session.scalars(
       db.select(

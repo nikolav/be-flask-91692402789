@@ -136,9 +136,13 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
   def serialize_to_text_search(self):
     return ' '.join(v for v in SchemaSerializeUsersTextSearch().dump(self).values() if v).lower()
   
-  def related_assets(self, *, TYPE = None, DISTINCT = True):
-    return Assets.assets_parents(*self.groups(), 
-                                 TYPE = TYPE, DISTINCT = DISTINCT)
+  def related_assets(self, *, TYPE = None, DISTINCT = True, PtAIDS = None, WITH_OWN = True):
+    return Assets.assets_parents(*self.groups(), PtAIDS = PtAIDS,
+                                 TYPE = TYPE, DISTINCT = DISTINCT, WITH_OWN = WITH_OWN)
+
+  def related_assets_sites_managed(self, *, PtAIDS = None, WITH_OWN = True):
+    return self.related_assets(TYPE = AssetsType.PHYSICAL_STORE.value, 
+                               PtAIDS = PtAIDS, WITH_OWN = WITH_OWN)
   
   # public
   def assets_belongs_to(self, *lsa, ANY = False):

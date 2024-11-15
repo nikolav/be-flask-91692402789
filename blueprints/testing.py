@@ -11,15 +11,25 @@ CORS(bp_testing)
 
 @bp_testing.route('/', methods = ('POST',))
 def testing_home():  
-  # from flask_app import db
+  from flask import g
+  from flask_app import db
   # from models.users import Users
-  # from models.assets import Assets
+  from models.assets import Assets
   # from models.assets import AssetsType
-  # from models.users import Users
+  from models.users import Users
   # from sqlalchemy import func
-  # from schemas.serialization import SchemaSerializeUsersTimes
+  from schemas.serialization import SchemaSerializeUsersTimes
+  from schemas.serialization import SchemaSerializeAssets
 
   r = ResponseStatus()
+  
+  u = db.session.get(Users, 1)
+
+  r.status = { 'sites': SchemaSerializeAssets(many = True, exclude = ('assets_has',)).dump(
+    u.related_assets_sites_managed(
+        WITH_OWN = False,
+      )
+  ) }
 
 
 

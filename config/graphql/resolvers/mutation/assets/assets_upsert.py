@@ -13,6 +13,8 @@ from models.assets import AssetsType
 from schemas.validation.assets import SchemaInputAssetsCreate
 from schemas.serialization     import SchemaSerializeAssets
 
+from src.classes import ResponseStatus
+
 
 # assetsUpsert(fields: JsonData!, aid: ID): JsonData!
 @mutation.field('assetsUpsert')
@@ -20,7 +22,7 @@ def resolve_assetsUpsert(_obj, _info, fields = {}, aid = None):
   # fields: { ...cols, category:string }
   a = None
   d = None
-  r = { 'error': None, 'status': None }
+  r = ResponseStatus()
   
   created = False
   
@@ -63,12 +65,11 @@ def resolve_assetsUpsert(_obj, _info, fields = {}, aid = None):
         # users  = [g.user],
       )
 
-      # include author in new asset:group
       if a.type in (
         AssetsType.PEOPLE_GROUP_TEAM.value,
       ):
+        # include author in new asset:group
         a.users = [g.user]
-      
       
       a.category_key_commit(fields.get('category'), _commit = False)
       
@@ -79,16 +80,16 @@ def resolve_assetsUpsert(_obj, _info, fields = {}, aid = None):
 
     
   except Exception as err:
-    r['error'] = str(err)
+    r.error = err
 
   
   else:
     if a:
-      r['status'] = { 'asset': SchemaSerializeAssets(exclude = ('assets_has',)).dump(a) }
+      r.status = { 'asset': SchemaSerializeAssets(exclude = ('assets_has', 'users', 'author',)).dump(a) }
       io.emit(a.type)
       if not created:
         a.ioemit_update()
   
   
-  return r
+  return r.dump()
 

@@ -178,6 +178,7 @@ type Asset {
   condition: String
   data: JsonData
   notes: String
+  key: String
 
   tags: [String!]
   users: [User!]
@@ -247,7 +248,7 @@ type Query {
 
   # assets, groups
   groupsList(gids: [ID!]): [Asset!]!
-  assetsList(aids: [ID!], type: String, own: Boolean): [Asset!]!
+  assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String): [Asset!]!
 
   # tags
   tagsSearchTagLike(search: String!, prefix: String, attach: String): [String!]!
@@ -327,6 +328,9 @@ type Mutation {
   assetsUpsert(fields: JsonData!, aid: ID): JsonData!
 
   # cache:redis
-  cacheRedisCommit(cache_key: String!, patch: JsonData, merge: Boolean): JsonData!
+  cacheRedisCommit(
+    cache_key: String!
+    patch: JsonData
+    merge: Boolean
+  ): JsonData!
 }
-

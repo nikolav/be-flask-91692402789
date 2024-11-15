@@ -156,6 +156,7 @@ class SchemaSerializeAssets(SchemaSerializeTimes):
   condition = fields.String()
   data      = fields.Dict()
   notes     = fields.String()
+  key       = fields.String()
   
   # virtal
   # users = fields.List(fields.Nested(SchemaSerializeUsersTimes(exclude = ('password',))))
