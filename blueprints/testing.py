@@ -18,18 +18,13 @@ def testing_home():
   # from models.assets import AssetsType
   from models.users import Users
   # from sqlalchemy import func
-  from schemas.serialization import SchemaSerializeUsersTimes
-  from schemas.serialization import SchemaSerializeAssets
+  from schemas.serialization import SchemaSerializeAssetsTextSearch
+
+  a = db.session.get(Assets, 10)
 
   r = ResponseStatus()
-  
-  u = db.session.get(Users, 1)
 
-  r.status = { 'sites': SchemaSerializeAssets(many = True, exclude = ('assets_has',)).dump(
-    u.related_assets_sites_managed(
-        WITH_OWN = False,
-      )
-  ) }
+  r.status = {'sAsset': a.serialize_to_text_search()}
 
 
 

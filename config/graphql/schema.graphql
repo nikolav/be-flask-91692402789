@@ -249,6 +249,9 @@ type Query {
   # assets, groups
   groupsList(gids: [ID!]): [Asset!]!
   assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String): [Asset!]!
+  # list assets by search query .q
+  assetsSearchQ(q: String!, type: String, limit: Int): [Asset!]!
+
 
   # tags
   tagsSearchTagLike(search: String!, prefix: String, attach: String): [String!]!

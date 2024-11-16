@@ -1,6 +1,9 @@
+
 from marshmallow import Schema
 from marshmallow import fields
 # https://marshmallow.readthedocs.io/en/stable/quickstart.html#field-validators-as-methods
+
+import json
 
 
 class SchemaSerializeTimes(Schema):
@@ -195,6 +198,24 @@ class SchemaSerializeUsersTextSearch(Schema):
   def groups_joined(self, user):
     ug = user.groups()
     return ' '.join([g.name for g in ug])
+
+
+class SchemaSerializeAssetsTextSearch(Schema):
+  name       = fields.String()
+  code       = fields.String()
+  location   = fields.String()
+  notes      = fields.String()
+  key        = fields.String()
+  tags       = fields.Method('tags_joined')
+  data_dumps = fields.Method('resolve_data_dumps')
+  
+  def tags_joined(self, asset):
+    return ' '.join([t.tag for t in asset.tags])
+
+  def resolve_data_dumps(self, asset):
+    return json.dumps(asset.data) if None != asset.data else ''
+
+
 
 '''
 {

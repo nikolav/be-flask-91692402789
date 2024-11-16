@@ -56,8 +56,10 @@ def resolve_sitesSGConfig(_obj, _info, sgConfig):
   else:
     r.status = { 'changes': changes }
     if 0 < changes:
-      for sid in sites_affected:
-        io.emit(f'{AssetsIOEvents.IOEVENT_SITE_GROUPS_CONFIGRED_prefix.value}{sid}')
+      for gid in gs.keys():
+        io.emit(f'{AssetsIOEvents.IOEVENT_ASSETS_CONFIGRED_prefix.value}{gid}')
+      # for sid in sites_affected:
+      #   io.emit(f'{AssetsIOEvents.IOEVENT_SITE_GROUPS_CONFIGRED_prefix.value}{sid}')
 
   
   return r.dump()

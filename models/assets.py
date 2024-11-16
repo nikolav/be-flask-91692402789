@@ -35,6 +35,7 @@ from models.tags import Tags
 from models.docs import DocsTags
 
 from utils import Unique
+from schemas.serialization import SchemaSerializeAssetsTextSearch
 
 
 CATEGORY_KEY_ASSETS_prefix = 'CATEGORY_KEY:ASSETS:hhPDiM:'
@@ -89,6 +90,7 @@ class AssetsIOEvents(Enum):
   IOEVENT_PEOPLE_GROUP_TEAM_CONFIGURED_prefix = 'IOEVENT_PEOPLE_GROUP_TEAM_CONFIGURED:ZNvAgNYKcEG5TNI:'
   IOEVENT_PEOPLE_GROUP_TEAM_REMOVED           = 'IOEVENT_PEOPLE_GROUP_TEAM_REMOVED:7xWnQnU:'
   IOEVENT_SITE_GROUPS_CONFIGRED_prefix        = 'IOEVENT_SITE_GROUPS_CONFIGRED:dx8XECJUjkGwkA:'
+  IOEVENT_ASSETS_CONFIGRED_prefix             = 'IOEVENT_ASSETS_CONFIGRED:B11XCb8hAP5:'
 
 
 class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, MixinExistsID, MixinFieldMergeable, db.Model):
@@ -125,6 +127,10 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     # back_populates = 'assets'
   )
 
+  
+  # public
+  def serialize_to_text_search(self):
+    return ' '.join(v for v in SchemaSerializeAssetsTextSearch().dump(self).values() if v).lower()
   
   # public
   def assets_join(self, *lss):
