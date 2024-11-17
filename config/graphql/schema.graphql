@@ -248,7 +248,7 @@ type Query {
 
   # assets, groups
   groupsList(gids: [ID!]): [Asset!]!
-  assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String): [Asset!]!
+  assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String, children: Boolean): [Asset!]!
   # list assets by search query .q
   assetsSearchQ(q: String!, type: String, limit: Int): [Asset!]!
 
@@ -330,6 +330,7 @@ type Mutation {
   groupsGUConfigure(guConfig: JsonData!): JsonData!
   assetsUpsert(fields: JsonData!, aid: ID): JsonData!
   sitesSGConfig(sgConfig: JsonData!): JsonData!
+  channelsCGConfig(cgConfig: JsonData!): JsonData!
 
   # cache:redis
   cacheRedisCommit(

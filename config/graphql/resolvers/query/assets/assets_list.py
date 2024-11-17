@@ -8,7 +8,7 @@ from models.users          import Users
 from schemas.serialization import SchemaSerializeAssets
 
 
-# assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String): [Asset!]!
+# assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String, children: Boolean): [Asset!]!
 @query.field('assetsList')
 def resolve_assetsList(_obj, _info, 
                        aids           = None, 
@@ -16,17 +16,26 @@ def resolve_assetsList(_obj, _info,
                        own            = True, 
                        aids_subs_only = None, 
                        aids_subs_type = None,
+                       children       = False,
                       ):
 
   q   = None
   lsa = None
   
-  if AssetsType.PHYSICAL_STORE.value == type:
+  if True == children:
+    lsa = Assets.assets_children(*Assets.by_ids(*aids), TYPE = type)
+  
+
+  elif type in (
+    AssetsType.PHYSICAL_STORE.value,
+    AssetsType.DIGITAL_CHAT.value,
+  ):
+    # search self:relations/asset-asset for this types
 
     if True == own:
       if aids_subs_only:
-        # fetch some managed sites
-        #   only provided groups: @aids_subs_only?: number[]
+        # fetch some managed parent assets
+        #   only relating to provided groups: @aids_subs_only?: number[]
         lsa = Assets.assets_parents(
             *Assets.by_ids_and_type(*aids_subs_only, type = aids_subs_type),
             PtAIDS   = aids,
@@ -34,8 +43,9 @@ def resolve_assetsList(_obj, _info,
             WITH_OWN = False,
           )
       else:
-        # fetch *managed sites
-        lsa = g.user.related_assets_sites_managed(
+        # fetch *related assets:parents
+        lsa = g.user.related_assets(
+            TYPE     = type,
             PtAIDS   = aids, 
             WITH_OWN = False,
           )
@@ -45,7 +55,7 @@ def resolve_assetsList(_obj, _info,
       q = db.select(
           Assets
         ).where(
-          AssetsType.PHYSICAL_STORE.value == Assets.type)
+          type == Assets.type)
       # only @IDs
       if aids:
         q = q.where(

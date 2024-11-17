@@ -11,6 +11,8 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
+from uuid import uuid4 as uuid
+
 from . import db
 from . import docsTable
 from . import usersTable
@@ -52,8 +54,7 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, MixinFieldMergeabl
   __tablename__ = docsTable
 
   id   : Mapped[int]           = mapped_column(primary_key = True)
-  # unique .key; get records by unique name
-  key  : Mapped[Optional[str]] = mapped_column(unique = True)
+  key  : Mapped[Optional[str]] = mapped_column(default = uuid)
   data : Mapped[dict]          = mapped_column(JSON)
   # foreignkey
   user_id    = mapped_column(db.ForeignKey(f'{usersTable}.id'))
