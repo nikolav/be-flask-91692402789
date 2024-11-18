@@ -13,6 +13,8 @@ from sqlalchemy.orm import backref
 from sqlalchemy.orm import aliased
 from sqlalchemy     import JSON
 from sqlalchemy     import union
+from sqlalchemy     import or_
+from sqlalchemy     import and_
 
 from flask_app import db
 from flask_app import io
@@ -393,7 +395,24 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
         AssetsType.PHYSICAL_STORE.value == Assets.type
       ))
 
+  @staticmethod
+  def nuxt_products_prerender():
+    q = db.select(
+      Assets.id
+    ).where(
+      AssetsType.PHYSICAL_PRODUCT.value == Assets.type,
+      or_(
+        Assets.status.is_(None),
+        and_(
+          Assets.status.isnot(None),
+          AssetsStatus.ARCHIVED.value != Assets.status,
+        )
+      )
+    )
+    
+    return db.session.scalars(q)
 
+    
 ##
 ## assets table fields @chatGPT response
 ##

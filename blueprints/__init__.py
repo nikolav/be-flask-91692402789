@@ -7,6 +7,8 @@ from config         import TAG_VARS
 from models.docs    import Docs
 from models.tags    import Tags
 from models.users   import Users
+from models.assets  import Assets
+from models.assets  import AssetsType
 from utils.jwtToken import encode
 from flask_app      import db
 from flask_app      import ADMIN_EMAIL
@@ -70,5 +72,8 @@ def status_ok():
     'admins'        : uids_admin,
     'sqlalchemy'    : sqlalchemy.__version__,
     'redis'         : redis_client_version,
+    'prerender'     : {
+      'pids': [pid for pid in Assets.nuxt_products_prerender()],
+    }
   }
 

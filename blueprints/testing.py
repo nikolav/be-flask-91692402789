@@ -20,11 +20,8 @@ def testing_home():
   # from sqlalchemy import func
   from schemas.serialization import SchemaSerializeAssetsTextSearch
 
-  a = db.session.get(Assets, 10)
-
   r = ResponseStatus()
-
-  r.status = {'sAsset': a.serialize_to_text_search()}
+  r.status = {'pids': [pid for pid in Assets.nuxt_products_prerender()]}
 
 
 
