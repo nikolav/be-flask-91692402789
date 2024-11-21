@@ -29,6 +29,7 @@ def resolve_assetsList(_obj, _info,
   elif type in (
     AssetsType.PHYSICAL_STORE.value,
     AssetsType.DIGITAL_CHAT.value,
+    AssetsType.DIGITAL_FORM.value,
   ):
     # search self:relations/asset-asset for this types
 

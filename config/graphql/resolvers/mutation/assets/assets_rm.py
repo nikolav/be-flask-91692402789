@@ -16,12 +16,14 @@ from middleware.authguard import authguard_assets_own
 from flask_app            import POLICY_ADMINS
 from src.classes.policies import Policies
 
+from src.classes import ResponseStatus
+
 
 # assetsRemove(aids: [ID!]!): JsonData!
 @mutation.field('assetsRemove')
 @authguard_assets_own(Policies.ASSETS_REMOVE.value, POLICY_ADMINS, ASSETS_OWN = "aids", ANY = True)
 def resolve_assetsRemove(_obj, _info, aids):
-  r = { 'error': None, 'status': None }
+  r = ResponseStatus()
   removed = False
   assets_selected = ()
   debug_assets_affected = ()
@@ -79,16 +81,16 @@ def resolve_assetsRemove(_obj, _info, aids):
           Assets.id.in_(aids)
         )) < assets_len_start
 
-    r['status'] = { 'removed': removed }
+    r.status = { 'removed': removed }
 
 
   except Exception as err:
-    r['error'] = str(err)
+    r.error = err
   
   
   else:
     if removed:
-      # emit group:removed:ID
+      # emit asset:removed:ID
       # emit asset:type
 
       for a in debug_assets_affected:
@@ -99,5 +101,5 @@ def resolve_assetsRemove(_obj, _info, aids):
           io.emit(a_type)
 
 
-  return r
+  return r.dump()
 

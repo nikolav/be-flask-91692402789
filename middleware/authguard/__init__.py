@@ -23,6 +23,9 @@ def authguard_assets_own(*policies, ASSETS_OWN = None, ANY = False):
   def with_authguard_assets_own(fn_route):
     @wraps(fn_route)
     def wrapper(*args, **kwargs):
+      # passes if 
+      #  has policies
+      #  author of related assets
       if not (g.user.includes_tags(
         *policies, ANY = ANY
       ) or (ASSETS_OWN and all(

@@ -7,6 +7,7 @@ from flask_app import IOEVENT_ACCOUNTS_UPDATED
 from models          import ln_users_tags
 # from models          import ln_orders_products
 # from models          import ln_products_tags
+from models          import ln_users_assets
 from models.users    import Users
 from models.docs     import Docs
 # from models.orders   import Orders
@@ -14,6 +15,7 @@ from models.docs     import Docs
 # from models.posts    import Posts
 
 from config.graphql.init import mutation
+from src.classes         import ResponseStatus
 
 from utils.jwtToken import setInvalid as token_set_invalid
 
@@ -26,8 +28,9 @@ def resollve_accountsDrop(_o, _i, uid):
       related records 
         --Tags --Docs
   '''
-  r  = { 'error': None,  'status': None }
+  r  = ResponseStatus()
   id = None
+
   
   try:
     u = db.session.get(Users, uid)
@@ -75,14 +78,14 @@ def resollve_accountsDrop(_o, _i, uid):
         ).where(
           id == ln_users_tags.c.user_id
         ))
-      
+              
       # db.session.execute(
       #   db.delete(Posts)
       #     .where(
       #       Posts.user_id == uid
       #     )
       # )
-      
+            
       db.session.execute(
         db.delete(
           Docs
@@ -90,6 +93,13 @@ def resollve_accountsDrop(_o, _i, uid):
           id == Docs.user_id
         ))
       
+      db.session.execute(
+        db.delete(
+          ln_users_assets
+        ).where(
+          id == ln_users_assets.c.user_id
+        ))
+
       db.session.execute(
         db.delete(
           Users
@@ -101,19 +111,20 @@ def resollve_accountsDrop(_o, _i, uid):
 
       # Users.clear_storage(uid)
 
-      if not g.user.is_admin():
-        token_set_invalid(g.access_token)
+      # if not g.user.is_admin():
+      #   token_set_invalid(g.access_token)
     
     
   except Exception as err:
-    r['error'] = str(err)
+    raise err
+    r.error = err
     
 
   else:
-    r['status'] = { 'id': id }
+    r.status = { 'id': id }
     if id:
       io.emit(IOEVENT_ACCOUNTS_UPDATED)
   
 
-  return r
+  return r.dump()
 
