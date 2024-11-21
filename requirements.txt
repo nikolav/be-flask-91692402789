@@ -45,3 +45,4 @@ RapidFuzz==3.10.1
 Levenshtein==0.26.1
 python-Levenshtein==0.26.1
 
+Hypercorn==0.17.3
