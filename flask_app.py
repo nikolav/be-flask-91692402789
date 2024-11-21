@@ -32,6 +32,7 @@ APP_SECRET_KEY                 = os.getenv('SECRET_KEY')
 USER_EMAIL                     = os.getenv('USER_EMAIL')
 USER_PASSWORD                  = os.getenv('USER_PASSWORD')
 DEFAULT_USER_ID                = os.getenv('DEFAULT_USER_ID')
+MAX_BODY_SIZE_MB               = int(os.getenv('MAX_BODY_SIZE_MB'))
 
 # policies
 POLICY_ADMINS                  = os.getenv('POLICY_ADMINS')
@@ -110,6 +111,8 @@ app = Flask(__name__)
 
 # app-config
 app.config['SECRET_KEY'] = APP_SECRET_KEY
+app.config['MAX_BODY_SIZE']      = MAX_BODY_SIZE_MB * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = app.config['MAX_BODY_SIZE']
 
 # app-config:db
 app.config['SQLALCHEMY_DATABASE_URI']        = DATABASE_URI
@@ -136,6 +139,7 @@ CORS(app,
     r'/graphql'               : {'origins': '*'},
     r'/storage'               : {'origins': '*'},
     r'/webhook_viber_channel' : {'origins': '*'},
+    r'/b64url'                : {'origins': '*'},
   }
 ) if PRODUCTION else CORS(app, supports_credentials = True)
 
@@ -204,6 +208,7 @@ from blueprints                       import bp_home
 from blueprints.auth                  import bp_auth
 from blueprints.storage               import bp_storage
 from blueprints.webhook_viber_channel import bp_webhook_viber_channel
+from blueprints.b64url                import bp_b64url
 
 # @blueprints:mount
 #   /
@@ -217,6 +222,9 @@ app.register_blueprint(bp_storage)
 
 # /webhook
 app.register_blueprint(bp_webhook_viber_channel)
+
+# /b64url
+app.register_blueprint(bp_b64url)
 
 if not PRODUCTION:
   #   /test
