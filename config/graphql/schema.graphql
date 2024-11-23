@@ -251,6 +251,8 @@ type Query {
   assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String, children: Boolean): [Asset!]!
   # list assets by search query .q
   assetsSearchQ(q: String!, type: String, limit: Int): [Asset!]!
+  # assets:count
+  assetsCount(asset_type: String!, own: Boolean): JsonData!
 
 
   # tags

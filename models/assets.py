@@ -66,6 +66,50 @@ class AssetsType(Enum):
   # ISSUES
   ISSUE_GENERAL = 'ISSUE_GENERAL:x53CJbY'
 
+class AssetsDigitalFormType(Enum):
+  # asset.data
+  #   {
+  #     fields: [
+  #       {
+  #         _type: '@choice',
+  #         ...qdr,
+  #         items,
+  #         multiple
+  #       },
+  #       {
+  #         _type: '@text',
+  #         ...qdr,
+  #       },
+  #       {
+  #         _type: '@boolean',
+  #         ...qdr,
+  #       },
+  #       {
+  #         _type: '@rating',
+  #         ...qdr,
+  #       },
+  #       {
+  #         _type: '@files',
+  #         ...qdr,
+  #       },
+  #     ]
+  #   }
+  
+  # @choice: 
+  #   .question .description? .required .items: { title:string; value: any; }[] .multiple?
+  CHOICE  = 'DIGITAL_FORM:CHOICE:hrNoq9hhbh2wUyZ9fjmf'
+  # @text
+  #   .question .description? .required
+  TEXT    = 'DIGITAL_FORM:TEXT:54QNKF'
+  # @boolean
+  #   .question .description? .required
+  BOOLEAN = 'DIGITAL_FORM:BOOLEAN:P1cUlYS4'
+  # @rating
+  #   .question .description? .required
+  RATING  = 'DIGITAL_FORM:RATING:C6zX66WEWk'
+  # @files
+  #   .question .description? .required
+  FILES   = 'DIGITAL_FORM:FILES:KBr3gZuJAM4s'
 
 class AssetsStatus(Enum):
   ACTIVE   = 'ACTIVE:YjCrzsLhGtiE4f3ffO'
@@ -76,14 +120,12 @@ class AssetsStatus(Enum):
   INACTIVE = 'INACTIVE:fdHJBPHGyC'
   PENDING  = 'PENDING:P4kOFE3HF'
 
-
 class AssetsCondition(Enum):
   BAD            = 'BAD:oKRchSYlnm8lMqcqoq'
   DEPRECATED     = 'DEPRECATED:stuDFLe7AQf4eKr0RVIn'
   GOOD           = 'GOOD:xW3qMs2e94T9S'
   NEEDS_REPAIR   = 'NEEDS_REPAIR:NJGJD8Spq9A2aFrQgas'
   OUT_OF_SERVICE = 'OUT_OF_SERVICE:KpJUn2IqM2oj'
-
 
 class AssetsIOEvents(Enum):
   # UPDATE                                      = 'UPDATE:4BPXLhqdWOf:'

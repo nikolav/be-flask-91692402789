@@ -40,6 +40,7 @@ from .groups import groups_list
 
 from .assets import assets_list
 from .assets import assets_search_q
+from .assets import assets_count
 
 from .dl import dl_file_b64
 
