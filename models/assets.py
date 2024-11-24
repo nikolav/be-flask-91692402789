@@ -66,31 +66,15 @@ class AssetsType(Enum):
   # ISSUES
   ISSUE_GENERAL = 'ISSUE_GENERAL:x53CJbY'
 
-class AssetsDigitalFormType(Enum):
+class AssetsDigitalFormFieldTypes(Enum):
   # asset.data
   #   {
   #     fields: [
   #       {
-  #         _type: '@choice',
-  #         ...qdr,
-  #         items,
-  #         multiple
-  #       },
-  #       {
-  #         _type: '@text',
-  #         ...qdr,
-  #       },
-  #       {
-  #         _type: '@boolean',
-  #         ...qdr,
-  #       },
-  #       {
-  #         _type: '@rating',
-  #         ...qdr,
-  #       },
-  #       {
-  #         _type: '@files',
-  #         ...qdr,
+  #         data { question, description, required:bool, multiple:bool },
+  #         items: string[],
+  #         key,
+  #         type
   #       },
   #     ]
   #   }
@@ -110,6 +94,7 @@ class AssetsDigitalFormType(Enum):
   # @files
   #   .question .description? .required
   FILES   = 'DIGITAL_FORM:FILES:KBr3gZuJAM4s'
+
 
 class AssetsStatus(Enum):
   ACTIVE   = 'ACTIVE:YjCrzsLhGtiE4f3ffO'
