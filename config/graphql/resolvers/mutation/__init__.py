@@ -38,6 +38,7 @@ from .assets import groups_configure
 from .assets import assets_rm
 from .assets import assets_upsert
 from .assets import assets_ag_config
+from .assets import assets_patch_data
 
 from .comms import comms_message_many
 from .comms import comms_group_message_many

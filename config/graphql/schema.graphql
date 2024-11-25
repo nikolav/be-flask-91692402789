@@ -254,7 +254,6 @@ type Query {
   # assets:count
   assetsCount(asset_type: String!, own: Boolean): JsonData!
 
-
   # tags
   tagsSearchTagLike(search: String!, prefix: String, attach: String): [String!]!
 
@@ -334,6 +333,8 @@ type Mutation {
   groupsGUConfigure(guConfig: JsonData!): JsonData!
   assetsUpsert(fields: JsonData!, aid: ID): JsonData!
   assetsAGConfig(ag_config: JsonData!, assets_type: String!): JsonData!
+  # assetsPatchData
+  assetsPatchData(aid: ID!, patch: JsonData!): JsonData!
 
   # cache:redis
   cacheRedisCommit(

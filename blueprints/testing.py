@@ -27,44 +27,6 @@ def testing_home():
   from schemas.serialization import SchemaSerializeAssetsTextSearch
 
   r = ResponseStatus()
-  
-  q_nonarchived = or_(
-      Assets.status.is_(None),
-      and_(
-        Assets.status.is_not(None),
-        AssetsStatus.ARCHIVED.value != Assets.status
-      )
-    )
-  
-  q_count_products = db.select(
-    literal('products').label('asset'),
-    func.count(Assets.id).label('tot')
-  ).where(
-    AssetsType.PHYSICAL_PRODUCT.value == Assets.type,
-    q_nonarchived)
-  # q_count_groups = db.select(
-  #   literal('groups').label('asset'),
-  #   func.count(Assets.id).label('tot')
-  # ).where(
-  #   AssetsType.PEOPLE_GROUP_TEAM.value == Assets.type,
-  #   q_nonarchived)
-  # q_count_sites = db.select(
-  #   literal('sites').label('asset'),
-  #   func.count(Assets.id).label('tot')
-  # ).where(
-  #   AssetsType.PHYSICAL_STORE.value == Assets.type,
-  #   q_nonarchived)
-  
-  q = union(
-    q_count_products, 
-    # q_count_groups, 
-    # q_count_sites,
-  )
-
-  r.status = { 
-              node.asset: node.tot 
-                for node in db.session.execute(q)
-              }
 
   return r.dump()
 

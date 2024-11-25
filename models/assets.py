@@ -460,3 +460,8 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
 # AssignedTo: The person or department to which the asset is assigned.
 # Status: The current status of the asset (e.g., In Use, In Storage, Disposed).
 # Notes: Any additional notes or comments about the asset.
+
+# google_calendar :config
+#  .data.shareable_link
+#  .data.public_url
+
