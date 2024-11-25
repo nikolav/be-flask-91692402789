@@ -333,8 +333,7 @@ type Mutation {
   assetsRemove(aids: [ID!]!): JsonData!
   groupsGUConfigure(guConfig: JsonData!): JsonData!
   assetsUpsert(fields: JsonData!, aid: ID): JsonData!
-  sitesSGConfig(sgConfig: JsonData!): JsonData!
-  channelsCGConfig(cgConfig: JsonData!): JsonData!
+  assetsAGConfig(ag_config: JsonData!, assets_type: String!): JsonData!
 
   # cache:redis
   cacheRedisCommit(

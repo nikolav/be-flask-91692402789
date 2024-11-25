@@ -37,8 +37,7 @@ from .messaging import cloud_messaging_notifications_chats
 from .assets import groups_configure
 from .assets import assets_rm
 from .assets import assets_upsert
-from .assets import sites_sg_config
-from .assets import channels_cg_config
+from .assets import assets_ag_config
 
 from .comms import comms_message_many
 from .comms import comms_group_message_many

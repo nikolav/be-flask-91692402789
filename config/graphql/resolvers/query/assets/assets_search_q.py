@@ -6,7 +6,6 @@ from config.graphql.init import query
 
 from flask_app import db
 from models.assets import Assets
-from models.assets import AssetsType
 from schemas.serialization import SchemaSerializeAssets
 
 # assetsSearchQ(q: String!, type: String, limit: Int): [Asset!]!

@@ -25,10 +25,10 @@ def resolve_groupsGUConfigure(_obj, _info, guConfig):
     for gKeys, lsuids in guConfig.items():
       for uid in lsuids:
         for k in gKeys.split(' '):
-          g = int(k[1:])
+          gid = int(k[1:])
           ug.setdefault(uid, 
-            { '+': set(), '-': set() })[k[0]].add(g)
-          groups_affected.add(g)
+            { '+': set(), '-': set() })[k[0]].add(gid)
+          groups_affected.add(gid)
     
     for u in Users.by_ids(*ug.keys()):
       
