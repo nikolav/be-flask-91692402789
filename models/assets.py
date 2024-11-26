@@ -94,6 +94,10 @@ class AssetsDigitalFormFieldTypes(Enum):
   # @files
   #   .question .description? .required
   FILES   = 'DIGITAL_FORM:FILES:KBr3gZuJAM4s'
+  # @table, fill table data
+  TABLE_DATA = 'DIGITAL_FORM:TABLE_DATA:GOOGLE_SHEETS:1lbH5rK'
+  # @goog.forms, complete google form
+  GOOGLE_FORMS = 'DIGITAL_FORM:GOOGLE_FORMS:NWso2XvdHbLlCIW4Q9'
 
 
 class AssetsStatus(Enum):
