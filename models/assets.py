@@ -124,6 +124,7 @@ class AssetsIOEvents(Enum):
   IOEVENT_PEOPLE_GROUP_TEAM_REMOVED           = 'IOEVENT_PEOPLE_GROUP_TEAM_REMOVED:7xWnQnU:'
   IOEVENT_SITE_GROUPS_CONFIGRED_prefix        = 'IOEVENT_SITE_GROUPS_CONFIGRED:dx8XECJUjkGwkA:'
   IOEVENT_ASSETS_CONFIGRED_prefix             = 'IOEVENT_ASSETS_CONFIGRED:B11XCb8hAP5:'
+  IOEVENT_ASSETS_FORMS_SUBMISSION_prefix      = 'IOEVENT_ASSETS_FORMS_SUBMISSION:kLctvwLigtUAaHzTD:'
 
 
 class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, MixinExistsID, MixinFieldMergeable, db.Model):
@@ -161,6 +162,10 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
   )
 
   
+  # public
+  def is_status(self, s):
+    return s == self.status
+    
   # public
   def serialize_to_text_search(self):
     return ' '.join(v for v in SchemaSerializeAssetsTextSearch().dump(self).values() if v).lower()

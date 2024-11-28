@@ -44,6 +44,7 @@ def resolve_assetsUpsert(_obj, _info, fields = {}, aid = None):
       a = db.session.get(Assets, aid)
       if not a:
         raise Exception('resolve_assetsUpsert --no-asset')
+            
 
       for field, value in d.items():
         if 'category' != field:
