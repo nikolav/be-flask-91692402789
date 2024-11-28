@@ -41,6 +41,7 @@ from .groups import groups_list
 from .assets import assets_list
 from .assets import assets_search_q
 from .assets import assets_count
+from .assets import assets_forms_submissions_list
 
 from .dl import dl_file_b64
 

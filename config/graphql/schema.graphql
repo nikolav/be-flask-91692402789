@@ -189,6 +189,17 @@ type Asset {
   updated_at: String
 }
 
+type Docs {
+  id: ID!
+  key: String!
+  data: JsonData!
+
+  asset: Asset
+  
+  created_at: String
+  updated_at: String
+}
+
 #########
 ## @Query
 
@@ -253,6 +264,8 @@ type Query {
   assetsSearchQ(q: String!, type: String, limit: Int): [Asset!]!
   # assets:count
   assetsCount(asset_type: String!, own: Boolean): JsonData!
+  # assets:forms
+  assetsFormsSubmissionsList: [Docs!]!
 
   # tags
   tagsSearchTagLike(search: String!, prefix: String, attach: String): [String!]!

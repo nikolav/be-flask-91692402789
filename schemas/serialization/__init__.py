@@ -215,6 +215,13 @@ class SchemaSerializeAssetsTextSearch(Schema):
   def resolve_data_dumps(self, asset):
     return json.dumps(asset.data) if None != asset.data else ''
 
+class SchemaSerializeDocs(SchemaSerializeDocJsonTimes):
+  key = fields.String()
+  
+  # virtual
+  asset = fields.Nested(SchemaSerializeAssets(
+    exclude = ('assets_has', 'author', 'users', 'docs',)))
+
 
 
 '''
