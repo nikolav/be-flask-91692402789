@@ -11,6 +11,7 @@ from models.assets import AssetsIOEvents
 from models        import ln_users_assets
 from models        import ln_assets_tags
 from models        import ln_assets_assets
+from models.docs   import Docs
 
 from middleware.authguard import authguard_assets_own
 from flask_app            import POLICY_ADMINS
@@ -59,6 +60,14 @@ def resolve_assetsRemove(_obj, _info, aids):
             ln_assets_assets.c.asset_r_id.in_(aids),
             ln_assets_assets.c.asset_l_id.in_(aids),
           )))
+      
+      # clear .asset_id fields @Docs
+      db.session.execute(
+        db.delete(
+          Docs
+        ).where(
+          Docs.asset_id.in_(aids)
+        ))
       
       
       debug_assets_affected = tuple({ 'id': a.id, 'type': a.type } for a in assets_selected)
