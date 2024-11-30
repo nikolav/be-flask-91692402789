@@ -24,6 +24,9 @@ from src.classes import ResponseStatus
 @mutation.field('assetsRemove')
 @authguard_assets_own(Policies.ASSETS_REMOVE.value, POLICY_ADMINS, ASSETS_OWN = "aids", ANY = True)
 def resolve_assetsRemove(_obj, _info, aids):
+  '''
+    hard deletes assets and related records
+  '''
   r = ResponseStatus()
   removed = False
   assets_selected = ()
@@ -61,14 +64,13 @@ def resolve_assetsRemove(_obj, _info, aids):
             ln_assets_assets.c.asset_l_id.in_(aids),
           )))
       
-      # clear .asset_id fields @Docs
+      # rm .asset_id fields @Docs
       db.session.execute(
         db.delete(
           Docs
         ).where(
           Docs.asset_id.in_(aids)
         ))
-      
       
       debug_assets_affected = tuple({ 'id': a.id, 'type': a.type } for a in assets_selected)
       

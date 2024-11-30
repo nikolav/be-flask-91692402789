@@ -10,6 +10,8 @@ from models.docs   import Docs
 from flask_app     import io
 from models.assets import AssetsIOEvents
 
+from schemas.serialization import SchemaSerializeDocs
+
 # assetsFormsSubmission(data: JsonData!, fid: ID!, key: String): JsonData!
 @mutation.field('assetsFormsSubmission')
 def resolve_assetsFormsSubmission(_obj, _info, data, fid, key = None):
@@ -47,7 +49,8 @@ def resolve_assetsFormsSubmission(_obj, _info, data, fid, key = None):
 
     
   else:
-    r.status = { 'key': dd_form_submission.key }
+    # r.status = { 'key': dd_form_submission.key }
+    r.status = { 'submission': SchemaSerializeDocs(only = ('id', 'key',)).dump(dd_form_submission) }
     io.emit(f'{AssetsIOEvents.IOEVENT_ASSETS_FORMS_SUBMISSION_prefix.value}{a.key}')
   
   
