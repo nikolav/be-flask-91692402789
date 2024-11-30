@@ -49,3 +49,5 @@ from .tags import tags_search_like
 
 from .redis import redis_cache_by_key
 
+from .docs_reports import reports_search
+

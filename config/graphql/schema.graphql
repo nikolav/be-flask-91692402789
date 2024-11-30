@@ -195,7 +195,8 @@ type Docs {
   data: JsonData!
 
   asset: Asset
-  
+  user: User
+
   created_at: String
   updated_at: String
 }
@@ -259,7 +260,14 @@ type Query {
 
   # assets, groups
   groupsList(gids: [ID!]): [Asset!]!
-  assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String, children: Boolean): [Asset!]!
+  assetsList(
+    aids: [ID!]
+    type: String
+    own: Boolean
+    aids_subs_only: [ID!]
+    aids_subs_type: String
+    children: Boolean
+  ): [Asset!]!
   # list assets by search query .q
   assetsSearchQ(q: String!, type: String, limit: Int): [Asset!]!
   # assets:count
@@ -272,6 +280,9 @@ type Query {
 
   # cache:redis
   cacheRedisGetCacheByKey(cache_key: String!): JsonData!
+
+  # docs:reports
+  reportsSearch(query_strategy: String!, query_strategy_args: JsonData): JsonData!
 }
 
 ############
@@ -330,8 +341,11 @@ type Mutation {
   # cloud_messaging
   cloudMessagingPing(payload: JsonData): JsonData!
   cloudMessagingNotifications(uids: [ID!]!, payload: JsonData!): JsonData!
-  cloudMessagingNotificationsChats(cids: [ID!]!, payload: JsonData!, AND_THIS: Boolean): JsonData!
-
+  cloudMessagingNotificationsChats(
+    cids: [ID!]!
+    payload: JsonData!
+    AND_THIS: Boolean
+  ): JsonData!
 
   # communication
   commsMessageMany(uids: [ID!]!, message: JsonData!): JsonData!

@@ -11,7 +11,7 @@ class SchemaSerializeTimes(Schema):
   updated_at = fields.DateTime()
 
 class SchemaSerializeDocJson(Schema):
-  id   = fields.Int()
+  id   = fields.Integer()
   data = fields.Dict()
 
 
@@ -221,6 +221,8 @@ class SchemaSerializeDocs(SchemaSerializeDocJsonTimes):
   # virtual
   asset = fields.Nested(SchemaSerializeAssets(
     exclude = ('assets_has', 'author', 'users', 'docs',)))
+  user = fields.Nested(SchemaSerializeUsersTimes(
+    exclude = ('password', 'products', 'posts',)))
 
 
 

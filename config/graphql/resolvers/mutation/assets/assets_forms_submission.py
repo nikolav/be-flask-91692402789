@@ -12,6 +12,9 @@ from models.assets import AssetsIOEvents
 
 from schemas.serialization import SchemaSerializeDocs
 
+from flask import g
+
+
 # assetsFormsSubmission(data: JsonData!, fid: ID!, key: String): JsonData!
 @mutation.field('assetsFormsSubmission')
 def resolve_assetsFormsSubmission(_obj, _info, data, fid, key = None):
@@ -39,6 +42,7 @@ def resolve_assetsFormsSubmission(_obj, _info, data, fid, key = None):
     )
 
     # db.session.add(dd_form_submission)
+    dd_form_submission.user = g.user
     a.docs.append(dd_form_submission)
 
     db.session.commit()
