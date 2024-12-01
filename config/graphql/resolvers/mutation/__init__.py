@@ -45,4 +45,7 @@ from .comms import comms_message_many
 from .comms import comms_group_message_many
 
 from .docs_reports import reports_remove
+from .docs_reports import reports_config
+
+
 

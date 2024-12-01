@@ -48,6 +48,7 @@ class DocsTags(Enum):
   ASSETS_FORM_SUBMISSION   = 'ASSETS_FORM_SUBMISSION:5JTfkV8'
   IMAGE_PRODUCT            = 'IMAGE_PRODUCT:06koI97IiCW'
   USER_AVAILABILITY_STATUS = 'USER_AVAILABILITY_STATUS:TOy5MSh9d7xmo94vvMED'
+  SHAREABLE                = 'DocsTags:SHAREABLE:muSvm4x5'
   
 
 # https://docs.sqlalchemy.org/en/20/tutorial/metadata.html#declaring-mapped-classes

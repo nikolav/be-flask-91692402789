@@ -196,6 +196,7 @@ type Docs {
 
   asset: Asset
   user: User
+  tags: [String]
 
   created_at: String
   updated_at: String
@@ -365,6 +366,7 @@ type Mutation {
   # assets:forms:reports
   assetsFormsSubmission(data: JsonData!, fid: ID!, key: String): JsonData!
   reportsDrop(ids: [ID!]!): JsonData!
+  reportsConfigurationTags(ids: [ID!]!, config: JsonData!): JsonData!
 
   # cache:redis
   cacheRedisCommit(

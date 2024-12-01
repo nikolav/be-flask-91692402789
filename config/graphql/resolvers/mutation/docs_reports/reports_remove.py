@@ -2,8 +2,9 @@
 from config.graphql.init import mutation
 from src.classes import ResponseStatus
 
-from flask_app import db
+from flask_app   import db
 from models.docs import Docs
+from models      import ln_docs_tags
 
 from middleware.authguard import authguard_reports_manage
 
@@ -29,12 +30,21 @@ def resolve_reportsDrop(_obj, _info, ids):
     
 
     if 0 < len(ls_ids_rm):    
+      
+      db.session.execute(
+        db.delete(
+          ln_docs_tags
+        ).where(
+          ln_docs_tags.c.doc_id.in_(ls_ids_rm)
+        ))
+
       db.session.execute(
         db.delete(
           Docs
         ).where(
           Docs.id.in_(ls_ids_rm)
         ))
+        
       db.session.commit()
     
     r.status = { 'removed': ls_ids_rm }

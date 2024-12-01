@@ -223,6 +223,7 @@ class SchemaSerializeDocs(SchemaSerializeDocJsonTimes):
     exclude = ('assets_has', 'author', 'users', 'docs',)))
   user = fields.Nested(SchemaSerializeUsersTimes(
     exclude = ('password', 'products', 'posts',)))
+  tags = fields.List(fields.String())
 
 
 
