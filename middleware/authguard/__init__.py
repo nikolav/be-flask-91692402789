@@ -5,6 +5,7 @@ from flask import abort
 from flask import make_response
 
 from models.assets import Assets
+from models.docs   import Docs
 
 
 # assert: --policies
@@ -36,3 +37,18 @@ def authguard_assets_own(*policies, ASSETS_OWN = None, ANY = False):
     return wrapper
   return with_authguard_assets_own
 
+
+# reports:manage --has-policies --owns
+def authguard_reports_manage(*policies, REPORTS_KEY = "ids", ANY = True):
+  def with_authguard_reports_manage(fn_route):
+    @wraps(fn_route)
+    def wrapper(*args, **kwargs):
+      if not (g.user.includes_tags(
+        *policies, ANY = ANY
+      ) or (REPORTS_KEY and all(
+        r.user.id == g.user.id for r in Docs.by_ids(*kwargs.get(REPORTS_KEY, []))
+      ))):
+        return abort(make_response('', 403))
+      return fn_route(*args, **kwargs)
+    return wrapper
+  return with_authguard_reports_manage

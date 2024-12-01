@@ -28,6 +28,7 @@ from src.mixins import MixinTimestamps
 from src.mixins import MixinIncludesTags
 from src.mixins import MixinExistsID
 from src.mixins import MixinFieldMergeable
+from src.mixins import MixinByIds
 
 from schemas.serialization import SchemaSerializeDocJsonTimes
 
@@ -50,7 +51,7 @@ class DocsTags(Enum):
   
 
 # https://docs.sqlalchemy.org/en/20/tutorial/metadata.html#declaring-mapped-classes
-class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, MixinFieldMergeable, db.Model):
+class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, MixinFieldMergeable, MixinByIds, db.Model):
   __tablename__ = docsTable
 
   id   : Mapped[int]           = mapped_column(primary_key = True)

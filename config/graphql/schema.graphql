@@ -362,8 +362,9 @@ type Mutation {
   assetsAGConfig(ag_config: JsonData!, assets_type: String!): JsonData!
   # assetsPatchData
   assetsPatchData(aid: ID!, patch: JsonData!): JsonData!
-  # assets:forms
+  # assets:forms:reports
   assetsFormsSubmission(data: JsonData!, fid: ID!, key: String): JsonData!
+  reportsDrop(ids: [ID!]!): JsonData!
 
   # cache:redis
   cacheRedisCommit(
