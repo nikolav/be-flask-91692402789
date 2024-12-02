@@ -29,17 +29,7 @@ queries_strategies = {
 # reportsSearch(query_strategy: String!, query_strategy_args: JsonData): JsonData!
 @query.field('reportsSearch')
 def resolve_reportsSearch(_obj, _info, query_strategy, query_strategy_args = None):
-
   r = ResponseStatus()
-
-  print('query_strategy')
-  print('query_strategy')
-  print('query_strategy')
-  print(query_strategy)
-  print('query_strategy_args')
-  print('query_strategy_args')
-  print('query_strategy_args')
-  print(query_strategy_args)
 
   try:
     dd = db.session.scalars(queries_strategies[query_strategy](query_strategy_args))

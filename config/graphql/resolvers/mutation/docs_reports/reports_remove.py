@@ -44,7 +44,7 @@ def resolve_reportsDrop(_obj, _info, ids):
         ).where(
           Docs.id.in_(ls_ids_rm)
         ))
-        
+
       db.session.commit()
     
     r.status = { 'removed': ls_ids_rm }

@@ -283,7 +283,10 @@ type Query {
   cacheRedisGetCacheByKey(cache_key: String!): JsonData!
 
   # docs:reports
-  reportsSearch(query_strategy: String!, query_strategy_args: JsonData): JsonData!
+  reportsSearch(
+    query_strategy: String!
+    query_strategy_args: JsonData
+  ): JsonData!
 }
 
 ############

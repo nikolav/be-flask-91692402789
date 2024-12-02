@@ -4,6 +4,7 @@ from flask_app             import db
 from config.graphql.init   import query
 from models.assets         import Assets
 from models.assets         import AssetsType
+from models.assets         import AssetsStatus
 from models.users          import Users
 from schemas.serialization import SchemaSerializeAssets
 

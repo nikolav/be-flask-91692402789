@@ -8,9 +8,11 @@ from flask_app           import io
 
 from models.assets import Assets
 from models.assets import AssetsIOEvents
+# from models.assets import AssetsStatus
 from models        import ln_users_assets
 from models        import ln_assets_tags
 from models        import ln_assets_assets
+from models        import ln_docs_tags
 from models.docs   import Docs
 
 from middleware.authguard import authguard_assets_own
@@ -64,7 +66,17 @@ def resolve_assetsRemove(_obj, _info, aids):
             ln_assets_assets.c.asset_l_id.in_(aids),
           )))
       
-      # rm .asset_id fields @Docs
+      # rm --related @Docs 
+      db.session.execute(
+        db.delete(
+          ln_docs_tags
+        ).where(
+          ln_docs_tags.c.doc_id.in_(db.select(
+            Docs.id
+          ).where(
+            Docs.asset_id.in_(aids)
+          ).subquery())
+        ))
       db.session.execute(
         db.delete(
           Docs
