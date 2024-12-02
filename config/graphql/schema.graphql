@@ -261,6 +261,7 @@ type Query {
 
   # assets, groups
   groupsList(gids: [ID!]): [Asset!]!
+  groupsByUser(uid: ID!): [Asset!]!
   assetsList(
     aids: [ID!]
     type: String

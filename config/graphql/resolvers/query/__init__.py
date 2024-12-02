@@ -29,6 +29,7 @@ from .users import users_shared_groups
 from .users import users_tagged
 from .users import users_q
 from .users import users_by_groups
+from .users import groups_by_user
 
 from .posts import posts_list
 from .posts import posts_images
