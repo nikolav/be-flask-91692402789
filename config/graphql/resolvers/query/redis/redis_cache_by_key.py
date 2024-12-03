@@ -5,7 +5,7 @@ from config.graphql.init import query
 from src.classes         import ResponseStatus
 
 
-# cacheRedisGetCacheByKey(key: String!): JsonData!
+# cacheRedisGetCacheByKey(cache_key: String!): JsonData!
 @query.field('cacheRedisGetCacheByKey')
 def resolve_cacheRedisGetCacheByKey(_obj, _info, cache_key):
   

@@ -46,7 +46,7 @@ def resolve_viberChannelSetupSetWebhook(_obj, _info, url, auth_token):
       raise Exception('viber:setup:error:no-channel-admin')
     
     ch_name = di['name']
-    ch_info = { 'from': ch_admin.id, 'auth_token': auth_token }
+    ch_info = { 'from': ch_admin['id'], 'auth_token': auth_token }
 
     g.user.profile_update(
       patch = {
