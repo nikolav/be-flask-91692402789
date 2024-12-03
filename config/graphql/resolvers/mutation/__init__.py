@@ -32,8 +32,9 @@ from .mail import sendmail
 from .messaging import cloud_messaging_ping
 from .messaging import cloud_messaging_notifications
 from .messaging import cloud_messaging_notifications_chats
-from .messaging import viber_setup_channel_set_webhook
 from .messaging import viber_send_message
+from .messaging import viber_setup_channel_set_webhook
+from .messaging import viber_channel_setup_channels_drop
 
 from .assets import groups_configure
 from .assets import assets_rm
