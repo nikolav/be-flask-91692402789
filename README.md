@@ -38,3 +38,6 @@ $ cat /etc/cron.d/certbot
 # test autorenew cron job
 $ certbot renew --dry-run
 
+
+# failed to solve: failed to register layer: write /usr/share/perl/5.36.0/File/Temp.pm: no space left on device
+
