@@ -2,35 +2,38 @@
 import json
 import requests
 
-from flask import g
-
 from config.graphql.init import mutation
-from flask_app           import URL_VIBER_MESSAGE_POST
-from flask_app           import VIBER_USER_CHANNELS_prefix
 from src.classes         import ResponseStatus
+from flask_app           import URL_VIBER_MESSAGE_POST
+from flask_app           import VIBER_CHANNELS_CACHEID
+from flask_app           import redis_client
 
 
 @mutation.field('viberSendTextMessage')
 def resolve_viberSendTextMessage(_obj, _info, payload):
-  r      = ResponseStatus()
-  result = []
+  r = ResponseStatus()
+  
+  result   = []
+  channels = {}
 
   try:
-    from flask_app import redis_client
     _err, client = redis_client
 
-    for channel_name, text in payload.items():
-      key_ = f'{VIBER_USER_CHANNELS_prefix}{g.user.key}:{channel_name}'
-      if client.exists(key_):
-        ch_info = json.loads(client.get(key_).decode())
-        result.append(
-          requests.post(URL_VIBER_MESSAGE_POST,
+    # load viber channels
+    if not client.exists(VIBER_CHANNELS_CACHEID):
+      client.set(VIBER_CHANNELS_CACHEID, json.dumps(channels))
+    else:
+      channels = json.loads(client.get(VIBER_CHANNELS_CACHEID).decode())
+    
+    result = [requests.post(URL_VIBER_MESSAGE_POST,
                 json = {
-                  'auth_token' : ch_info['auth_token'],
-                  'from'       : ch_info['from'],
+                  'auth_token' : channels[channel_name]['auth_token'],
+                  'from'       : channels[channel_name]['from'],
                   'type'       : 'text',
                   'text'       : text
-                }).json())
+                }).json() 
+                  for channel_name, text in payload.items()
+                    if channel_name in channels]
 
 
   except Exception as err:
