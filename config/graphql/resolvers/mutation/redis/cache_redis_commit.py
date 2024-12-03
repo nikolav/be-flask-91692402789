@@ -34,6 +34,7 @@ def resolve_cacheRedisCommit(_obj, _info, cache_key, patch = None, merge = True)
 
 
   except Exception as err:
+    # raise err
     r.error = err
 
 

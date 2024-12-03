@@ -99,6 +99,7 @@ AWS_END_USER_MESSAGING_ENABLED = bool(os.getenv('AWS_END_USER_MESSAGING_ENABLED'
 #  viber
 URL_VIBER_MESSAGE_POST         = os.getenv('URL_VIBER_MESSAGE_POST')
 VIBER_CHANNELS_DOCID           = os.getenv('VIBER_CHANNELS_DOCID')
+VIBER_USER_CHANNELS_prefix     = os.getenv('VIBER_USER_CHANNELS_prefix')
 
 # topics comms
 TOPIC_CHAT_USER_CHANNEL_prefix = os.getenv('TOPIC_CHAT_USER_CHANNEL_prefix')

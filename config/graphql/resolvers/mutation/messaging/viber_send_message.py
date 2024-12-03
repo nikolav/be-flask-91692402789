@@ -1,32 +1,45 @@
+
+import json
 import requests
 
+from flask import g
+
 from config.graphql.init import mutation
-from models.docs         import Docs
 from flask_app           import URL_VIBER_MESSAGE_POST
+from flask_app           import VIBER_USER_CHANNELS_prefix
+from src.classes         import ResponseStatus
 
 
 @mutation.field('viberSendTextMessage')
 def resolve_viberSendTextMessage(_obj, _info, payload):
-  r = { 'error': None, 'status': None }
-  result = None
+  r      = ResponseStatus()
+  result = []
 
   try:
-    vib_channels = Docs.viber_channels().data
-    result = [requests.post(URL_VIBER_MESSAGE_POST,
+    from flask_app import redis_client
+    _err, client = redis_client
+
+    for channel_name, text in payload.items():
+      key_ = f'{VIBER_USER_CHANNELS_prefix}{g.user.key}:{channel_name}'
+      if client.exists(key_):
+        ch_info = json.loads(client.get(key_).decode())
+        result.append(
+          requests.post(URL_VIBER_MESSAGE_POST,
                 json = {
-                  'auth_token' : vib_channels[channel_name]['auth_token'],
-                  'from'       : vib_channels[channel_name]['from'],
+                  'auth_token' : ch_info['auth_token'],
+                  'from'       : ch_info['from'],
                   'type'       : 'text',
                   'text'       : text
-                }).json() 
-                  for channel_name, text in payload.items() 
-                    if channel_name in vib_channels]
-  
+                }).json())
+
+
   except Exception as err:
-    r['error'] = str(err)
+    r.error = err
     
+
   else:
-    r['status'] = result
+    r.status = result
     
-  return r
+
+  return r.dump()
 

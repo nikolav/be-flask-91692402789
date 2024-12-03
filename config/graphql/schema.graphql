@@ -358,6 +358,7 @@ type Mutation {
 
   # viber
   # https://developers.viber.com/docs/tools/channels-post-api/
+  viberChannelSetupSetWebhook(url: String!, auth_token: String!): JsonData!
   viberSendTextMessage(payload: JsonData!): JsonData!
 
   # assets, groups
