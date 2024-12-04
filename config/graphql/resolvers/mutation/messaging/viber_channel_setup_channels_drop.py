@@ -5,9 +5,16 @@ from config.graphql.init import mutation
 from src.classes         import ResponseStatus
 from flask_app           import VIBER_CHANNELS_CACHEID
 
+from middleware.authguard import authguard_viber_manage
+
+from flask_app            import POLICY_ADMINS
+from src.classes.policies import Policies
+
 
 # viberChannelSetupChannelsDrop(channelNames: [String!]!): JsonData!
 @mutation.field('viberChannelSetupChannelsDrop')
+@authguard_viber_manage(POLICY_ADMINS, Policies.VIBER_CHANNELS_MANAGE.value, 
+                        CHANNELS_KEY = "channelNames", ANY = True)
 def resolve_viberChannelSetupChannelsDrop(_obj, _info, channelNames = []):
   r   = ResponseStatus()
   res = None
