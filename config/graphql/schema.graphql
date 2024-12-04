@@ -275,7 +275,7 @@ type Query {
   # assets:count
   assetsCount(asset_type: String!, own: Boolean): JsonData!
   # assets:forms
-  assetsFormsSubmissionsList: [Docs!]!
+  assetsFormsSubmissionsList(strategy: String, args: [JsonData!]): [Docs!]!
 
   # tags
   tagsSearchTagLike(search: String!, prefix: String, attach: String): [String!]!
