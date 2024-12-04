@@ -1,4 +1,7 @@
 
+from datetime import datetime
+from datetime import timezone
+
 import requests
 
 from config.graphql.init import mutation
@@ -11,18 +14,16 @@ from flask     import g
 from flask_app import db
 
 
-# viberChannelSetupSetWebhook(url: String!, auth_token: String!): JsonData!
+# viberChannelSetupSetWebhook(url: String!, auth_token: String!, is_global: Boolean): JsonData!
 @mutation.field('viberChannelSetupSetWebhook')
-def resolve_viberChannelSetupSetWebhook(_obj, _info, url, auth_token):
-
+def resolve_viberChannelSetupSetWebhook(_obj, _info, url, auth_token, is_global = False):
   r = ResponseStatus()
   
   ch_name = None
   ch_info = None
 
-
-  try:    
-
+  try:
+    
     # validate url
     dp = requests.post(URL_VIBER_SET_WEBHOOK, 
                     json = {
@@ -46,12 +47,16 @@ def resolve_viberChannelSetupSetWebhook(_obj, _info, url, auth_token):
       raise Exception('viber:setup:error:no-channel-admin')
     
     ch_name = di['name']
-    ch_info = { 'from': ch_admin['id'], 'auth_token': auth_token }
+    ch_info = { 
+                'from'       : ch_admin['id'], 
+                'auth_token' : auth_token, 
+                'is_global'  : is_global,
+              }
 
     g.user.profile_update(
       patch = {
         'viber_channels': {
-          ch_name: 1
+          ch_name: datetime.now(tz = timezone.utc).isoformat()
         }
       })
     db.session.commit()
