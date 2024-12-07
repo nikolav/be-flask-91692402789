@@ -270,6 +270,8 @@ type Query {
     aids_subs_type: String
     children: Boolean
     category: String
+    my_only: Boolean
+    ordered: String
   ): [Asset!]!
   # list assets by search query .q
   assetsSearchQ(q: String!, type: String, limit: Int): [Asset!]!

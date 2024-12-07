@@ -11,6 +11,12 @@ CORS(bp_testing)
 
 @bp_testing.route('/', methods = ('POST',))
 def testing_home():  
+  from models.assets import Assets
+  from  flask_app import db
+  a = db.session.get(Assets, 166)
   r = ResponseStatus()
+  print('a.created_at')
+  print(type(a.created_at))
+  print(a.created_at.timestamp())
   return r.dump()
 

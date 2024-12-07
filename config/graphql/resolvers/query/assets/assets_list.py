@@ -15,7 +15,12 @@ ASSETS_WITH_GROUPS_RELATIONS = (
   AssetsType.DIGITAL_POST.value,
 )
 
-# assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String, children: Boolean, category: String): [Asset!]!
+STRATEGY_order = {
+  'date_asc'  : lambda lsa: sorted(lsa, key = lambda a: a.created_at),
+  'date_desc' : lambda lsa: sorted(lsa, key = lambda a: a.created_at, reverse = True),
+}
+
+# assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String, children: Boolean, category: String, my_only: Boolean, ordered: String): [Asset!]!
 @query.field('assetsList')
 def resolve_assetsList(_obj, _info, 
                        aids           = None, 
@@ -25,10 +30,13 @@ def resolve_assetsList(_obj, _info,
                        aids_subs_type = None,
                        children       = False,
                        category       = None,
+                       my_only        = False,
+                       ordered        = None,
                       ):
-
+  
   q   = None
   lsa = None
+  
   
   if True == children:
     # search child nodes
@@ -65,15 +73,21 @@ def resolve_assetsList(_obj, _info,
           )
 
     else:
-      # fetch all sites
+      # fetch all assets
       q = db.select(
           Assets
         ).where(
           type == Assets.type)
+      
       # only @IDs
       if aids:
         q = q.where(
           Assets.id.in_(aids))
+    
+      # only for this user
+      if True == my_only:
+        q = q.where(
+          g.user.id == Assets.author_id)
       
       lsa = db.session.scalars(q)
       
@@ -105,11 +119,14 @@ def resolve_assetsList(_obj, _info,
 
     lsa = db.session.scalars(q)
   
+  if None != category:
+    lsa = filter(lambda a: category == a.category_key(), lsa)
+
+  if None != ordered and ordered in STRATEGY_order:
+    lsa = STRATEGY_order[ordered](lsa)
     
   return SchemaSerializeAssets(
       many    = True,
       exclude = ('assets_has',)
-    ).dump(
-      lsa if not category else filter(lambda a: category == a.category_key(), lsa)
-    )
+    ).dump(lsa)
 
