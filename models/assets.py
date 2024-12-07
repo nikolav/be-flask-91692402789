@@ -15,6 +15,7 @@ from sqlalchemy     import JSON
 from sqlalchemy     import union
 from sqlalchemy     import or_
 from sqlalchemy     import and_
+from sqlalchemy     import func
 
 from flask_app import db
 from flask_app import io
@@ -49,6 +50,7 @@ class AssetsType(Enum):
   #  custom commnication for users
   DIGITAL_CHAT = 'DIGITAL_CHAT:4nASbEj8pFvqm'
   DIGITAL_FORM = 'DIGITAL_FORM:TzZJs5PZqcWc'
+  DIGITAL_POST = 'DIGITAL_POST:6b9959a1-a82c-54a6-b7b2-dbeb285f23d7'
   # all users access
   DIGITAL_CHANNEL_GLOBAL = 'DIGITAL_CHANNEL_GLOBAL:tQ6c5O1mRDtP6fDCCj'
   DIGITAL_CHAT_GLOBAL    = 'DIGITAL_CHAT_GLOBAL:JS4nzSghZq4CZH'
@@ -188,8 +190,7 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
       changes += 1
 
     return changes
-  
-  
+    
   # public
   def category_key(self):
     return db.session.scalar(

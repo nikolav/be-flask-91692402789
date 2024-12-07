@@ -8,8 +8,14 @@ from models.assets         import AssetsStatus
 from models.users          import Users
 from schemas.serialization import SchemaSerializeAssets
 
+ASSETS_WITH_GROUPS_RELATIONS = (
+  AssetsType.PHYSICAL_STORE.value,
+  AssetsType.DIGITAL_CHAT.value,
+  AssetsType.DIGITAL_FORM.value,
+  AssetsType.DIGITAL_POST.value,
+)
 
-# assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String, children: Boolean): [Asset!]!
+# assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String, children: Boolean, category: String): [Asset!]!
 @query.field('assetsList')
 def resolve_assetsList(_obj, _info, 
                        aids           = None, 
@@ -18,26 +24,32 @@ def resolve_assetsList(_obj, _info,
                        aids_subs_only = None, 
                        aids_subs_type = None,
                        children       = False,
+                       category       = None,
                       ):
 
   q   = None
   lsa = None
   
   if True == children:
+    # search child nodes
+    #  site => groups
+    #  form => groups
+    #  chat => groups
+    #  post => groups
     lsa = Assets.assets_children(*Assets.by_ids(*aids), TYPE = type)
   
 
-  elif type in (
-    AssetsType.PHYSICAL_STORE.value,
-    AssetsType.DIGITAL_CHAT.value,
-    AssetsType.DIGITAL_FORM.value,
-  ):
+  elif type in ASSETS_WITH_GROUPS_RELATIONS:
     # search self:relations/asset-asset for this types
+    #  groups-sites
+    #  groups-forms
+    #  groups-chats
+    #  groups-posts
 
     if True == own:
       if aids_subs_only:
         # fetch some managed parent assets
-        #   only relating to provided groups: @aids_subs_only?: number[]
+        #   only related to provided groups: @aids_subs_only?: number[]
         lsa = Assets.assets_parents(
             *Assets.by_ids_and_type(*aids_subs_only, type = aids_subs_type),
             PtAIDS   = aids,
@@ -67,7 +79,8 @@ def resolve_assetsList(_obj, _info,
       
 
   else:
-    
+    # query user groups
+
     q = db.select(
       Assets
     )
@@ -96,5 +109,7 @@ def resolve_assetsList(_obj, _info,
   return SchemaSerializeAssets(
       many    = True,
       exclude = ('assets_has',)
-    ).dump(lsa)
+    ).dump(
+      lsa if not category else filter(lambda a: category == a.category_key(), lsa)
+    )
 

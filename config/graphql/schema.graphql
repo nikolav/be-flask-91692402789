@@ -269,6 +269,7 @@ type Query {
     aids_subs_only: [ID!]
     aids_subs_type: String
     children: Boolean
+    category: String
   ): [Asset!]!
   # list assets by search query .q
   assetsSearchQ(q: String!, type: String, limit: Int): [Asset!]!
@@ -358,7 +359,11 @@ type Mutation {
 
   # viber
   # https://developers.viber.com/docs/tools/channels-post-api/
-  viberChannelSetupSetWebhook(url: String!, auth_token: String!, is_global: Boolean): JsonData!
+  viberChannelSetupSetWebhook(
+    url: String!
+    auth_token: String!
+    is_global: Boolean
+  ): JsonData!
   viberChannelSetupChannelsDrop(channelNames: [String!]): JsonData!
   viberSendTextMessage(payload: JsonData!): JsonData!
 
