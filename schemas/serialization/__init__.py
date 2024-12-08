@@ -13,6 +13,7 @@ class SchemaSerializeTimes(Schema):
 class SchemaSerializeDocJson(Schema):
   id   = fields.Integer()
   data = fields.Dict()
+  key  = fields.String()
 
 
 class SchemaSerializeDocJsonTimes(SchemaSerializeDocJson):
@@ -81,12 +82,15 @@ class SchemaSerializeUsersWho(SchemaSerializeTimes):
   key     = fields.String()
   
   # computed
+  #  flags
   admin          = fields.Method('calc_admin')
   approved       = fields.Method('calc_approved')
   default        = fields.Method('calc_is_default')
   email_verified = fields.Method('calc_email_verified')
   external       = fields.Method('calc_is_external')
   manager        = fields.Method('calc_manager')
+  #  fields
+  groups         = fields.Method('calc_groups')
 
   def calc_approved(self, u):
     return u.approved()
@@ -105,6 +109,9 @@ class SchemaSerializeUsersWho(SchemaSerializeTimes):
 
   def calc_is_default(self, u):
     return u.is_default_user()
+
+  def calc_groups(self, u):
+    return SchemaSerializeAssets(many = True, only = ('id', 'name')).dump(u.groups())
 
   
 class SchemaSerializeProductsTimes(SchemaSerializeTimes):
@@ -217,8 +224,6 @@ class SchemaSerializeAssetsTextSearch(Schema):
     return json.dumps(asset.data) if None != asset.data else ''
 
 class SchemaSerializeDocs(SchemaSerializeDocJsonTimes):
-  key = fields.String()
-  
   # virtual
   asset = fields.Nested(SchemaSerializeAssets(
     exclude = ('assets_has', 'author', 'users', 'docs',)))
