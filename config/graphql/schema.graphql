@@ -273,6 +273,8 @@ type Query {
     category: String
     my_only: Boolean
     ordered: String
+    blacklist_tags: [String!]
+    whitelist_tags: [String!]
   ): [Asset!]!
   # list assets by search query .q
   assetsSearchQ(q: String!, type: String, limit: Int): [Asset!]!

@@ -20,7 +20,7 @@ STRATEGY_order = {
   'date_desc' : lambda lsa: sorted(lsa, key = lambda a: a.created_at, reverse = True),
 }
 
-# assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String, children: Boolean, category: String, my_only: Boolean, ordered: String): [Asset!]!
+# assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String, children: Boolean, category: String, my_only: Boolean, ordered: String, blacklist_tags: [String!]): [Asset!]!
 @query.field('assetsList')
 def resolve_assetsList(_obj, _info, 
                        aids           = None, 
@@ -32,6 +32,8 @@ def resolve_assetsList(_obj, _info,
                        category       = None,
                        my_only        = False,
                        ordered        = None,
+                       blacklist_tags = None,
+                       whitelist_tags = None,
                       ):
   
   q   = None
@@ -121,7 +123,13 @@ def resolve_assetsList(_obj, _info,
   
   if None != category:
     lsa = filter(lambda a: category == a.category_key(), lsa)
+  
+  if blacklist_tags:
+    lsa = filter(lambda a: not a.includes_tags(*blacklist_tags, ANY = True), lsa)
 
+  if whitelist_tags:
+    lsa = filter(lambda a: a.includes_tags(*whitelist_tags, ANY = True), lsa)
+  
   if None != ordered and ordered in STRATEGY_order:
     lsa = STRATEGY_order[ordered](lsa)
     

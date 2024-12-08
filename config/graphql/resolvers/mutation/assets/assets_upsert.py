@@ -8,6 +8,7 @@ from flask_app     import io
 
 from models.assets import Assets
 from models.assets import AssetsType
+from models.assets import AssetsStatus
 
 # from schemas.validation.assets import SchemaInputAssets
 from schemas.validation.assets import SchemaInputAssetsCreate
@@ -71,8 +72,15 @@ def resolve_assetsUpsert(_obj, _info, fields = {}, aid = None):
       ):
         # include author in new asset:group
         a.users = [g.user]
-      
+
       a.category_key_commit(fields.get('category'), _commit = False)
+
+      # author access @init
+      if a.type in (
+        AssetsType.DIGITAL_POST.value,
+      ):
+        a.status = AssetsStatus.POSTS_BLOCKED.value
+
       
       db.session.add(a)
       created = True
@@ -86,7 +94,10 @@ def resolve_assetsUpsert(_obj, _info, fields = {}, aid = None):
   
   else:
     if a:
-      r.status = { 'asset': SchemaSerializeAssets(exclude = ('assets_has', 'users', 'author',)).dump(a) }
+      r.status = { 
+        'created' : created, 
+        'asset'   : SchemaSerializeAssets(exclude = ('assets_has', 'users', 'author',)).dump(a),
+      }
       io.emit(a.type)
       if not created:
         a.ioemit_update()

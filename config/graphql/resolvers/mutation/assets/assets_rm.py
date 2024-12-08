@@ -104,7 +104,7 @@ def resolve_assetsRemove(_obj, _info, aids):
           Assets.id.in_(aids)
         )) < assets_len_start
 
-    r.status = { 'removed': removed }
+    r.status = { 'removed': removed, 'assets_removed': aids }
 
 
   except Exception as err:
