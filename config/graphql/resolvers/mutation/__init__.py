@@ -42,6 +42,7 @@ from .assets import assets_upsert
 from .assets import assets_ag_config
 from .assets import assets_patch_data
 from .assets import assets_forms_submission
+from .assets import assets_manage_tags
 
 from .comms import comms_message_many
 from .comms import comms_group_message_many

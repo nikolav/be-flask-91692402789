@@ -12,11 +12,22 @@ CORS(bp_testing)
 @bp_testing.route('/', methods = ('POST',))
 def testing_home():  
   from models.assets import Assets
-  from  flask_app import db
-  a = db.session.get(Assets, 166)
+  from flask         import g
+  from models.assets import AssetsType
+  from schemas.serialization import SchemaSerializeAssets
   r = ResponseStatus()
-  print('a.created_at')
-  print(type(a.created_at))
-  print(a.created_at.timestamp())
-  return r.dump()
+
+  lsa = Assets.groups_related_assets_authored( 
+          ASSETS_TYPES = (AssetsType.DIGITAL_POST.value,),
+          BLACKLIST_ASSET_STATUSES = ('POSTS_BLOCKED:UcAMV',),
+          # EXCLUDE_MY_ASSETS = True,
+          ORDERED='date_desc',
+          # WHITELIST_ASSET_TAGS = ('TAG_ASSETS_SHAREABLE:de0fe927-a79e-505a-8d0c-9cbff5e3ef10',),
+          
+        )
+  
+  
+  return SchemaSerializeAssets(many=True, only=('id',)).dump(lsa)
+
+
 

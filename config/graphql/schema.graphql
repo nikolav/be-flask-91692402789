@@ -179,6 +179,7 @@ type Asset {
   data: JsonData
   notes: String
   key: String
+  author_id: Int
 
   tags: [String!]
   users: [User!]
@@ -279,6 +280,8 @@ type Query {
   assetsCount(asset_type: String!, own: Boolean): JsonData!
   # assets:forms
   assetsFormsSubmissionsList(strategy: String, args: [JsonData!]): [Docs!]!
+  # assets:posts
+  assetsPostsReadable(uids: [ID!]): [Asset!]!
 
   # tags
   tagsSearchTagLike(search: String!, prefix: String, attach: String): [String!]!
@@ -374,6 +377,7 @@ type Mutation {
   groupsGUConfigure(guConfig: JsonData!): JsonData!
   assetsUpsert(fields: JsonData!, aid: ID): JsonData!
   assetsAGConfig(ag_config: JsonData!, assets_type: String!): JsonData!
+  assetsManageTags(aid: ID!, config: JsonData!): JsonData!
   # assetsPatchData
   assetsPatchData(aid: ID!, patch: JsonData!): JsonData!
   # assets:forms:reports

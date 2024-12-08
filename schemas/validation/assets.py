@@ -10,7 +10,7 @@ class SchemaInputAssetsAdd(Schema):
   
   code      = fields.String()
   location  = fields.String()
-  status    = fields.String()
+  status    = fields.String(allow_none = True)
   condition = fields.String()
   notes     = fields.String()
   data      = fields.Dict()

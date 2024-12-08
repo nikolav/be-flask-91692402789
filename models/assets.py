@@ -33,15 +33,20 @@ from src.mixins import MixinByIdsAndType
 from src.mixins import MixinExistsID
 from src.mixins import MixinFieldMergeable
 
-from models.docs import Docs
-from models.tags import Tags
-from models.docs import DocsTags
+from models.docs  import Docs
+from models.tags  import Tags
+from models.docs  import DocsTags
 
 from utils import Unique
 from schemas.serialization import SchemaSerializeAssetsTextSearch
 
 
-CATEGORY_KEY_ASSETS_prefix = 'CATEGORY_KEY:ASSETS:hhPDiM:'
+CATEGORY_KEY_ASSETS_prefix   = 'CATEGORY_KEY:ASSETS:hhPDiM:'
+
+STRATEGY_order_assets = {
+  'date_asc'  : lambda q: q.order_by(Assets.created_at.asc()),
+  'date_desc' : lambda q: q.order_by(Assets.created_at.desc()),
+}
 
 class AssetsType(Enum):
   # DIGITAL = "Digital Asset"
@@ -103,13 +108,17 @@ class AssetsDigitalFormFieldTypes(Enum):
 
 
 class AssetsStatus(Enum):
-  ACTIVE   = 'ACTIVE:YjCrzsLhGtiE4f3ffO'
-  ARCHIVED = 'ARCHIVED:zfbooZxI5IXQmbZIZ'
-  CANCELED = 'CANCELED:2whyBKhy6vv98bPcsUNc'
-  CLOSED   = 'CLOSED:bGbGsEnAk2xu9sye7'
-  DONE     = 'DONE:6jRIWy6fWT3mT3uNuF2'
-  INACTIVE = 'INACTIVE:fdHJBPHGyC'
-  PENDING  = 'PENDING:P4kOFE3HF'
+  ACTIVE    = 'ACTIVE:YjCrzsLhGtiE4f3ffO'
+  ARCHIVED  = 'ARCHIVED:zfbooZxI5IXQmbZIZ'
+  CANCELED  = 'CANCELED:2whyBKhy6vv98bPcsUNc'
+  CLOSED    = 'CLOSED:bGbGsEnAk2xu9sye7'
+  DONE      = 'DONE:6jRIWy6fWT3mT3uNuF2'
+  INACTIVE  = 'INACTIVE:fdHJBPHGyC'
+  PENDING   = 'PENDING:P4kOFE3HF'
+
+  POSTS_BLOCKED = 'POSTS_BLOCKED:UcAMV'
+  POSTS_OPEN    = 'POSTS_OPEN:luIlZa5'
+
 
 class AssetsCondition(Enum):
   BAD            = 'BAD:oKRchSYlnm8lMqcqoq'
@@ -163,6 +172,33 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     # back_populates = 'assets'
   )
 
+  
+  def tags_add(self, *tags, _commit = True):
+    changes = 0
+
+    for tname in filter(lambda p: not self.includes_tags(p), tags):
+      tp = Tags.by_name(tname, create = True, _commit = _commit)
+      tp.assets.append(self)
+      changes += 1
+    
+    if (0 < changes) and (True == _commit):
+      db.session.commit()
+    
+    return changes
+
+  # public 
+  def tags_rm(self, *tags, _commit = True):
+    changes = 0
+
+    for tname in filter(lambda p: self.includes_tags(p), tags):
+      tp = Tags.by_name(tname, create = True, _commit = _commit)
+      tp.assets.remove(self)
+      changes += 1
+    
+    if (0 < changes) and (True == _commit):
+      db.session.commit()
+    
+    return changes
   
   # public
   def is_status(self, s):
@@ -296,6 +332,113 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     # default
     return []
 
+  # ACTIVE    = 'ACTIVE:YjCrzsLhGtiE4f3ffO'
+  # ARCHIVED  = 'ARCHIVED:zfbooZxI5IXQmbZIZ'
+  # CANCELED  = 'CANCELED:2whyBKhy6vv98bPcsUNc'
+  # CLOSED    = 'CLOSED:bGbGsEnAk2xu9sye7'
+  # DONE      = 'DONE:6jRIWy6fWT3mT3uNuF2'
+  # INACTIVE  = 'INACTIVE:fdHJBPHGyC'
+  # PENDING   = 'PENDING:P4kOFE3HF'
+
+  # POSTS_BLOCKED = 'POSTS_BLOCKED:UcAMV'
+  # POSTS_OPEN    = 'POSTS_OPEN:luIlZa5'
+
+  @staticmethod
+  def groups_related_assets_authored(*uids, 
+                                    ASSETS_TYPES, 
+                                    BLACKLIST_ASSET_STATUSES = (), 
+                                    WHITELIST_ASSET_TAGS = (), 
+                                    EXCLUDE_MY_ASSETS = False,
+                                    ORDERED = None,
+                                  ):
+    # what (readable) assets other accounts I share groups with have created
+    from models.users import Users
+
+    if not uids:
+      uids = [g.user.id]
+    
+    
+    # get related groups IDs
+    # ..get my groups
+    sq_groups_lookup = db.select(
+        Assets.id
+      ).join(
+        Assets.users
+      ).where(
+        AssetsType.PEOPLE_GROUP_TEAM.value == Assets.type,
+        Users.id.in_(uids)
+      ).subquery()
+      
+    # get groups related users; users in this groups
+    quids = db.select(
+        Users.id
+      ).distinct().join(
+        Users.assets
+      ).where(
+        Assets.id.in_(sq_groups_lookup)
+      ).subquery()
+      
+    # select from assets, type, where author in quids
+    q_aids = db.select(
+      Assets.id
+    ).where(
+      # ASSET_TYPE == Assets.type,
+      Assets.type.in_(ASSETS_TYPES),
+      Assets.author_id.in_(quids),
+      # ~Assets.status.in_(BLACKLIST_ASSET_STATUSES),
+      or_(
+        # pass my assets
+        g.user.id == Assets.author_id,
+        # pass unknown asset:status
+        Assets.status.is_(None),
+        # skip blacklisted
+        and_(
+          Assets.status.is_not(None),
+          ~Assets.status.in_(BLACKLIST_ASSET_STATUSES),
+        )
+      )
+    )
+    
+    # pickup tagged assets --any-author
+    #  ..for passing shareable posts
+    if WHITELIST_ASSET_TAGS:
+      q_aids_wl_tags = db.select(
+          Assets.id
+        ).join(
+          Assets.tags
+        ).where(
+          Assets.type.in_(ASSETS_TYPES),
+          or_(
+            Assets.status.is_(None),
+            # skip if asset is both global and blocked
+            and_(
+              Assets.status.is_not(None),
+              ~Assets.status.in_(BLACKLIST_ASSET_STATUSES),
+              Tags.tag.in_(WHITELIST_ASSET_TAGS),
+            )
+          )
+        )
+      q_aids = union(q_aids, q_aids_wl_tags)
+    
+
+    # skip assets I created if requested
+    if True == EXCLUDE_MY_ASSETS:
+      q_aids = q_aids.where(
+        g.user.id != Assets.author_id)
+    
+    
+    q = db.select(
+        Assets
+      ).where(
+        Assets.id.in_(q_aids.subquery()))
+    
+    # order if requested
+    if ORDERED and ORDERED in STRATEGY_order_assets:
+      q = STRATEGY_order_assets[ORDERED](q)
+        
+    
+    return db.session.scalars(q)
+  
 
   @staticmethod
   def assets_parents(*lsa, PtAIDS = None, TYPE = None, DISTINCT = True, WITH_OWN = True):

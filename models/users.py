@@ -222,7 +222,7 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
   # public
   def groups(self):
     return self.assets_by_type(AssetsType.PEOPLE_GROUP_TEAM.value)
-
+  
   # public
   def stores(self):
     return self.assets_by_type(AssetsType.PHYSICAL_STORE.value)

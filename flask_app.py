@@ -111,6 +111,10 @@ TOPIC_CHAT_USER_CHANNEL_prefix = os.getenv('TOPIC_CHAT_USER_CHANNEL_prefix')
 TOPIC_CHAT_ASSETS_prefix       = os.getenv('TOPIC_CHAT_ASSETS_prefix')
 
 
+# assets :topics :tags
+TAG_ASSETS_SHAREABLE_GLOBALY = os.getenv('TAG_ASSETS_SHAREABLE_GLOBALY')
+
+
 # app:main
 app = Flask(__name__)
 
