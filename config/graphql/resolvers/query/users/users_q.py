@@ -21,7 +21,7 @@ def resolve_usersQ(_obj, _info, q, limit = 5):
 
   return SchemaSerializeUsersTimes(
       many    = True, 
-      exclude = ('password', 'products', 'posts',)
+      exclude = ('password',)
     ).dump(
       [lsu_ts[m[0]] for m in matches]
     )

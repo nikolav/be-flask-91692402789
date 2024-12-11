@@ -61,8 +61,6 @@ type User {
   password: String!
   profile: JsonData
   key: String
-  products: [Product!]
-  posts: [Post!]
   tags: [String!]
   is_approved: Boolean
   is_manager: Boolean
@@ -73,94 +71,6 @@ type User {
   email_verified: Boolean
   created_at: String
   updated_at: String
-}
-
-type Product {
-  id: ID!
-  user_id: ID
-  name: String
-  price: NumberReal
-  price_history: [JsonData!]!
-  stock: NumberReal
-  stockType: String
-  onSale: Boolean
-  description: String
-  user: User
-  tags: [String!]
-  docs: [JsonData!]
-  created_at: String
-  updated_at: String
-}
-
-type ProductWithAmount {
-  amount: NumberReal
-  id: ID!
-  user_id: ID
-  name: String
-  price: NumberReal
-  price_history: [JsonData!]!
-  stock: NumberReal
-  stockType: String
-  onSale: Boolean
-  description: String
-  user: User
-  tags: [String!]
-  docs: [JsonData!]
-  created_at: String
-  updated_at: String
-}
-
-type Company {
-  id: ID!
-  email: String!
-  password: String!
-  created_at: String!
-  updated_at: String!
-}
-
-type Order {
-  id: ID!
-  code: String
-  description: String
-  user_id: ID
-  completed: Boolean
-  canceled: Boolean
-  status: Int
-  products: [ProductWithAmount!]
-  delivery_at: String
-  created_at: String!
-  updated_at: String!
-}
-
-type Post {
-  id: ID!
-  title: String
-  content: String
-  user_id: ID
-  user: User
-  tags: [String!]
-  docs: [JsonData!]
-  created_at: String
-  updated_at: String
-}
-
-input InputProduct {
-  name: String
-  category: String
-  price: NumberReal
-  stock: NumberReal
-  stockType: String
-  onSale: Boolean
-  description: String
-}
-
-input InputPost {
-  title: String
-  content: String
-}
-
-type ResultTotalAmountOrdered {
-  amount: Int!
 }
 
 type ResultMailStatus {
@@ -226,27 +136,6 @@ type Query {
   # list users in groups
   usersByGroups(gids: [ID!]!, ALL: Boolean): [User!]!
 
-  # products
-  productsList(pids: [ID!]): [Asset!]!
-
-  productsListByUser(user_id: ID!): [Product!]!
-  productsListByTags(tags: [String!]!): [Product!]!
-  productsListPopular(length: Int): [Product!]!
-  productsTotalAmountOrdered(pid: ID!): ResultTotalAmountOrdered!
-  productsSearch(query: JsonData): [Product!]!
-
-  # orders
-  ordersOne(oid: ID!): Order
-  ordersListByUser(uid: ID!): [Order!]!
-  ordersReceived: [Order!]!
-  ordersProducts(oid: ID!): [ProductWithAmount!]!
-  ordersReceivedProducts(order_id: ID!): [ProductWithAmount!]!
-
-  # posts
-  postsList(uid: ID): [Post!]!
-  postsListOnly(sids: [ID!]!): [Post!]!
-  postsImages(id: ID): [JsonData!]!
-
   # docs
   docsByTopic(topic: String!, order: Int): [JsonData!]!
   docByDocId(doc_id: String!): JsonData!
@@ -275,6 +164,7 @@ type Query {
     ordered: String
     blacklist_tags: [String!]
     whitelist_tags: [String!]
+    search: JsonData
   ): [Asset!]!
   # list assets by search query .q
   assetsSearchQ(q: String!, type: String, limit: Int): [Asset!]!
@@ -283,7 +173,7 @@ type Query {
   # assets:forms
   assetsFormsSubmissionsList(strategy: String, args: [JsonData!]): [Docs!]!
   # assets:posts
-  assetsPostsReadable(uids: [ID!]): [Asset!]!
+  assetsPostsReadable(uids: [ID!], pagination: JsonData): [Asset!]!
 
   # tags
   tagsSearchTagLike(search: String!, prefix: String, attach: String): [String!]!
@@ -302,22 +192,6 @@ type Query {
 ## @Mutation
 
 type Mutation {
-  # products
-  productsUpsert(data: InputProduct!, id: ID): Product!
-  productsRm(id: ID!): Product
-  orderProductsStatusByCompany(oid: ID!, uid: ID!, status: Int!): String
-  orderProductsDeliveryDateByCompany(oid: ID!, uid: ID!, date: String!): String
-
-  # orders
-  ordersPlace(data: JsonData!, items: JsonData!): ID
-  manageOrderData(oid: ID!, data: JsonData!): Order
-  ordersSetCompleted(oid: ID!, completed: Boolean): ID
-
-  # posts
-  postsUpsert(data: InputPost!, id: ID): Post!
-  postsRemove(id: ID!): Post
-  postsImagesDrop(id: ID!): Post
-
   # docs
   docsUpsert(topic: String!, data: JsonData!, id: ID): JsonData!
   docsRm(topic: String!, id: ID!): JsonData

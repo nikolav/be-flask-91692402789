@@ -49,6 +49,6 @@ def resolve_usersByGroups(_obj, _info, gids, ALL = False):
   
   return SchemaSerializeUsersTimes(
       many    = True, 
-      exclude = ('password', 'posts', 'products',)
+      exclude = ('password',)
     ).dump(lsu)
 

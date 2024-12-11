@@ -26,15 +26,11 @@ from src.mixins import MixinFieldMergeable
 
 from models.tags     import Tags
 from models.docs     import Docs
-from models.products import Products
 from models.assets   import Assets
 from models.assets   import AssetsType
 
 # from utils.str import match_after_last_at
 from utils.pw  import hash as hashPassword
-
-from copy import deepcopy
-from utils.merge_strategies import dict_deepmerger_extend_lists as merger
 
 from flask_app import KEY_FCM_DEVICE_TOKENS
 from flask_app import POLICY_ADMINS
@@ -98,9 +94,6 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
   
   # virtual
   tags         : Mapped[List['Tags']]     = relationship(secondary = ln_users_tags, back_populates = 'users')
-  products     : Mapped[List['Products']] = relationship(back_populates = 'user')
-  orders       : Mapped[List['Orders']]   = relationship(back_populates = 'user')
-  posts        : Mapped[List['Posts']]    = relationship(back_populates = 'user')
   docs         : Mapped[List['Docs']]     = relationship(back_populates = 'user')
   assets       : Mapped[List['Assets']]   = relationship(secondary = ln_users_assets, back_populates = 'users')
   assets_owned : Mapped[List['Assets']]   = relationship(back_populates = 'author') # assets created by the user
@@ -320,10 +313,6 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
       self.policies_rm(TAG_ARCHIVED)
 
     return self.is_archived()
-
-  # public
-  def products_sorted_popular(self):
-    return Products.popular_sorted_user(self)
   
   # public 
   def policies_add(self, *policies, _commit = True):

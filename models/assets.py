@@ -15,7 +15,6 @@ from sqlalchemy     import JSON
 from sqlalchemy     import union
 from sqlalchemy     import or_
 from sqlalchemy     import and_
-from sqlalchemy     import func
 
 from flask_app import db
 from flask_app import io
@@ -35,10 +34,10 @@ from src.mixins import MixinFieldMergeable
 
 from models.docs  import Docs
 from models.tags  import Tags
-from models.docs  import DocsTags
 
 from utils import Unique
 from schemas.serialization import SchemaSerializeAssetsTextSearch
+from schemas.validation    import SchemaInputPagination
 
 
 CATEGORY_KEY_ASSETS_prefix   = 'CATEGORY_KEY:ASSETS:hhPDiM:'
@@ -295,42 +294,6 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
   def ioemit_update(self):
     io.emit(f'{AssetsIOEvents.UPDATE.value}{self.id}')
 
-  # public
-  def product_images_all(self):
-    if self.type == AssetsType.PHYSICAL_PRODUCT.value:
-      return db.session.scalars(
-        db.select(
-          Docs
-        ).join(
-          Docs.tags
-        ).where(
-          self.id == Docs.asset_id,
-          DocsTags.IMAGE_PRODUCT.value == Tags.tag
-        ))
-    
-    # default
-    return []
-
-  
-  # public
-  def form_submissions_all(self):
-    if AssetsType.DIGITAL_FORM.value == self.type:
-      return db.session.scalars(
-        db.select(
-          Docs
-        ).join(
-          Docs.tags
-        ).where(
-          self.id == Docs.asset_id,
-          Docs.tags.any(
-            DocsTags.ASSETS_FORM_SUBMISSION.value == Tags.tag
-          )
-        ).order_by(
-          Docs.created_at.desc()
-        ))
-    
-    # default
-    return []
 
   # ACTIVE    = 'ACTIVE:YjCrzsLhGtiE4f3ffO'
   # ARCHIVED  = 'ARCHIVED:zfbooZxI5IXQmbZIZ'
@@ -350,8 +313,12 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
                                     WHITELIST_ASSET_TAGS = (), 
                                     EXCLUDE_MY_ASSETS = False,
                                     ORDERED = None,
+                                    PAGINATION = None,
                                   ):
     # what (readable) assets other accounts I share groups with have created
+
+    # PAGINATION: {page:number, per_page:number}
+    
     from models.users import Users
 
     if not uids:
@@ -431,6 +398,23 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
         Assets
       ).where(
         Assets.id.in_(q_aids.subquery()))
+    
+    # @@
+    if PAGINATION:
+      pg = None
+      
+      try:
+        pg = SchemaInputPagination().load(PAGINATION)
+      
+      except Exception as err:
+        raise err
+        # pass
+      
+      else:
+        limit_  = pg['per_page']
+        offset_ = (pg['page'] - 1) * limit_
+        q = q.limit(limit_).offset(offset_)
+    
     
     # order if requested
     if ORDERED and ORDERED in STRATEGY_order_assets:

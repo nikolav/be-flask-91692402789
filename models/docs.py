@@ -1,4 +1,4 @@
-import os
+
 import json
 
 from enum   import Enum
@@ -6,7 +6,6 @@ from typing import List
 from typing import Optional
 
 from sqlalchemy     import JSON
-from sqlalchemy     import text
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
@@ -16,9 +15,6 @@ from uuid import uuid4 as uuid
 from . import db
 from . import docsTable
 from . import usersTable
-from . import postsTable
-from . import productsTable
-from . import ordersTable
 from . import assetsTable
 from . import ln_docs_tags
 
@@ -37,8 +33,6 @@ from flask_app import TAG_STORAGE
 from flask_app import TAG_VARS
 from flask_app import TAG_IS_FILE
 
-
-TAG_USER_PROFILE_prefix = os.getenv('TAG_USER_PROFILE_prefix')
 
 _schemaDocsDump     = SchemaSerializeDocJsonTimes()
 _schemaDocsDumpMany = SchemaSerializeDocJsonTimes(many = True)
@@ -60,18 +54,12 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, MixinFieldMergeabl
   data : Mapped[dict]          = mapped_column(JSON)
   # foreignkey
   user_id    = mapped_column(db.ForeignKey(f'{usersTable}.id'))
-  post_id    = mapped_column(db.ForeignKey(f'{postsTable}.id'))
-  product_id = mapped_column(db.ForeignKey(f'{productsTable}.id'))
-  order_id   = mapped_column(db.ForeignKey(f'{ordersTable}.id'))
   asset_id   = mapped_column(db.ForeignKey(f'{assetsTable}.id'))
   parent_id  = mapped_column(db.ForeignKey(f'{docsTable}.id'))
 
   # virtual
   tags     : Mapped[List['Tags']] = relationship(secondary = ln_docs_tags, back_populates = 'docs')
   user     : Mapped['Users']      = relationship(back_populates = 'docs')
-  post     : Mapped['Posts']      = relationship(back_populates = 'docs')
-  product  : Mapped['Products']   = relationship(back_populates = 'docs')
-  order    : Mapped['Orders']     = relationship(back_populates = 'docs')
   asset    : Mapped['Assets']     = relationship(back_populates = 'docs')
   # virtual: hierarchical data
   parent   : Mapped['Docs']       = relationship(back_populates = 'children', remote_side = [id])
@@ -135,7 +123,7 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, MixinFieldMergeabl
       
   
   @staticmethod
-  def by_key(key, *, create = False):
+  def by_key(key, *, create = False, _commit =  True):
     d = None
     if key:
       d = db.session.scalar(
@@ -150,26 +138,30 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, MixinFieldMergeabl
           # add
           d = Docs(data = {}, key = key)
           db.session.add(d)
-          db.session.commit()
+          if _commit:
+            db.session.commit()
     
     return d
   
 
   # alias .by_key
   @staticmethod
-  def by_doc_id(key, *, create = False):
-    return Docs.by_key(key, create = create)
+  def by_doc_id(key, *, create = False, _commit = True):
+    return Docs.by_key(key, create = create, _commit = _commit)
     
   
   # vars
   @staticmethod
   def var_by_name(var_name):
     return db.session.scalar(
-      db.select(Docs).join(Docs.tags).where(
-        Tags.tag == '@vars', 
-        Docs.data.contains(var_name)
-      )
-    )
+      db.select(
+        Docs
+      ).join(
+        Docs.tags
+      ).where(
+        '@vars' == Tags.tag, 
+        Docs.data.contains(var_name),
+      ))
   
   
   @staticmethod

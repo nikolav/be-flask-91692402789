@@ -96,7 +96,7 @@ def resolve_assetsUpsert(_obj, _info, fields = {}, aid = None):
     if a:
       r.status = { 
         'created' : created, 
-        'asset'   : SchemaSerializeAssets(exclude = ('assets_has', 'users', 'author',)).dump(a),
+        'asset'   : SchemaSerializeAssets(exclude = ('assets_has', 'users',)).dump(a),
       }
       io.emit(a.type)
       if not created:

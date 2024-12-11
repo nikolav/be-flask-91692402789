@@ -8,6 +8,10 @@ from models.assets         import AssetsStatus
 from models.users          import Users
 from schemas.serialization import SchemaSerializeAssets
 
+from marshmallow import fields
+from marshmallow import Schema
+
+
 ASSETS_WITH_GROUPS_RELATIONS = (
   AssetsType.PHYSICAL_STORE.value,
   AssetsType.DIGITAL_CHAT.value,
@@ -20,7 +24,25 @@ STRATEGY_order = {
   'date_desc' : lambda lsa: sorted(lsa, key = lambda a: a.created_at, reverse = True),
 }
 
-# assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String, children: Boolean, category: String, my_only: Boolean, ordered: String, blacklist_tags: [String!]): [Asset!]!
+class SchemaArgsOneByKey(Schema):
+  key = fields.String(required = True)
+
+
+def resolve_one_by_key(lsa, args):
+  try:
+    return next([a] for a in lsa if args['key'] == a.key)
+  
+  except StopIteration:
+    return []
+
+STRATEGY_search = {
+  'one_by_key': {
+    'schema_args' : SchemaArgsOneByKey,
+    'resolve'     : resolve_one_by_key,
+  },
+}
+
+# assetsList(aids: [ID!], type: String, own: Boolean, aids_subs_only: [ID!], aids_subs_type: String, children: Boolean, category: String, my_only: Boolean, ordered: String, blacklist_tags: [String!], search: JsonData): [Asset!]!
 @query.field('assetsList')
 def resolve_assetsList(_obj, _info, 
                        aids           = None, 
@@ -34,6 +56,8 @@ def resolve_assetsList(_obj, _info,
                        ordered        = None,
                        blacklist_tags = None,
                        whitelist_tags = None,
+                       # search: {strategy:string, args:any}
+                       search         = None,
                       ):
   
   q   = None
@@ -132,6 +156,21 @@ def resolve_assetsList(_obj, _info,
   
   if None != ordered and ordered in STRATEGY_order:
     lsa = STRATEGY_order[ordered](lsa)
+  
+  if None != search:
+    try:
+      if not search['strategy'] in STRATEGY_search:
+        raise Exception(f'error:T8KPL5 ![{search['strategy']}]')
+      
+      strategy_ = search['strategy']
+      args_     = STRATEGY_search[strategy_]['schema_args']().load(search['args'])
+      
+      lsa = STRATEGY_search[strategy_]['resolve'](lsa, args_)
+
+
+    except Exception as err:
+      raise err
+
     
   return SchemaSerializeAssets(
       many    = True,

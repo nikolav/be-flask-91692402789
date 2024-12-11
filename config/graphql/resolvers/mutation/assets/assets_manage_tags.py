@@ -6,6 +6,8 @@ from models.assets       import Assets
 from models.assets       import AssetsIOEvents
 from flask_app           import io
 
+from schemas.serialization import SchemaSerializeAssets
+
 
 # assetsManageTags(aid: ID!, config: JsonData!): JsonData!
 @mutation.field('assetsManageTags')
@@ -40,6 +42,7 @@ def resolve_assetsManageTags(_obj, _info, aid, config):
   else:
     r.status = { 
                 'id'           : a.id, 
+                'asset'        : SchemaSerializeAssets(exclude = ('assets_has', 'users',)).dump(a),
                 'changes'      : changes, 
                 'tags_added'   : tls_add, 
                 'tags_removed' : tls_rm,

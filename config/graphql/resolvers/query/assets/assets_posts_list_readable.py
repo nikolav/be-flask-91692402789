@@ -11,7 +11,8 @@ from flask_app             import TAG_ASSETS_SHAREABLE_GLOBALY
 
 # assetsPostsReadable(uids: [ID!]): [Asset!]!
 @query.field('assetsPostsReadable')
-def resolve_assetsPostsReadable(_obj, _info, uids = None):
+def resolve_assetsPostsReadable(_obj, _info, uids = None, pagination = None):
+  # pagination: {page:number, per_page:number}
   if None == uids:
     uids = [g.user.id]
   return SchemaSerializeAssets(many=True, exclude=('assets_has',)).dump(
@@ -20,6 +21,7 @@ def resolve_assetsPostsReadable(_obj, _info, uids = None):
         BLACKLIST_ASSET_STATUSES = (AssetsStatus.POSTS_BLOCKED.value,),
         WHITELIST_ASSET_TAGS     = (TAG_ASSETS_SHAREABLE_GLOBALY,),
         ORDERED                  = 'date_desc',
+        PAGINATION               = pagination,
       ))
 
 

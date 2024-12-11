@@ -51,7 +51,7 @@ def resolve_usersTagged(_obj, _info, tags, ALL = False):
     
     return SchemaSerializeUsersTimes(
         many    = True, 
-        exclude = ('password', 'products', 'posts',)
+        exclude = ('password',)
       ).dump(lsu)
   
   return []

@@ -194,9 +194,6 @@ with app.app_context():
   from models.tags     import Tags
   from models.docs     import Docs
   from models.users    import Users
-  from models.products import Products
-  from models.orders   import Orders
-  from models.posts    import Posts
   from models.assets   import Assets
 
   # drop/create schema

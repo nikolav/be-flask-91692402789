@@ -34,7 +34,7 @@ def resolve_users(_obj, _info, skip_external = DEFAULT_GRAPHQL_USERS_LIST_SKIP_E
 
     return SchemaSerializeUsersTimes(
       many    = True, 
-      exclude = ('password', 'products', 'posts',)).dump(users)
+      exclude = ('password',)).dump(users)
 
 
   except Exception as err:

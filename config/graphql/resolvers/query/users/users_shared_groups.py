@@ -44,7 +44,7 @@ def resolve_usersSharedGroups(_obj, _info, uids = None):
     lsu = db.session.scalars(qu)
     return SchemaSerializeUsersTimes(
         many    = True, 
-        exclude = ('password', 'products', 'posts',)
+        exclude = ('password',)
       ).dump(lsu)
   
   return []

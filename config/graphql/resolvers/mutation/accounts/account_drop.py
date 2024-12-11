@@ -5,14 +5,9 @@ from flask_app import io
 from flask_app import IOEVENT_ACCOUNTS_UPDATED
 
 from models          import ln_users_tags
-# from models          import ln_orders_products
-# from models          import ln_products_tags
 from models          import ln_users_assets
 from models.users    import Users
 from models.docs     import Docs
-# from models.orders   import Orders
-# from models.products import Products
-# from models.posts    import Posts
 
 from config.graphql.init import mutation
 from src.classes         import ResponseStatus
@@ -42,35 +37,6 @@ def resollve_accountsDrop(_o, _i, uid):
         raise Exception('accountsDrop --access-denied')
         
       id = u.id
-
-      # subq_oids = db.select(Orders.id).where(Orders.user_id == uid).subquery()
-      # subq_pids = db.select(Products.id).where(Products.user_id == uid).subquery()
-      
-      # db.session.execute(
-      #   db.delete(ln_orders_products)
-      #     .where(ln_orders_products.c.order_id.in_(subq_oids))
-      # ) 
-      # db.session.execute(
-      # db.delete(Orders)
-      #   .where(
-      #     Orders.user_id == uid
-      #   )
-      # )
-
-      # db.session.execute(
-      #   db.delete(ln_products_tags)
-      #     .where(ln_products_tags.c.product_id.in_(subq_pids))
-      # ) 
-      # db.session.execute(
-      #   db.delete(ln_orders_products)
-      #     .where(ln_orders_products.c.product_id.in_(subq_pids))
-      # ) 
-      # db.session.execute(
-      #   db.delete(Products)
-      #   .where(
-      #     Products.user_id == uid
-      #   )
-      # )
       
       db.session.execute(
         db.delete(
@@ -78,14 +44,7 @@ def resollve_accountsDrop(_o, _i, uid):
         ).where(
           id == ln_users_tags.c.user_id
         ))
-              
-      # db.session.execute(
-      #   db.delete(Posts)
-      #     .where(
-      #       Posts.user_id == uid
-      #     )
-      # )
-            
+                          
       db.session.execute(
         db.delete(
           Docs
