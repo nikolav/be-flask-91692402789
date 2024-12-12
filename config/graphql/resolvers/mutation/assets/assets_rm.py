@@ -104,8 +104,8 @@ def resolve_assetsRemove(_obj, _info, aids):
           Assets.id.in_(aids)
         )) < assets_len_start
 
-    r.status = { 'removed': removed, 'assets_removed': aids }
-
+      r.status = { 'removed': removed, 'assets_removed': [a['id'] for a in debug_assets_affected] }
+      
 
   except Exception as err:
     r.error = err
@@ -115,6 +115,7 @@ def resolve_assetsRemove(_obj, _info, aids):
     if removed:
       # emit asset:removed:ID
       # emit asset:type
+
 
       for a in debug_assets_affected:
         io.emit(f'{AssetsIOEvents.REMOVE.value}:{a['id']}')

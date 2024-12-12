@@ -12,10 +12,16 @@ class SchemaInputPagination(Schema):
   @validates('page')
   def validates_page(self, value):
     if not 0 < value:
-      raise ValidationError('@pagination.page: must be gt:0')
+      raise ValidationError('@SchemaInputPagination.page: must be gt:0')
   
   @validates('page')
   def validates_page(self, value):
     if not 0 < value:
-      raise ValidationError('@pagination.per_page: must be gt:0')
+      raise ValidationError('@SchemaInputPagination.per_page: must be gt:0')
 
+class SchemaInputAssetsRows(Schema):
+  strategy = fields.String(required = True)
+  args     = fields.Dict()
+  limit    = fields.Integer()
+class SchemaInputAssetsRowsArgsOlderThan(Schema):
+  older_than = fields.DateTime()

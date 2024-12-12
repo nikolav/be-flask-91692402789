@@ -173,7 +173,7 @@ type Query {
   # assets:forms
   assetsFormsSubmissionsList(strategy: String, args: [JsonData!]): [Docs!]!
   # assets:posts
-  assetsPostsReadable(uids: [ID!], pagination: JsonData): [Asset!]!
+  assetsPostsReadable(uids: [ID!], pagination: JsonData, assets_rows: JsonData): [Asset!]!
 
   # tags
   tagsSearchTagLike(search: String!, prefix: String, attach: String): [String!]!

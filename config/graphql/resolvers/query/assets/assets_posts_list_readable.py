@@ -9,9 +9,9 @@ from schemas.serialization import SchemaSerializeAssets
 from flask_app             import TAG_ASSETS_SHAREABLE_GLOBALY
 
 
-# assetsPostsReadable(uids: [ID!]): [Asset!]!
+# assetsPostsReadable(uids: [ID!], pagination: JsonData, assets_rows: JsonData): [Asset!]!
 @query.field('assetsPostsReadable')
-def resolve_assetsPostsReadable(_obj, _info, uids = None, pagination = None):
+def resolve_assetsPostsReadable(_obj, _info, uids = None, pagination = None, assets_rows = None):
   # pagination: {page:number, per_page:number}
   if None == uids:
     uids = [g.user.id]
@@ -22,6 +22,7 @@ def resolve_assetsPostsReadable(_obj, _info, uids = None, pagination = None):
         WHITELIST_ASSET_TAGS     = (TAG_ASSETS_SHAREABLE_GLOBALY,),
         ORDERED                  = 'date_desc',
         PAGINATION               = pagination,
+        ASSETS_ROWS              = assets_rows,
       ))
 
 

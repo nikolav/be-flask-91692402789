@@ -1,10 +1,11 @@
 
-from flask import g
+from datetime import datetime
+from typing   import List
+from typing   import Optional
+from enum     import Enum
+from uuid     import uuid4 as uuid
 
-from typing import List
-from typing import Optional
-from enum   import Enum
-from uuid   import uuid4 as uuid
+from flask import g
 
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -38,6 +39,8 @@ from models.tags  import Tags
 from utils import Unique
 from schemas.serialization import SchemaSerializeAssetsTextSearch
 from schemas.validation    import SchemaInputPagination
+from schemas.validation    import SchemaInputAssetsRows
+from schemas.validation    import SchemaInputAssetsRowsArgsOlderThan
 
 
 CATEGORY_KEY_ASSETS_prefix   = 'CATEGORY_KEY:ASSETS:hhPDiM:'
@@ -45,6 +48,14 @@ CATEGORY_KEY_ASSETS_prefix   = 'CATEGORY_KEY:ASSETS:hhPDiM:'
 STRATEGY_order_assets = {
   'date_asc'  : lambda q: q.order_by(Assets.created_at.asc()),
   'date_desc' : lambda q: q.order_by(Assets.created_at.desc()),
+}
+
+
+STRATEGY_assets_rows = {
+  'older_than': {
+    'schema_args' : SchemaInputAssetsRowsArgsOlderThan,
+    'resolve'     : lambda q, args, limit_, *rest: q.where(Assets.created_at < args['older_than']).limit(limit_)
+  }
 }
 
 class AssetsType(Enum):
@@ -314,6 +325,8 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
                                     EXCLUDE_MY_ASSETS = False,
                                     ORDERED = None,
                                     PAGINATION = None,
+                                    # ASSETS_ROWS: {gt:ID, limit:numner}
+                                    ASSETS_ROWS = None,
                                   ):
     # what (readable) assets other accounts I share groups with have created
 
@@ -415,6 +428,20 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
         offset_ = (pg['page'] - 1) * limit_
         q = q.limit(limit_).offset(offset_)
     
+    if ASSETS_ROWS:
+      rows = None
+      
+      try:
+        rows = SchemaInputAssetsRows().load(ASSETS_ROWS)
+        
+        strategy_ = rows['strategy']
+        args_     = STRATEGY_assets_rows[strategy_]['schema_args']().load(rows['args'])
+        limit_    = rows['limit']
+        
+        q = STRATEGY_assets_rows[strategy_]['resolve'](q, args_, limit_)
+
+      except:
+        raise
     
     # order if requested
     if ORDERED and ORDERED in STRATEGY_order_assets:
