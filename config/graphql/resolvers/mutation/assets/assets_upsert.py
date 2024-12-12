@@ -17,9 +17,9 @@ from schemas.serialization     import SchemaSerializeAssets
 from src.classes import ResponseStatus
 
 
-# assetsUpsert(fields: JsonData!, aid: ID): JsonData!
+# assetsUpsert(fields: JsonData!, aid: ID, merge_field_data: Boolean): JsonData!
 @mutation.field('assetsUpsert')
-def resolve_assetsUpsert(_obj, _info, fields = {}, aid = None):
+def resolve_assetsUpsert(_obj, _info, fields = {}, aid = None, merge_field_data = True):
   # fields: { ...cols, category:string }
   a = None
   d = None
@@ -52,7 +52,7 @@ def resolve_assetsUpsert(_obj, _info, fields = {}, aid = None):
           if 'data' != field:
             setattr(a, field, value)
           else:
-            a.data_update(patch = value)
+            a.data_update(patch = value, merge = True == merge_field_data)
         else:
           a.category_key_commit(value, _commit = False)
       

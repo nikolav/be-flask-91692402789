@@ -251,7 +251,7 @@ type Mutation {
   # assets, groups
   assetsRemove(aids: [ID!]!): JsonData!
   groupsGUConfigure(guConfig: JsonData!): JsonData!
-  assetsUpsert(fields: JsonData!, aid: ID): JsonData!
+  assetsUpsert(fields: JsonData!, aid: ID, merge_field_data: Boolean): JsonData!
   assetsAGConfig(ag_config: JsonData!, assets_type: String!): JsonData!
   assetsManageTags(aid: ID!, config: JsonData!): JsonData!
   # assetsPatchData
