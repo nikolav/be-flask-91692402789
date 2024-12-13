@@ -104,6 +104,9 @@ VIBER_CHANNELS_CACHEID_GLOBAL_CHANNELS = os.getenv('VIBER_CHANNELS_CACHEID_GLOBA
 VIBER_USER_CHANNELS_prefix             = os.getenv('VIBER_USER_CHANNELS_prefix')
 URL_VIBER_SET_WEBHOOK                  = os.getenv('URL_VIBER_SET_WEBHOOK')
 VIBER_URL_ACCOUNT_INFO                 = os.getenv('VIBER_URL_ACCOUNT_INFO')
+# googlemaps
+API_KEY_GOOGLE_MAPS_PLACES = os.getenv('API_KEY_GOOGLE_MAPS_PLACES')
+
 
 
 # topics comms

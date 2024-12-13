@@ -186,6 +186,9 @@ type Query {
     query_strategy: String!
     query_strategy_args: JsonData
   ): JsonData!
+
+  # services:google
+  googleapisPlacesNearby(location: JsonData!, next_page_token: String): JsonData!
 }
 
 ############
@@ -234,9 +237,12 @@ type Mutation {
     AND_THIS: Boolean
   ): JsonData!
 
+
   # communication
   commsMessageMany(uids: [ID!]!, message: JsonData!): JsonData!
   commsGroupMessageMany(gids: [ID!]!, message: JsonData!): JsonData!
+  # @delivery notify-teams-users-nearby
+  commsDeliveryStatusPublish(site: JsonData!): JsonData!
 
   # viber
   # https://developers.viber.com/docs/tools/channels-post-api/

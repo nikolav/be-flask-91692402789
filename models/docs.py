@@ -33,6 +33,8 @@ from flask_app import TAG_STORAGE
 from flask_app import TAG_VARS
 from flask_app import TAG_IS_FILE
 
+from sqlalchemy import event
+
 
 _schemaDocsDump     = SchemaSerializeDocJsonTimes()
 _schemaDocsDumpMany = SchemaSerializeDocJsonTimes(many = True)
@@ -175,5 +177,4 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, MixinFieldMergeabl
 
   def dump(self, **kwargs):
     return _schemaDocsDump.dump(self, **kwargs)
-
 

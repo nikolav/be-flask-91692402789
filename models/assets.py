@@ -42,6 +42,8 @@ from schemas.validation    import SchemaInputPagination
 from schemas.validation    import SchemaInputAssetsRows
 from schemas.validation    import SchemaInputAssetsRowsArgsOlderThan
 
+from sqlalchemy import event
+
 
 CATEGORY_KEY_ASSETS_prefix   = 'CATEGORY_KEY:ASSETS:hhPDiM:'
 
@@ -49,7 +51,6 @@ STRATEGY_order_assets = {
   'date_asc'  : lambda q: q.order_by(Assets.created_at.asc()),
   'date_desc' : lambda q: q.order_by(Assets.created_at.desc()),
 }
-
 
 STRATEGY_assets_rows = {
   'older_than': {
@@ -75,8 +76,9 @@ class AssetsType(Enum):
   PEOPLE_GROUP_TEAM = 'PEOPLE_GROUP_TEAM:sEdkj9r'
 
   # PHYSICAL = "Physical Asset"
-  PHYSICAL_PRODUCT  = 'PHYSICAL_PRODUCT:u1zDoNxQnYLnHHbp'
-  PHYSICAL_STORE    = 'PHYSICAL_STORE:5btoy9I8IKgT0RJO'
+  PHYSICAL_PRODUCT           = 'PHYSICAL_PRODUCT:u1zDoNxQnYLnHHbp'
+  PHYSICAL_STORE             = 'PHYSICAL_STORE:5btoy9I8IKgT0RJO'
+  PHYSICAL_DISTRIBUTION_UNIT = 'PHYSICAL_DISTRIBUTION_UNIT:3e854289-02e2-5aa8-85ec-e9d1fc021ea7'
 
   # FINANCIAL = "Financial Asset"
 
@@ -227,7 +229,6 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
 
     return changes
   
-
   # public
   def assets_leave(self, *lss):
     changes = 0
@@ -252,7 +253,6 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
       )
     )
 
-  
   # public
   def category_key_commit(self, c_key, *, _commit = True):
     _status = False
@@ -268,7 +268,6 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     
     return _status
 
-  
   # public
   def category_key_drop(self, *, _commit = True):
     changes = 0
@@ -283,24 +282,20 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
 
     return changes
   
-  
   # public
   def data_updated(self, patch):
     return self.dataField_updated(patch = patch)
-  
   
   # public
   def data_update(self, *, patch, merge = True):
     patched = self.data_updated(patch) if merge else patch
     self.dataField_update(patch = patched)
 
-  
   # public
   def get_data(self):
     d = self.data if None != self.data else {}
     return d.copy()
 
-  
   # public
   def ioemit_update(self):
     io.emit(f'{AssetsIOEvents.UPDATE.value}{self.id}')
@@ -450,7 +445,6 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     
     return db.session.scalars(q)
   
-
   @staticmethod
   def assets_parents(*lsa, PtAIDS = None, TYPE = None, DISTINCT = True, WITH_OWN = True):
     '''
@@ -503,7 +497,6 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
       ).where(
         Assets.id.in_(subq)))
 
-  
   @staticmethod
   def assets_children(*lsa, TYPE = None, DISTINCT = True):
     '''
@@ -537,11 +530,9 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
       ).where(
         Assets.id.in_(subq)))
 
-
   @staticmethod
   def codegen(*, length = 4, prefix = 'Assets:'):
     return f'{prefix}{Unique.id(length = length)}'
-
 
   @staticmethod
   def products_all():
@@ -552,7 +543,6 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
         AssetsType.PHYSICAL_PRODUCT.value == Assets.type
       ))
   
-
   @staticmethod
   def groups_all():
     return db.session.scalars(
@@ -562,7 +552,6 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
         AssetsType.PEOPLE_GROUP_TEAM.value == Assets.type
       ))
 
-  
   @staticmethod
   def groups_only(gids):
     '''
@@ -575,7 +564,6 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
         AssetsType.PEOPLE_GROUP_TEAM.value == Assets.type,
         Assets.id.in_(gids)
       ))
-
 
   @staticmethod
   def stores_all():
@@ -603,7 +591,33 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     
     return db.session.scalars(q)
 
+
+# bind listener for Assets:group .location 
+#  update lat:lng @data.coords if location provided
+@event.listens_for(Assets.location, 'set')
+def on_updated_assets_sites_location(asset, value, _oldvalue, _initiator):
+  changes = 0
+  if (AssetsType.PEOPLE_GROUP_TEAM.value == asset.type):
+    if not value:
+      # @empty, clear current lat:lng
+      asset.data_update(
+        patch = {
+          'coords': None
+        })
+      changes += 1
+
+    else:
+      from servcies.googlemaps import geocode_address
+      res = geocode_address(value)
+      asset.data_update(
+        patch = {
+          'coords': None if res['error'] else res['status']['coords']})
+      changes += 1
     
+    if 0 < changes:
+      db.session.commit()
+  
+
 ##
 ## assets table fields @chatGPT response
 ##

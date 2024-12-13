@@ -45,4 +45,8 @@ RapidFuzz==3.10.1
 Levenshtein==0.26.1
 python-Levenshtein==0.26.1
 
+# server
 Hypercorn==0.17.3
+
+# apis:goog
+googlemaps==4.10.0
