@@ -4,7 +4,7 @@ from flask_app             import db
 from config.graphql.init   import query
 from models.assets         import Assets
 from models.assets         import AssetsType
-from models.assets         import AssetsStatus
+# from models.assets         import AssetsStatus
 from models.users          import Users
 from schemas.serialization import SchemaSerializeAssets
 
@@ -35,10 +35,17 @@ def resolve_one_by_key(lsa, args):
   except StopIteration:
     return []
 
+def resolve_status_active(lsa, args = None):
+  return filter(lambda a: a.is_status_active(), lsa)
+
 STRATEGY_search = {
   'one_by_key': {
     'schema_args' : SchemaArgsOneByKey,
     'resolve'     : resolve_one_by_key,
+  },
+  'status_active': {
+    'schema_args' : None,
+    'resolve'     : resolve_status_active,
   },
 }
 
@@ -163,7 +170,7 @@ def resolve_assetsList(_obj, _info,
         raise Exception(f'error:T8KPL5 ![{search['strategy']}]')
       
       strategy_ = search['strategy']
-      args_     = STRATEGY_search[strategy_]['schema_args']().load(search['args'])
+      args_     = STRATEGY_search[strategy_]['schema_args']().load(search['args']) if None != STRATEGY_search[strategy_]['schema_args'] else None
       
       lsa = STRATEGY_search[strategy_]['resolve'](lsa, args_)
 

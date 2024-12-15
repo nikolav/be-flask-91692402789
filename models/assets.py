@@ -215,6 +215,10 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
   # public
   def is_status(self, s):
     return s == self.status
+
+  # public
+  def is_status_active(self):
+    return self.is_status(AssetsStatus.ACTIVE.value)
     
   # public
   def serialize_to_text_search(self):
