@@ -41,8 +41,9 @@ def resolve_assetsFormsSubmission(_obj, _info, data, fid, key = None):
       data = data,
     )
 
-    # db.session.add(dd_form_submission)
     dd_form_submission.user = g.user
+    
+    db.session.add(dd_form_submission)
     a.docs.append(dd_form_submission)
 
     db.session.commit()
