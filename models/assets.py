@@ -44,8 +44,8 @@ from schemas.validation    import SchemaInputAssetsRowsArgsOlderThan
 
 from sqlalchemy import event
 
+from flask_app import CATEGORY_KEY_ASSETS_prefix
 
-CATEGORY_KEY_ASSETS_prefix   = 'CATEGORY_KEY:ASSETS:hhPDiM:'
 
 STRATEGY_order_assets = {
   'date_asc'  : lambda q: q.order_by(Assets.created_at.asc()),

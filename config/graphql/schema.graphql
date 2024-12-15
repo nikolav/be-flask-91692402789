@@ -169,7 +169,7 @@ type Query {
   # list assets by search query .q
   assetsSearchQ(q: String!, type: String, limit: Int): [Asset!]!
   # assets:count
-  assetsCount(asset_type: String!, own: Boolean): JsonData!
+  assetsCount(asset_type: String!, own: Boolean, category: String): JsonData!
   # assets:forms
   assetsFormsSubmissionsList(strategy: String, args: [JsonData!]): [Docs!]!
   # assets:posts

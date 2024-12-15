@@ -116,6 +116,8 @@ TOPIC_CHAT_ASSETS_prefix       = os.getenv('TOPIC_CHAT_ASSETS_prefix')
 
 # assets :topics :tags
 TAG_ASSETS_SHAREABLE_GLOBALY = os.getenv('TAG_ASSETS_SHAREABLE_GLOBALY')
+CATEGORY_KEY_ASSETS_prefix   = os.getenv('CATEGORY_KEY_ASSETS_prefix'  )
+
 
 
 # app:main

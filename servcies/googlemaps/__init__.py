@@ -25,11 +25,13 @@ class SchemaResultNearbyStores(Schema):
   next_page_token = fields.String()
   results         = fields.List(fields.Nested(SchemaResultNearbyStoresNode))
 
+
 gmaps = googlemaps.Client(key = API_KEY_GOOGLE_MAPS_PLACES)
+
 
 _location = (44.793704910875114, 20.48102157162112,)
 def places_nearby(
-    location = _location, *,
+    location        = _location, *,
     next_page_token = None,
     types           = ("grocery_or_supermarket", "grocery_store", "supermarket", "shopping_mall",),
   ):
