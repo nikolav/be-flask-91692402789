@@ -333,9 +333,9 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     
     from models.users import Users
 
+
     if not uids:
       uids = [g.user.id]
-    
     
     # get related groups IDs
     # ..get my groups
@@ -346,7 +346,8 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
       ).where(
         AssetsType.PEOPLE_GROUP_TEAM.value == Assets.type,
         Users.id.in_(uids)
-      ).subquery()
+      )
+      # ).subquery()
       
     # get groups related users; users in this groups
     quids = db.select(
@@ -355,7 +356,8 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
         Users.assets
       ).where(
         Assets.id.in_(sq_groups_lookup)
-      ).subquery()
+      )
+      # ).subquery()
       
     # select from assets, type, where author in quids
     q_aids = db.select(
@@ -409,7 +411,8 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     q = db.select(
         Assets
       ).where(
-        Assets.id.in_(q_aids.subquery()))
+        # Assets.id.in_(q_aids.subquery()))
+        Assets.id.in_(q_aids))
     
     # @@
     if PAGINATION:
@@ -448,6 +451,7 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
         
     
     return db.session.scalars(q)
+  
   
   @staticmethod
   def assets_parents(*lsa, PtAIDS = None, TYPE = None, DISTINCT = True, WITH_OWN = True):
@@ -493,13 +497,14 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
 
       q = union(q, q_own)
         
-    subq = q.subquery()
+    # subq = q.subquery()
     
     return db.session.scalars(
       db.select(
         Assets
       ).where(
-        Assets.id.in_(subq)))
+        # Assets.id.in_(subq)))
+        Assets.id.in_(q)))
 
   @staticmethod
   def assets_children(*lsa, TYPE = None, DISTINCT = True):
@@ -526,13 +531,14 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
     if DISTINCT:
       q = q.distinct()
     
-    subq = q.subquery()
+    # subq = q.subquery()
     
     return db.session.scalars(
       db.select(
         Assets
       ).where(
-        Assets.id.in_(subq)))
+        # Assets.id.in_(subq)))
+        Assets.id.in_(q)))
 
   @staticmethod
   def codegen(*, length = 4, prefix = 'Assets:'):

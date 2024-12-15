@@ -22,7 +22,8 @@ def resolve_usersTagged(_obj, _info, tags, ALL = False):
         Users.tags.any(
           Tags.tag.in_(tags)
         )
-      ).subquery()
+      )
+      # ).subquery()
       
     else:
       quids = db.select(
@@ -38,7 +39,7 @@ def resolve_usersTagged(_obj, _info, tags, ALL = False):
           )
         )
       
-      quids = quids.subquery()
+      # quids = quids.subquery()
     
 
     lsu = db.session.scalars(

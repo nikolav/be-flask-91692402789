@@ -38,13 +38,14 @@ def resolve_usersByGroups(_obj, _info, gids, ALL = False):
           gid == Assets.id
         ))
   
-  sq_uids = quids.subquery()
+  # sq_uids = quids.subquery()
 
   lsu = db.session.scalars(
     db.select(
       Users
     ).where(
-      Users.id.in_(sq_uids)
+      Users.id.in_(quids)
+      # Users.id.in_(sq_uids)
     ))
   
   return SchemaSerializeUsersTimes(

@@ -71,11 +71,13 @@ def resolve_assetsRemove(_obj, _info, aids):
         db.delete(
           ln_docs_tags
         ).where(
-          ln_docs_tags.c.doc_id.in_(db.select(
-            Docs.id
-          ).where(
-            Docs.asset_id.in_(aids)
-          ).subquery())
+          ln_docs_tags.c.doc_id.in_(
+            db.select(
+              Docs.id
+            ).where(
+              Docs.asset_id.in_(aids)
+            ))
+            # ).subquery())
         ))
       db.session.execute(
         db.delete(

@@ -26,7 +26,8 @@ def resolve_usersSharedGroups(_obj, _info, uids = None):
     ).where(
       AssetsType.PEOPLE_GROUP_TEAM.value == Assets.type,
       Users.id.in_(uids)
-    ).subquery()
+    )
+    # ).subquery()
 
     quids = db.select(
       Users.id
@@ -34,7 +35,8 @@ def resolve_usersSharedGroups(_obj, _info, uids = None):
       Users.assets
     ).where(
       Assets.id.in_(sq_groups_lookup)
-    ).subquery()
+    )
+    # ).subquery()
 
     qu = db.select(
       Users
