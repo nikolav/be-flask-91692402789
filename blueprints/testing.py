@@ -10,6 +10,15 @@ bp_testing = Blueprint('testing', __name__, url_prefix = '/test')
 CORS(bp_testing)
 
 @bp_testing.route('/', methods = ('POST',))
-def testing_home():    
+def testing_home():
+  from models.assets import Assets
+  from flask_app import db
+
+  a = db.session.get(Assets, 299)
+  
   r = ResponseStatus()
+
+  r.status = a.category_key()
+  
+  
   return r.dump()

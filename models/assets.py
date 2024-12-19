@@ -1,5 +1,4 @@
 
-from datetime import datetime
 from typing   import List
 from typing   import Optional
 from enum     import Enum
@@ -248,14 +247,11 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
       db.select(
         Tags.tag
       ).join(
-        ln_assets_tags
-      ).join(
-        Assets
+        Assets.tags
       ).where(
         self.id == Assets.id,
         Tags.tag.startswith(CATEGORY_KEY_ASSETS_prefix)
-      )
-    )
+      ))
 
   # public
   def category_key_commit(self, c_key, *, _commit = True):

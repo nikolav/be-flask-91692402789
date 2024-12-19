@@ -20,13 +20,9 @@ class SchemaResultNearbyStoresNode(Schema):
   def calc_coords(self, node):
     return node.get('geometry', {}).get('location')
 
-
 class SchemaResultNearbyStores(Schema):
   next_page_token = fields.String()
   results         = fields.List(fields.Nested(SchemaResultNearbyStoresNode))
-
-
-gmaps = googlemaps.Client(key = API_KEY_GOOGLE_MAPS_PLACES)
 
 
 _location = (44.793704910875114, 20.48102157162112,)
@@ -38,6 +34,7 @@ def places_nearby(
   r = ResponseStatus()
   
   try:
+    gmaps = googlemaps.Client(key = API_KEY_GOOGLE_MAPS_PLACES)
     r.status = {
       'places': SchemaResultNearbyStores().dump(
         gmaps.places_nearby(
@@ -57,7 +54,6 @@ def places_nearby(
   
   return r.dump()
 
-  
 
 _address = 'MIhaila Milovanovića 76v, Mladenovac 11400'
 _region  = 'sr'
@@ -65,6 +61,7 @@ def geocode_address(address = _address, region = _region):
   r = ResponseStatus()
   
   try:
+    gmaps  = googlemaps.Client(key = API_KEY_GOOGLE_MAPS_PLACES)
     coords = SchemaCoordsLatLng().dump(
       gmaps.geocode(address, region = region)[0]['geometry']['location'])
     
