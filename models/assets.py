@@ -25,6 +25,7 @@ from . import assetsTable
 from . import ln_assets_tags
 from . import ln_users_assets
 from . import ln_assets_assets
+from . import ln_orders_products
 from src.mixins import MixinTimestamps
 from src.mixins import MixinIncludesTags
 from src.mixins import MixinByIds
@@ -169,17 +170,19 @@ class Assets(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinByIdsAndType, 
   author_id = mapped_column(db.ForeignKey(f'{usersTable}.id')) # .uid added the asset
 
   # virtual
-  users  : Mapped[List['Users']]  = relationship(secondary = ln_users_assets, back_populates = 'assets') # Who is responsible/belongs for/to asset
-  tags   : Mapped[List['Tags']]   = relationship(secondary = ln_assets_tags, back_populates = 'assets') # Additional tags or keywords related to the asset for easier categorization or searchability
-  docs   : Mapped[List['Docs']]   = relationship(back_populates = 'asset') # addtional related records
-  author : Mapped['Users']        = relationship(back_populates = 'assets_owned') # Who added the asset
+  users       : Mapped[List['Users']]  = relationship(secondary = ln_users_assets, back_populates = 'assets') # Who is responsible/belongs for/to asset
+  tags        : Mapped[List['Tags']]   = relationship(secondary = ln_assets_tags, back_populates = 'assets') # Additional tags or keywords related to the asset for easier categorization or searchability
+  docs        : Mapped[List['Docs']]   = relationship(back_populates = 'asset') # addtional related records
+  author      : Mapped['Users']        = relationship(back_populates = 'assets_owned') # Who added the asset
+  site_orders : Mapped[List['Orders']] = relationship(back_populates = 'site') # related site
+  orders      : Mapped[List['Orders']] = relationship(secondary = ln_orders_products, back_populates = 'products') # related assetSites:orders
 
   # self-referential, has|belongs-to assets
   assets_has: Mapped[List['Assets']] = relationship(
     secondary      = ln_assets_assets, 
     primaryjoin    = id == ln_assets_assets.c.asset_l_id, 
     secondaryjoin  = id == ln_assets_assets.c.asset_r_id, 
-    backref        = backref( 'assets_belong', lazy='dynamic')
+    backref        = backref('assets_belong', lazy='dynamic')
     # back_populates = 'assets'
   )
 

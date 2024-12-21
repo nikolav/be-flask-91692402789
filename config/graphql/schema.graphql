@@ -113,6 +113,27 @@ type Docs {
   updated_at: String
 }
 
+type Orders {
+  id: ID!
+  key: String
+  status: String
+  data: JsonData
+  notes: String
+
+  author_id: ID
+  site_id: ID
+  
+  author: User
+  site: Asset
+  tags: [String]
+  products: [Asset!]
+}
+
+type ProductAmount {
+  amount: Int!
+  product: Asset!
+}
+
 #########
 ## @Query
 
@@ -189,6 +210,11 @@ type Query {
 
   # services:google
   googleapisPlacesNearby(location: JsonData!, next_page_token: String): JsonData!
+
+  # orders; assets:sites:ls-articles
+  assetsAssetsSitesOrders(sid: ID!): [Orders!]!
+  ordersProductsAmounts(ooid: ID!): [ProductAmount!]!
+
 }
 
 ############

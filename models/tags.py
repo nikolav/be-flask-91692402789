@@ -10,6 +10,7 @@ from . import db
 from . import ln_docs_tags
 from . import ln_users_tags
 from . import ln_assets_tags
+from . import ln_orders_tags
 
 
 
@@ -23,9 +24,10 @@ class Tags(db.Model):
   description : Mapped[Optional[str]]
 
   # virtual
-  users    : Mapped[List['Users']]    = relationship(secondary = ln_users_tags,    back_populates = 'tags')
-  docs     : Mapped[List['Docs']]     = relationship(secondary = ln_docs_tags,     back_populates = 'tags')
-  assets   : Mapped[List['Assets']]   = relationship(secondary = ln_assets_tags,   back_populates = 'tags')
+  users    : Mapped[List['Users']]  = relationship(secondary = ln_users_tags,  back_populates = 'tags')
+  docs     : Mapped[List['Docs']]   = relationship(secondary = ln_docs_tags,   back_populates = 'tags')
+  assets   : Mapped[List['Assets']] = relationship(secondary = ln_assets_tags, back_populates = 'tags')
+  orders   : Mapped[List['Orders']] = relationship(secondary = ln_orders_tags, back_populates = 'tags')
 
   # magic
   def __repr__(self):

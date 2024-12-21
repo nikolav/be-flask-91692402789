@@ -38,3 +38,7 @@ from .docs_reports import reports_search
 
 from .maps import places_nearby_list
 
+from .orders import orders_at_site
+from .orders import orders_products_amounts
+
+

@@ -1,3 +1,4 @@
+
 from flask       import Blueprint
 from flask_cors  import CORS
 
@@ -11,14 +12,6 @@ CORS(bp_testing)
 
 @bp_testing.route('/', methods = ('POST',))
 def testing_home():
-  from models.assets import Assets
-  from flask_app import db
-
-  a = db.session.get(Assets, 299)
-  
-  r = ResponseStatus()
-
-  r.status = a.category_key()
-  
-  
+  r = ResponseStatus()  
   return r.dump()
+

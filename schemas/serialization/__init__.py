@@ -220,3 +220,21 @@ class SchemaSerializeDocs(SchemaSerializeDocJsonTimes):
   ]
 }
 '''
+
+class SchemaSerializeOrders(SchemaSerializeTimes):
+  id     = fields.Integer()
+
+  key    = fields.String()
+  status = fields.String()
+  data   = fields.Dict()
+  notes  = fields.String()
+
+  author_id = fields.Integer()
+  site_id   = fields.Integer()
+  
+  # virtal
+  author   = fields.Nested(SchemaSerializeUsersTimes(exclude = ('password',)))
+  site     = fields.Nested(SchemaSerializeAssets(exclude = ('assets_has',)))
+  tags     = fields.List(fields.String())
+  products = fields.List(fields.Nested(SchemaSerializeAssets(exclude = ('assets_has', 'author',))))
+

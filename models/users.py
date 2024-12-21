@@ -97,6 +97,7 @@ class Users(MixinTimestamps, MixinIncludesTags, MixinByIds, MixinFieldMergeable,
   docs         : Mapped[List['Docs']]     = relationship(back_populates = 'user')
   assets       : Mapped[List['Assets']]   = relationship(secondary = ln_users_assets, back_populates = 'users')
   assets_owned : Mapped[List['Assets']]   = relationship(back_populates = 'author') # assets created by the user
+  orders       : Mapped[List['Orders']]   = relationship(back_populates = 'author') # orders created by the user
 
   # self-referential, has|belongs-to assets
   users_following: Mapped[List['Users']] = relationship(

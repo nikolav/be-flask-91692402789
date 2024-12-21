@@ -200,6 +200,7 @@ with app.app_context():
   from models.docs     import Docs
   from models.users    import Users
   from models.assets   import Assets
+  from models.orders   import Orders
 
   # drop/create schema
   if REBUILD_SCHEMA:
