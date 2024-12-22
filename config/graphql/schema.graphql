@@ -311,4 +311,7 @@ type Mutation {
     patch: JsonData
     merge: Boolean
   ): JsonData!
+
+  # orders
+  catalogOrderAdd(sid: ID!, items: JsonData!): JsonData!
 }
