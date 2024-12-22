@@ -15,6 +15,9 @@ from models        import ln_assets_assets
 from models        import ln_docs_tags
 from models.docs   import Docs
 
+from models        import ln_orders_products
+from models.orders import Orders
+
 from middleware.authguard import authguard_assets_own
 from flask_app            import POLICY_ADMINS
 from src.classes.policies import Policies
@@ -84,6 +87,26 @@ def resolve_assetsRemove(_obj, _info, aids):
           Docs
         ).where(
           Docs.asset_id.in_(aids)
+        ))
+      
+      # from ln-orders-products drop all where order-site_id in aids
+      q_ooids_rm = db.select(
+        Orders.id
+      ).where(
+        Orders.site_id.in_(aids))
+      db.session.execute(
+        db.delete(
+          ln_orders_products
+        ).where(
+          ln_orders_products.c.order_id.in_(q_ooids_rm)
+        ))
+      # clear Assets:site-orders
+      #  from orders drop all where order-site_id in aids
+      db.session.execute(
+        db.delete(
+          Orders
+        ).where(
+          Orders.site_id.in_(aids)
         ))
       
       debug_assets_affected = tuple({ 'id': a.id, 'type': a.type } for a in assets_selected)

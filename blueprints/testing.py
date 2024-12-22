@@ -12,6 +12,22 @@ CORS(bp_testing)
 
 @bp_testing.route('/', methods = ('POST',))
 def testing_home():
+  from flask_app import db
+  from models.users import Users
+  from models.assets import Assets
+  from models.orders import Orders
+
+
   r = ResponseStatus()  
+  u = db.session.get(Users, 1)
+  a = db.session.get(Assets, 7)
+
+  o = Orders(
+    author = u,
+    site   = a,
+  )
+  db.session.add(o)
+  db.session.commit()
+  
   return r.dump()
 
