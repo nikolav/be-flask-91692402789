@@ -136,6 +136,10 @@ type ProductAmount {
   amount: Int!
   product: Asset!
 }
+type OrderItems {
+  order: Orders
+  items: [ProductAmount!]!
+}
 
 #########
 ## @Query
@@ -223,7 +227,7 @@ type Query {
 
   # orders; assets:sites:ls-articles
   assetsAssetsSitesOrders(sid: ID!): [Orders!]!
-  ordersProductsAmounts(ooid: ID!): [ProductAmount!]!
+  ordersProductsAmounts(ooid: ID!): OrderItems!
 }
 
 ############
