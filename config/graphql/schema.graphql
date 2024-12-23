@@ -314,4 +314,6 @@ type Mutation {
 
   # orders
   catalogOrderAdd(sid: ID!, items: JsonData!): JsonData!
+  catalogOrderRemove(ids: [ID!]!): JsonData!
+  catalogManageTags(id: ID!, config: JsonData!): JsonData!
 }

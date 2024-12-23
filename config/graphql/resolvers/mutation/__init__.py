@@ -41,4 +41,8 @@ from .docs_reports import reports_config
 from .redis import cache_redis_commit
 
 from .orders import catalog_order_add
+from .orders import catalog_remove
+from .orders import catalog_manage_tags
+
+
 
