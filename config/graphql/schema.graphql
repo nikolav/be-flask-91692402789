@@ -165,7 +165,7 @@ type Query {
   usersByGroups(gids: [ID!]!, ALL: Boolean): [User!]!
 
   # docs
-  docsByTopic(topic: String!, order: Int): [JsonData!]!
+  docsByTopic(topic: String!, order: Int, search: JsonData): [JsonData!]!
   docByDocId(doc_id: String!): JsonData!
   tagsByDocId(id: ID!): [String!]!
 

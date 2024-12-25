@@ -27,13 +27,16 @@ from src.mixins import MixinFieldMergeable
 from src.mixins import MixinByIds
 
 from schemas.serialization import SchemaSerializeDocJsonTimes
+from schemas.serialization import SchemaSerializeDocsQStringSearch
 
 from flask_app import VIBER_CHANNELS_DOCID
 from flask_app import TAG_STORAGE
 from flask_app import TAG_VARS
 from flask_app import TAG_IS_FILE
 
-from sqlalchemy import event
+from src.classes.q_search_tokenizer import QSearchTokenizer
+
+# from sqlalchemy import event
 
 
 _schemaDocsDump     = SchemaSerializeDocJsonTimes()
@@ -45,7 +48,7 @@ class DocsTags(Enum):
   IMAGE_PRODUCT            = 'IMAGE_PRODUCT:06koI97IiCW'
   USER_AVAILABILITY_STATUS = 'USER_AVAILABILITY_STATUS:TOy5MSh9d7xmo94vvMED'
   SHAREABLE                = 'DocsTags:SHAREABLE:muSvm4x5'
-  DOCS_TAGGED_CONTACTS     = 'DOCS_TAGGED_CONTACTS:16d675d0-4119-5675-9db1-2b5649cc559c'
+  TAGGED_CONTACTS          = 'CONTACTS:6249cd68-f04f-5960-a454-7d5a66ecfbaa'
   
 
 # https://docs.sqlalchemy.org/en/20/tutorial/metadata.html#declaring-mapped-classes
@@ -72,6 +75,11 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, MixinFieldMergeabl
   def __repr__(self):
     return f'Docs({json.dumps(self.dump())})'
   
+    
+  # public
+  def serialize_to_qsearch(self):
+    return ' '.join(QSearchTokenizer().tokenize(' '.join(v for v in SchemaSerializeDocsQStringSearch().dump(self).values() if v)))
+
     
   # public
   def get_data(self, updates = None):

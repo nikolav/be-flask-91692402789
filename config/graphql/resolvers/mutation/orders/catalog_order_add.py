@@ -8,6 +8,8 @@ from models.orders       import Orders
 from flask               import g
 from models              import ln_orders_products
 
+from schemas.serialization import SchemaSerializeOrders
+
 
 # catalogOrderAdd(sid: ID!, items: JsonData!): JsonData!
 @mutation.field('catalogOrderAdd')
@@ -45,11 +47,16 @@ def resolve_catalogOrderAdd(_obj, _info, sid, items):
         ))
     db.session.commit()
 
+
   except Exception as err:
     r.error = err
   
+  
   else:
-    r.status = { 'id': o.id }
+    r.status = { 
+                  'id'    : o.id, 
+                  'order' : SchemaSerializeOrders(exclude = ('products', 'author', 'site',)).dump(o),
+                }
 
   return r.dump()
 

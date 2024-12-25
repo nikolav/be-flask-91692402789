@@ -176,6 +176,21 @@ class SchemaSerializeAssetsTextSearch(Schema):
   def resolve_data_dumps(self, asset):
     return json.dumps(asset.data) if None != asset.data else ''
 
+class SchemaSerializeDocsQStringSearch(Schema):
+  tags       = fields.Method('tags_joined')
+  data_dumps = fields.Method('resolve_data_dumps')
+
+  def tags_joined(self, d):
+    from models.docs import DocsTags
+    omit_tags = (
+      DocsTags.TAGGED_CONTACTS.value,
+    )
+    return ' '.join([t.tag for t in d.tags if not t.tag in omit_tags])
+  
+  def resolve_data_dumps(self, d):
+    return ' '.join([json.dumps(v) for v in d.data.values()]) if None != d.data else ''
+
+
 class SchemaSerializeDocs(SchemaSerializeDocJsonTimes):
   # virtual
   asset = fields.Nested(SchemaSerializeAssets(
