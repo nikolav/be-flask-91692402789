@@ -8,6 +8,7 @@ from models          import ln_users_tags
 from models          import ln_users_assets
 from models.users    import Users
 from models.docs     import Docs
+from models.assets   import Assets
 
 from config.graphql.init import mutation
 from src.classes         import ResponseStatus
@@ -58,7 +59,18 @@ def resollve_accountsDrop(_o, _i, uid):
         ).where(
           id == ln_users_assets.c.user_id
         ))
-
+      
+      # clear related assets
+      #  set group.author_id = None
+      db.session.execute(
+        db.update(
+          Assets
+        ).where(
+          uid == Assets.author_id,
+        ).values(
+          author_id = None
+        ))
+      
       db.session.execute(
         db.delete(
           Users
