@@ -17,6 +17,7 @@ ASSETS_WITH_GROUPS_RELATIONS = (
   AssetsType.DIGITAL_CHAT.value,
   AssetsType.DIGITAL_FORM.value,
   AssetsType.DIGITAL_POST.value,
+  AssetsType.DIGITAL_TASKS.value,
 )
 
 STRATEGY_order = {
