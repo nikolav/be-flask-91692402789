@@ -111,7 +111,7 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, MixinFieldMergeabl
       ).join(
         Docs.tags
       ).where(
-        Tags.tag == tag_name
+        tag_name == Tags.tag
       ))
   
   
@@ -142,11 +142,11 @@ class Docs(MixinTimestamps, MixinIncludesTags, MixinExistsID, MixinFieldMergeabl
           Docs
         ).where(
           key == Docs.key
-        )
-      )
+        ))
+      
       if not d:
-        if create == True:
-          # add
+        if True == create:
+          # @create:default
           d = Docs(data = {}, key = key)
           db.session.add(d)
           if _commit:
