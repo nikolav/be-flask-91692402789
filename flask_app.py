@@ -12,6 +12,8 @@ from flask_socketio import SocketIO
 # https://pythonhosted.org/Flask-Mail/
 from flask_mail import Mail
 
+from flask_pymongo import PyMongo
+
 from src.classes import Base as DbModelBaseClass
 
 
@@ -117,8 +119,11 @@ TOPIC_CHAT_ASSETS_prefix       = os.getenv('TOPIC_CHAT_ASSETS_prefix')
 
 # assets :topics :tags
 TAG_ASSETS_SHAREABLE_GLOBALY = os.getenv('TAG_ASSETS_SHAREABLE_GLOBALY')
-CATEGORY_KEY_ASSETS_prefix   = os.getenv('CATEGORY_KEY_ASSETS_prefix'  )
+CATEGORY_KEY_ASSETS_prefix   = os.getenv('CATEGORY_KEY_ASSETS_prefix')
 
+# mongo:db
+MONGO_DB_INIT = bool(os.getenv('MONGO_DB_INIT'))
+MONGO_URI     = os.getenv('MONGO_URI')
 
 
 # app:main
@@ -146,6 +151,9 @@ app.config['MAIL_ASCII_ATTACHMENTS'] = bool(os.getenv('MAIL_ASCII_ATTACHMENTS'))
 
 # app-config:redis
 app.config['REDIS_URL'] = REDIS_URL
+
+# app-config:mongo
+app.config['MONGO_URI'] = MONGO_URI
 
 
 CORS(app, 
@@ -192,6 +200,7 @@ io    = SocketIO(app,
                 )
 mail  = Mail(app)
 
+mongo = PyMongo(app, uri = MONGO_URI) if MONGO_DB_INIT else None
 
 # db schema
 with app.app_context():

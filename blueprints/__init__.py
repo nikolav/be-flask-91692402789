@@ -61,6 +61,13 @@ def status_ok():
     redis_client_version = redis_cli.info().get('redis_version')
   except:
     pass
+  
+  mongo_client_version = None
+  try:
+    from flask_app import mongo
+    mongo_client_version = mongo.cx.server_info().get('version')
+  except:
+    pass
 
   return {
     'status'        : 'ok',
@@ -74,6 +81,7 @@ def status_ok():
     'redis'         : redis_client_version,
     'prerender'     : {
       'pids': [pid for pid in Assets.nuxt_products_prerender()],
-    }
+    },
+    'mongo': mongo_client_version,
   }
 
