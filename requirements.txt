@@ -50,3 +50,6 @@ Hypercorn==0.17.3
 
 # apis:goog
 googlemaps==4.10.0
+
+# mongo
+Flask-PyMongo==2.3.0
