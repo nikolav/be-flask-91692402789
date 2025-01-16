@@ -1,9 +1,12 @@
 
 from marshmallow import Schema
 from marshmallow import fields
+from marshmallow import INCLUDE
 # https://marshmallow.readthedocs.io/en/stable/quickstart.html#field-validators-as-methods
 
 import json
+
+from bson import ObjectId
 
 
 class SchemaSerializeTimes(Schema):
@@ -252,4 +255,19 @@ class SchemaSerializeOrders(SchemaSerializeTimes):
   site     = fields.Nested(SchemaSerializeAssets(exclude = ('assets_has',)))
   tags     = fields.List(fields.String())
   products = fields.List(fields.Nested(SchemaSerializeAssets(exclude = ('assets_has', 'author',))))
+
+
+# Custom field for handling ObjectId
+class ObjectIdField(fields.Field):
+  def _serialize(self, value, attr, obj, **kwargs):
+    return str(value) if isinstance(value, ObjectId) else value
+
+def schemaSerializeMongoDocument(*, FIELDS):
+  class _SchemaSerializeMongoDbDocument(Schema):
+    _id = ObjectIdField()
+    class Meta:
+      fields  = FIELDS
+      unknown = INCLUDE
+  
+  return _SchemaSerializeMongoDbDocument
 
