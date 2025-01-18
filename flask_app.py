@@ -14,7 +14,9 @@ from flask_mail import Mail
 
 from flask_pymongo import PyMongo
 
+
 from src.classes import Base as DbModelBaseClass
+
 
 
 FLASKAPP_PATH = os.path.dirname(__file__)
@@ -200,6 +202,7 @@ io    = SocketIO(app,
                 )
 mail  = Mail(app)
 
+# mongo client
 mongo = PyMongo(app, uri = MONGO_URI) if MONGO_DB_INIT else None
 
 # db schema
