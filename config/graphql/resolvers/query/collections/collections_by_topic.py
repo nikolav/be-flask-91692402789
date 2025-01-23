@@ -27,12 +27,13 @@ def resolve_collectionsByTopic(_obj, _info, topic, config):
     FIELDS = set(('_id',))
     FIELDS.update(config_['fields'])
     r.status = {
-      'docs': schemaSerializeMongoDocument(FIELDS = tuple(FIELDS))(many = True).dump(sorted_(mongo.db[topic].find())),
+      'docs': schemaSerializeMongoDocument(FIELDS = tuple(FIELDS))(many = True).dump(
+        sorted_(mongo.db[topic].find())),
     }
     
   except Exception as err:
     r.error = err
 
-  return r.dump()
 
+  return r.dump()
 
