@@ -228,6 +228,9 @@ type Query {
   # orders; assets:sites:ls-articles
   assetsAssetsSitesOrders(sid: ID!): [Orders!]!
   ordersProductsAmounts(ooid: ID!): OrderItems!
+
+  # collections --mongo
+  collectionsByTopic(topic: String!, config: JsonData!): JsonData!
 }
 
 ############

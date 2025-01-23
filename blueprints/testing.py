@@ -14,19 +14,17 @@ CORS(bp_testing)
 def testing_home():
   from flask_app import mongo
   from schemas.serialization import schemaSerializeMongoDocument
+  from flask_app import io
   # from marshmallow import INCLUDE
   # from utils.id_gen import id_gen
 
 
-  r = ResponseStatus()  
+  r = ResponseStatus()
 
+  io.emit('status:foo', {'x': 1})
   # mongo.db.foobars.insert_one({'foo': id_gen(), 'bar': id_gen()})
 
-  r.status = {
-    'main': schemaSerializeMongoDocument(
-        FIELDS = ('_id', 'foo', 'bar',)
-      )(many = True).dump(mongo.db.foobars.find({}))
-  }
+  r.status = 'ok'
   
   return r.dump()
 

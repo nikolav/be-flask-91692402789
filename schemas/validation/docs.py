@@ -1,7 +1,7 @@
 from marshmallow import Schema
 from marshmallow import EXCLUDE
 from marshmallow import fields
-from marshmallow.exceptions import ValidationError as MVError
+# from marshmallow.exceptions import ValidationError as MVError
 
 
 class SchemaDocs(Schema):

@@ -41,4 +41,5 @@ from .maps import places_nearby_list
 from .orders import orders_at_site
 from .orders import orders_products_amounts
 
+from .collections import collections_by_topic
 
