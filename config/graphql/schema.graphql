@@ -319,4 +319,8 @@ type Mutation {
   catalogOrderAdd(sid: ID!, items: JsonData!): JsonData!
   catalogOrderRemove(ids: [ID!]!): JsonData!
   catalogManageTags(id: ID!, config: JsonData!): JsonData!
+
+  # collections --mongo
+  collectionsUpsert(topic: String!, data: JsonData!, fields: [String!]!, id: ID): JsonData!
+  collectionsDrop(topic: String!, ids: [ID!]): JsonData!
 }

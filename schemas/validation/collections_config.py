@@ -1,8 +1,10 @@
 from marshmallow import Schema
-from marshmallow import fields
+from marshmallow import fields as mfields
 from marshmallow import INCLUDE
 
 class SchemaValidateCollectionsConfig(Schema):
   class Meta:
     unknown = INCLUDE
-  fields = fields.List(fields.String(), required = True)
+  fields = mfields.List(mfields.String(), required = True)
+  sort   = mfields.String()
+

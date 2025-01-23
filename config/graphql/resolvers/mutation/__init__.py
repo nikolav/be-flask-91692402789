@@ -44,5 +44,9 @@ from .orders import catalog_order_add
 from .orders import catalog_remove
 from .orders import catalog_manage_tags
 
+from .collections import upsert
+from .collections import drop
+
+
 
 

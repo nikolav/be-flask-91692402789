@@ -87,6 +87,7 @@ IOEVENT_ACCOUNTS_UPDATED_prefix        = os.getenv('IOEVENT_ACCOUNTS_UPDATED_pre
 IOEVENT_AUTH_NEWUSER                   = os.getenv('IOEVENT_AUTH_NEWUSER')
 IOEVENT_DOCS_CHANGE_JsonData           = os.getenv('IOEVENT_DOCS_CHANGE_JsonData')
 IOEVENT_REDIS_CACHE_KEY_UPDATED_prefix = os.getenv('IOEVENT_REDIS_CACHE_KEY_UPDATED_prefix')
+IOEVENT_COLLECTIONS_UPSERT_prefix      = os.getenv('IOEVENT_COLLECTIONS_UPSERT_prefix')
 
 # scheduler
 SCHEDULER_INIT                 = bool(os.getenv('SCHEDULER_INIT'))
